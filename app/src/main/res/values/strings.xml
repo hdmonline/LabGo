@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">IMSL</string>
+    <string name="login_password_hint">Enter Password</string>
+    <string name="login_gtid_hint">Enter GTID</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
 </resources>
