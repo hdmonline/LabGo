@@ -6,6 +6,9 @@
 
     <color name="buzzGold">#EAAA00</color>
     <color name="buzzBlue">#003057</color>
-    <color name="gray">#BFBFBF</color>
+    <color name="brightGray">#EEEEEE</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="black_overlay">#66000000</color>
 
 </resources>

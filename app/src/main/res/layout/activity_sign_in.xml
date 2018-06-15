@@ -2,15 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SigninActivity"
-    android:background="@color/gray">
+    tools:context=".SignInActivity"
+    android:background="@color/brightGray">
 
     <RelativeLayout
         android:id="@+id/layout_sign_in"
         android:layout_width="@dimen/login_area_width"
-        android:layout_height="@dimen/login_area_height"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/login_area_top_margin">
 
@@ -26,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/ic_app"
             android:layout_centerHorizontal="true">
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -35,7 +38,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:hint="@string/login_gtid_hint"
                     android:maxLines="1"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -62,7 +64,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="@string/login_password_hint"
                 android:maxLines="1"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -80,6 +81,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginRight="@dimen/sign_in_buttons_margin"
+                android:background="@color/buzzBlue"
+                android:textColor="@color/white"
                 android:text="@string/sign_in" />
 
 

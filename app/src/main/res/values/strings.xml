@@ -4,4 +4,8 @@
     <string name="login_gtid_hint">Enter GTID</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
+
+    <string name="title_activity_qrcode">QRCode</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
