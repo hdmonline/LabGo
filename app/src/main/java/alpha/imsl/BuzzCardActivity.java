@@ -35,6 +35,13 @@ public class BuzzCardActivity extends AppCompatActivity {
         caller = getIntent().getIntExtra("caller", 0);
     }
 
+    @Override
+    protected void onResume() {
+        // check the caller
+        caller = getIntent().getIntExtra("caller", 0);
+        super.onResume();
+    }
+
     private void createCameraSource() {
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build();
         final CameraSource cameraSource = new CameraSource.Builder(this, barcodeDetector)
@@ -89,13 +96,18 @@ public class BuzzCardActivity extends AppCompatActivity {
                     switch (caller) {
                         case R.integer.FROM_CAMERA_BUTTON:
                             intent = new Intent(BuzzCardActivity.this, SignInActivity.class);
+                            setResult(CommonStatusCodes.SUCCESS, intent);
+                            intent.putExtra("qrCode", barcodes.valueAt(0));
+                            finish();
                             break;
                         default:
                             intent = new Intent(BuzzCardActivity.this, SignUpActivity.class);
+                            intent.putExtra("qrCode", barcodes.valueAt(0)); // get latest qr code from the array
+
+                            startActivity(intent);
+                            finish();
+                            break;
                     }
-                    intent.putExtra("qrCode", barcodes.valueAt(0)); // get latest qr code from the array
-                    setResult(CommonStatusCodes.SUCCESS, intent);
-                    finish();
                 }
             }
         });

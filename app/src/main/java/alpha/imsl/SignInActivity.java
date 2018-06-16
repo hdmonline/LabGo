@@ -42,17 +42,11 @@ public class SignInActivity extends AppCompatActivity {
         mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent toBuzzCard = new Intent(SignInActivity.this, QrCodeActivity.class);
+                Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardActivity.class);
                 toBuzzCard.putExtra("caller", R.integer.FROM_SIGN_UP_BUTTON);
                 startActivity(toBuzzCard);
             }
         });
-    }
-
-    /* add click event to the sign up button */
-    public void scanCode (View v) {
-        Intent intent = new Intent(this, QrCodeActivity.class);
-        startActivityForResult(intent, 0);
     }
 
     @Override
