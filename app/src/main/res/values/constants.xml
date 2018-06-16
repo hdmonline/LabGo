@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="FROM_SIGN_UP_BUTTON">1</integer>
+    <integer name="FROM_CAMERA_BUTTON">2</integer>
+</resources>

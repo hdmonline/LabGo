@@ -4,7 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
-import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -18,17 +18,21 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
-public class QRCodeActivity extends Activity {
+public class BuzzCardActivity extends AppCompatActivity {
 
-    SurfaceView qrCodePreview;
+    SurfaceView mBuzzCardPreview;
+    int caller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qrcode);
+        setContentView(R.layout.activity_buzz_card);
 
-        qrCodePreview = (SurfaceView) findViewById(R.id.qr_code_preview);
+        mBuzzCardPreview = findViewById(R.id.buzz_card_preview);
         createCameraSource();
+
+        // check the caller
+        caller = getIntent().getIntExtra("caller", 0);
     }
 
     private void createCameraSource() {
@@ -38,10 +42,10 @@ public class QRCodeActivity extends Activity {
                 .setRequestedPreviewSize(1600, 900)
                 .build();
 
-        qrCodePreview.getHolder().addCallback(new SurfaceHolder.Callback() {
+        mBuzzCardPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                if (ActivityCompat.checkSelfPermission(QRCodeActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(BuzzCardActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -52,7 +56,7 @@ public class QRCodeActivity extends Activity {
                     return;
                 }
                 try {
-                    cameraSource.start(qrCodePreview.getHolder());
+                    cameraSource.start(mBuzzCardPreview.getHolder());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -79,8 +83,17 @@ public class QRCodeActivity extends Activity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() > 0) {
-                    Intent intent = new Intent();
-                    intent.putExtra("qrCodes", barcodes.valueAt(0));
+                    Intent intent;
+
+                    // if the caller is camera button, then return signin activity
+                    switch (caller) {
+                        case R.integer.FROM_CAMERA_BUTTON:
+                            intent = new Intent(BuzzCardActivity.this, SignInActivity.class);
+                            break;
+                        default:
+                            intent = new Intent(BuzzCardActivity.this, SignUpActivity.class);
+                    }
+                    intent.putExtra("qrCode", barcodes.valueAt(0)); // get latest qr code from the array
                     setResult(CommonStatusCodes.SUCCESS, intent);
                     finish();
                 }

@@ -4,6 +4,11 @@
     <string name="login_gtid_hint">Enter GTID</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
+    <string name="sign_up_gtid_hint">GTID</string>
+    <string name="sign_up_user_name_hint">NAME</string>
+    <string name="sign_up_user_email_hint">E-MAIL</string>
+    <string name="sign_up_user_password_hint">PASSWORD</string>
+
 
     <string name="title_activity_qrcode">QRCode</string>
     <string name="dummy_button">Dummy Button</string>
