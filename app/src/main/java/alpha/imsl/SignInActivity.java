@@ -17,7 +17,6 @@ public class SignInActivity extends AppCompatActivity {
     ImageButton mCameraButton;
     Button mSignUpButton;
     TextInputEditText mGtid;
-    TextView test;
 
     static final int GTID_REQUEST = 1;
 
@@ -26,7 +25,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        test = findViewById(R.id.field_show_code);
+        mGtid = findViewById(R.id.field_sign_in_gtid);
 
         mCameraButton = findViewById(R.id.button_camera);
         mCameraButton.setOnClickListener(new View.OnClickListener() {
@@ -61,9 +60,7 @@ public class SignInActivity extends AppCompatActivity {
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     Barcode qrCode =  data.getParcelableExtra("qrCode");
-                    test.setText(qrCode.displayValue);
-                } else {
-                    test.setText("00");
+                    mGtid.setText(qrCode.displayValue);
                 }
             }
         }

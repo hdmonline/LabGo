@@ -98,14 +98,6 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/field_show_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layout_buttons"
-            android:layout_centerHorizontal="true"
-            android:text="showcode"/>
-
     </RelativeLayout>
 
 </RelativeLayout>

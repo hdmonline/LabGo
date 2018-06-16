@@ -32,13 +32,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".QrCodeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".SignUpActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".BuzzCardActivity"></activity>
+
+        <activity
+            android:name=".BuzzCardActivity"
+            android:parentActivityName="alpha.imsl.BuzzCardActivity"/>
     </application>
 
 </manifest>
