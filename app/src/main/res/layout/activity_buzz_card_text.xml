@@ -6,19 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".QrCodeActivity">
 
-    <com.google.firebase.samples.apps.mlkit.CameraSourcePreview
-        android:id="@+id/cameraPreview"
+    <alpha.imsl.CameraSourcePreview
+        android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
         <com.google.firebase.samples.apps.mlkit.GraphicOverlay
-            android:id="@+id/CameraOverlay"
+            android:id="@+id/camera_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"/>
-    </com.google.firebase.samples.apps.mlkit.CameraSourcePreview>
+    </alpha.imsl.CameraSourcePreview>
 </LinearLayout>
