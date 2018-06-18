@@ -3,6 +3,8 @@
     package="alpha.imsl">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -22,6 +24,9 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="text" />
 
         <activity
             android:name=".SignInActivity"
@@ -32,18 +37,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".QrCodeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".SignUpActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
-            android:name=".BuzzCardActivity"
-            android:parentActivityName="alpha.imsl.BuzzCardActivity"/>
+            android:name=".BuzzCardBarcodeActivity"
+            android:parentActivityName=".BuzzCardBarcodeActivity" />
+        <activity android:name=".BuzzCardTextActivity"></activity>
     </application>
 
 </manifest>

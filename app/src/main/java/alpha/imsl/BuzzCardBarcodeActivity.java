@@ -18,15 +18,15 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
-public class BuzzCardActivity extends AppCompatActivity {
+public class BuzzCardBarcodeActivity extends AppCompatActivity {
 
     SurfaceView mBuzzCardPreview;
-    int caller;
+    private int caller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_buzz_card);
+        setContentView(R.layout.activity_buzz_card_barcode);
 
         mBuzzCardPreview = findViewById(R.id.buzz_card_preview);
         createCameraSource();
@@ -52,7 +52,7 @@ public class BuzzCardActivity extends AppCompatActivity {
         mBuzzCardPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                if (ActivityCompat.checkSelfPermission(BuzzCardActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(BuzzCardBarcodeActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -95,13 +95,13 @@ public class BuzzCardActivity extends AppCompatActivity {
                     // if the caller is camera button, then return signin activity
                     switch (caller) {
                         case R.integer.FROM_CAMERA_BUTTON:
-                            intent = new Intent(BuzzCardActivity.this, SignInActivity.class);
+                            intent = new Intent(BuzzCardBarcodeActivity.this, SignInActivity.class);
                             setResult(CommonStatusCodes.SUCCESS, intent);
                             intent.putExtra("qrCode", barcodes.valueAt(0));
                             finish();
                             break;
                         default:
-                            intent = new Intent(BuzzCardActivity.this, SignUpActivity.class);
+                            intent = new Intent(BuzzCardBarcodeActivity.this, SignUpActivity.class);
                             intent.putExtra("qrCode", barcodes.valueAt(0)); // get latest qr code from the array
 
                             startActivity(intent);
