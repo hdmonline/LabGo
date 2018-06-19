@@ -13,7 +13,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
-        <com.google.firebase.samples.apps.mlkit.GraphicOverlay
+        <alpha.imsl.GraphicOverlay
             android:id="@+id/camera_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
