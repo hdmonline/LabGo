@@ -8,6 +8,7 @@
     <string name="sign_up_user_name_hint">NAME</string>
     <string name="sign_up_user_email_hint">E-MAIL</string>
     <string name="sign_up_user_password_hint">PASSWORD</string>
+    <string name="submit">SUBMIT</string>
 
 
     <string name="title_activity_qrcode">QRCode</string>

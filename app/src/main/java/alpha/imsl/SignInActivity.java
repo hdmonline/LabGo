@@ -85,11 +85,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.button_camera) {
-            Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardTextActivity.class);
+            Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardBarcodeActivity.class);
             toBuzzCard.putExtra("caller", R.integer.FROM_CAMERA_BUTTON);
             startActivityForResult(toBuzzCard, GTID_REQUEST);
         } else if (id == R.id.button_sign_up) {
-            Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardTextActivity.class);
+            Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardBarcodeActivity.class);
             toBuzzCard.putExtra("caller", R.integer.FROM_SIGN_UP_BUTTON);
             startActivity(toBuzzCard);
         } else if (id == R.id.button_sign_in) {
