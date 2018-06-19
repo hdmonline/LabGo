@@ -45,10 +45,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BuzzCardBarcodeActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".SignInActivity" />
         <activity
             android:name=".BuzzCardTextActivity"
-            android:theme="@style/AppTheme.NoActionBar" />/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".SignInActivity"/>
     </application>
 
 </manifest>
