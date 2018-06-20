@@ -1,6 +1,5 @@
 package alpha.imsl;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,13 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -31,7 +28,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private TextInputEditText mNameField;
     private TextInputEditText mEmailField;
     private TextInputEditText mPasswordField;
-    private Button mSignUp;
+    private Button mSubmitButton;
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
@@ -49,10 +46,12 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         mNameField = findViewById(R.id.field_user_name);
         mEmailField = findViewById(R.id.field_user_email);
         mPasswordField = findViewById(R.id.field_user_password);
-//        mSignUp = findViewById();
+        mSubmitButton = findViewById(R.id.button_submit);
 
         Barcode gtidData = getIntent().getParcelableExtra("qrCode");
         mGtidField.setText(gtidData.displayValue);
+
+        mSubmitButton.setOnClickListener(this);
     }
 
     @Override
@@ -93,6 +92,14 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         return result;
     }
 
+    private boolean validateGtid(String gtid) {
+        boolean result = true;
+        if (mDatabase.child("gtid").child(gtid) != null) {
+            result = false;
+        }
+        return result;
+    }
+
     private void signUp() {
         Log.d(TAG, "signUp");
         if (!validateForm()) {
@@ -104,6 +111,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         final String email = mEmailField.getText().toString();
         final String name = mNameField.getText().toString();
         final String password = mPasswordField.getText().toString();
+
+        if (!validateGtid(gtid)) {
+            hideProgressDialog();
+            Toast.makeText(SignUpActivity.this, "Entered GTID has already been signed up",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
 
         mAuth.createUserWithEmailAndPassword(email, password).
                 addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -117,11 +131,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                         } else {
                             Toast.makeText(SignUpActivity.this, "Sign Up Failed",
                                     Toast.LENGTH_SHORT).show();
+                            Exception exception = task.getException();
+                            Log.d(TAG, exception.toString());
                         }
                     }
-                })
-
-
+                });
     }
 
     private void onAuthSuccess(String uid, String gtid, String name, String email) {
@@ -129,15 +143,22 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         // Write new user
         writeNewUser(uid, gtid, name, email);
 
-        // Go to MainActivity
-        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+        // Go to DashboardActivity
+        startActivity(new Intent(SignUpActivity.this, DashboardActivity.class));
         finish();
     }
 
     private void writeNewUser(String uid, String gtid, String name, String email) {
         boolean identity = false;
         User user = new User(gtid, name, email, identity);
+
+        // write user information into "users"
         mDatabase.child("users").child(uid).setValue(user);
-        mDatabase.child("gtid").child(gtid).setValue(uid);
+
+        // write user information into "gtid" so that app can retrieve any user by gtid.
+        mDatabase.child("gtid").child(gtid).child("uid").setValue(uid);
+        mDatabase.child("gtid").child(gtid).child("email").setValue(email);
+        mDatabase.child("gtid").child(gtid).child("name").setValue(name);
+        mDatabase.child("gtid").child(gtid).child("identify").setValue(identity);
     }
 }

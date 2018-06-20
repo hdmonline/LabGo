@@ -1,13 +1,20 @@
 package alpha.imsl;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -16,14 +23,18 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
+public class SignInActivity extends BaseActivity implements View.OnClickListener {
+
+    private static final String TAG = "SignInActivity";
 
     private static final int GTID_REQUEST = 1;
 
+    // views
     private ImageButton mCameraButton;
     private Button mSignUpButton;
     private Button mSignInButton;
-    private TextInputEditText mGtidField;
+    private TextInputEditText mEmailField;
+    private TextInputEditText mPasswordField;
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
@@ -37,7 +48,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         mAuth = FirebaseAuth.getInstance();
 
         // Views
-        mGtidField = findViewById(R.id.field_sign_in_gtid);
+        mEmailField = findViewById(R.id.field_sign_in_email);
+        mPasswordField = findViewById(R.id.field_sign_in_password);
         mCameraButton = findViewById(R.id.button_camera);
         mSignUpButton = findViewById(R.id.button_sign_up);
         mSignInButton = findViewById(R.id.button_sign_in);
@@ -54,7 +66,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // Check auth on Activity start
         if (mAuth.getCurrentUser() != null) {
-            onAuthSuccess(mAuth.getCurrentUser());
+            onAuthSuccess();
         }
     }
 
@@ -70,15 +82,68 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     Barcode qrCode =  data.getParcelableExtra("qrCode");
-                    mGtidField.setText(qrCode.displayValue);
+                    mEmailField.setText(qrCode.displayValue);
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void onAuthSuccess(FirebaseUser user) {
+    private void onAuthSuccess() {
+        // Go to DashboardActivity
+        startActivity(new Intent(SignInActivity.this, DashboardActivity.class));
+        finish();
+    }
 
+    private boolean validateForm() {
+        boolean result = true;
+
+        // check email
+        if (TextUtils.isEmpty(mEmailField.getText().toString())) {
+            mEmailField.setError("Required");
+            result = false;
+        } else {
+            mEmailField.setError(null);
+        }
+
+        // check password
+        if (TextUtils.isEmpty(mPasswordField.getText().toString())) {
+            mPasswordField.setError("Required");
+            result = false;
+        } else {
+            mPasswordField.setError(null);
+        }
+
+        return result;
+    }
+
+    private void signIn() {
+        Log.d(TAG, "signUp");
+        if (!validateForm()) {
+            return;
+        }
+
+        showProgressDialog();
+        final String email = mEmailField.getText().toString();
+        final String password = mPasswordField.getText().toString();
+
+        mAuth.signInWithEmailAndPassword(email, password).
+                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "createUser:onComplete" + task.isSuccessful());
+                        hideProgressDialog();
+
+                        if (task.isSuccessful()) {
+                            onAuthSuccess();
+                        } else {
+                            Toast.makeText(SignInActivity.this, "Sign Up Failed",
+                                    Toast.LENGTH_SHORT).show();
+                            Exception exception = task.getException();
+                            Log.d(TAG, exception.toString());
+                        }
+                    }
+                });
     }
 
     @Override
@@ -93,7 +158,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             toBuzzCard.putExtra("caller", R.integer.FROM_SIGN_UP_BUTTON);
             startActivity(toBuzzCard);
         } else if (id == R.id.button_sign_in) {
-
+            signIn();
         }
     }
 }

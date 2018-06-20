@@ -3,7 +3,7 @@
     package="alpha.imsl">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -38,19 +38,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".QrCodeActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".SignUpActivity"
+            android:parentActivityName=".BuzzCardBarcodeActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BuzzCardBarcodeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".SignInActivity" />
+            android:parentActivityName=".SignInActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BuzzCardTextActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".SignInActivity"/>
+            android:parentActivityName=".SignInActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".DashboardActivity"/>
     </application>
 
 </manifest>
