@@ -7,6 +7,10 @@ public class UserByGtid {
 
     public Map<String, Object> user = new HashMap<>();
 
+    public UserByGtid() {
+
+    }
+
     public UserByGtid(String uid, String name, String email, boolean identity) {
         user.put("name", name);
         user.put("email", email);

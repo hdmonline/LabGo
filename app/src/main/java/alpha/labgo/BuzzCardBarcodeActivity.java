@@ -108,7 +108,9 @@ public class BuzzCardBarcodeActivity extends AppCompatActivity {
                 if (barcodes.size() > 0) {
                     Intent intent;
 
-                    // if the caller is camera button, then return signin activity
+                    // if the caller is camera button, just finish current activity and the request
+                    // will handle it back to signin activity.
+                    // if the caller is signup button, go back to signup activity.
                     switch (caller) {
                         case R.integer.FROM_CAMERA_BUTTON:
                             intent = new Intent(BuzzCardBarcodeActivity.this, SignInActivity.class);
@@ -119,7 +121,6 @@ public class BuzzCardBarcodeActivity extends AppCompatActivity {
                         default:
                             intent = new Intent(BuzzCardBarcodeActivity.this, SignUpActivity.class);
                             intent.putExtra("qrCode", barcodes.valueAt(0)); // get latest qr code from the array
-
                             startActivity(intent);
                             finish();
                             break;
