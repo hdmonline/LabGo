@@ -38,7 +38,6 @@ public class BuzzCardBarcodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_buzz_card_barcode);
 
         mBuzzCardPreview = findViewById(R.id.buzz_card_preview);
-        createCameraSource();
 
         // check the caller
         caller = getIntent().getIntExtra("caller", 0);
@@ -47,14 +46,16 @@ public class BuzzCardBarcodeActivity extends AppCompatActivity {
             createCameraSource();
         } else {
             getRuntimePermissions();
+            createCameraSource();
         }
     }
 
     @Override
     protected void onResume() {
+        super.onResume();
         // check the caller
         caller = getIntent().getIntExtra("caller", 0);
-        super.onResume();
+        createCameraSource();
     }
 
     private void createCameraSource() {

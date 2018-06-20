@@ -15,11 +15,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseReference;
 
 public class SignInActivity extends BaseActivity implements View.OnClickListener {
 
@@ -34,7 +33,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private TextInputEditText mEmailField;
     private TextInputEditText mPasswordField;
 
-    private DatabaseReference mDatabase;
+    //private DatabaseReference mDatabase;
+    //private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
 
     @Override
@@ -42,8 +42,10 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        //mDatabase = FirebaseDatabase.getInstance().getReference();
+        //mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
 
         // Views
         mEmailField = findViewById(R.id.field_sign_in_email);

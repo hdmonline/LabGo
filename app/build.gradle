@@ -34,6 +34,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.1'
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.google.firebase:firebase-ml-vision:16.0.0'
+    implementation 'com.google.firebase:firebase-firestore:17.0.1'
     //implementation 'com.google.firebase:firebase-admin:6.2.0'
 
     // add google mobile vision api

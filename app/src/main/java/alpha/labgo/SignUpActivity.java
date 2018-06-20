@@ -17,8 +17,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import alpha.labgo.models.User;
+import alpha.labgo.models.UserByGtid;
+import alpha.labgo.models.UserByUid;
 
 public class SignUpActivity extends BaseActivity implements View.OnClickListener {
 
@@ -30,15 +34,24 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private TextInputEditText mPasswordField;
     private Button mSubmitButton;
 
-    private DatabaseReference mDatabase;
+    //private DatabaseReference mDatabase;
+    private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
+
+    // global variables
+    private String gtid;
+    private String name;
+    private String email;
+    private String password;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        //mDatabase = FirebaseDatabase.getInstance().getReference();
+        mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
         // views
@@ -92,12 +105,31 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         return result;
     }
 
-    private boolean validateGtid(String gtid) {
-        boolean result = true;
-        if (mDatabase.child("gtid").child(gtid) != null) {
-            result = false;
+    private void validateGtidCallback(boolean valid) {
+
+        if (valid) {
+            mAuth.createUserWithEmailAndPassword(email, password).
+                    addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.d(TAG, "createUser:onComplete" + task.isSuccessful());
+                            hideProgressDialog();
+
+                            if (task.isSuccessful()) {
+                                onAuthSuccess(task.getResult().getUser().getUid(), gtid, name, email);
+                            } else {
+                                Toast.makeText(SignUpActivity.this, "Sign Up Failed",
+                                        Toast.LENGTH_SHORT).show();
+                                Exception exception = task.getException();
+                                Log.d(TAG, exception.toString());
+                            }
+                        }
+                    });
+        } else {
+            hideProgressDialog();
+            Toast.makeText(SignUpActivity.this, "Entered GTID has already been signed up",
+                    Toast.LENGTH_LONG).show();
         }
-        return result;
     }
 
     private void signUp() {
@@ -106,33 +138,25 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             return;
         }
 
+        gtid = mGtidField.getText().toString();
+        email = mEmailField.getText().toString();
+        name = mNameField.getText().toString();
+        password = mPasswordField.getText().toString();
+
         showProgressDialog();
         final String gtid = mGtidField.getText().toString();
-        final String email = mEmailField.getText().toString();
-        final String name = mNameField.getText().toString();
-        final String password = mPasswordField.getText().toString();
 
-        if (!validateGtid(gtid)) {
-            hideProgressDialog();
-            Toast.makeText(SignUpActivity.this, "Entered GTID has already been signed up",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
 
-        mAuth.createUserWithEmailAndPassword(email, password).
-                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        // check if gtid is valid
+        mFirestore.collection("gtid").document(gtid).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUser:onComplete" + task.isSuccessful());
-                        hideProgressDialog();
-
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-                            onAuthSuccess(task.getResult().getUser().getUid(), gtid, name, email);
+                            boolean validGtid = !task.getResult().exists();
+                            validateGtidCallback(validGtid);
                         } else {
-                            Toast.makeText(SignUpActivity.this, "Sign Up Failed",
-                                    Toast.LENGTH_SHORT).show();
-                            Exception exception = task.getException();
-                            Log.d(TAG, exception.toString());
+                            Log.d(TAG, "failed to retrieve gtid data");
                         }
                     }
                 });
@@ -150,15 +174,22 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     private void writeNewUser(String uid, String gtid, String name, String email) {
         boolean identity = false;
-        User user = new User(gtid, name, email, identity);
+
+        UserByUid userByUid = new UserByUid(gtid, name, email, identity);
+        UserByGtid UserByGtid = new UserByGtid(uid, name, email, identity);
 
         // write user information into "users"
-        mDatabase.child("users").child(uid).setValue(user);
+        mFirestore.collection("users").document(uid).set(userByUid.user);
 
         // write user information into "gtid" so that app can retrieve any user by gtid.
-        mDatabase.child("gtid").child(gtid).child("uid").setValue(uid);
-        mDatabase.child("gtid").child(gtid).child("email").setValue(email);
-        mDatabase.child("gtid").child(gtid).child("name").setValue(name);
-        mDatabase.child("gtid").child(gtid).child("identify").setValue(identity);
+        mFirestore.collection("gtid").document(gtid).set(UserByGtid.user);
+
+        /* write to real-time database */
+        //User user = new User(gtid, name, email, identity);
+        //mDatabase.child("users").child(uid).setValue(user);
+        //mDatabase.child("gtid").child(gtid).child("uid").setValue(uid);
+        //mDatabase.child("gtid").child(gtid).child("email").setValue(email);
+        //mDatabase.child("gtid").child(gtid).child("name").setValue(name);
+        //mDatabase.child("gtid").child(gtid).child("identify").setValue(identity);
     }
 }
