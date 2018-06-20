@@ -1,4 +1,4 @@
-package alpha.imsl;
+package alpha.labgo;
 
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;

@@ -6,19 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".QrCodeActivity">
 
-    <alpha.imsl.CameraSourcePreview
+    <alpha.labgo.CameraSourcePreview
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
-        <alpha.imsl.GraphicOverlay
+        <alpha.labgo.GraphicOverlay
             android:id="@+id/camera_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"/>
-    </alpha.imsl.CameraSourcePreview>
+    </alpha.labgo.CameraSourcePreview>
 </LinearLayout>

@@ -1,4 +1,4 @@
-package alpha.imsl.textrecognition;
+package alpha.labgo.textrecognition;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -8,9 +8,9 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
-import alpha.imsl.FrameMetadata;
-import alpha.imsl.GraphicOverlay;
-import alpha.imsl.VisionProcessorBase;
+import alpha.labgo.FrameMetadata;
+import alpha.labgo.GraphicOverlay;
+import alpha.labgo.VisionProcessorBase;
 
 import java.io.IOException;
 import java.util.List;

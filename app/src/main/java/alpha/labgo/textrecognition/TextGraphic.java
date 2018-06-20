@@ -1,4 +1,4 @@
-package alpha.imsl.textrecognition;
+package alpha.labgo.textrecognition;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,8 +7,8 @@ import android.graphics.RectF;
 
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 
-import alpha.imsl.GraphicOverlay;
-import alpha.imsl.GraphicOverlay.Graphic;
+import alpha.labgo.GraphicOverlay;
+import alpha.labgo.GraphicOverlay.Graphic;
 
 /**
  * Graphic instance for rendering TextBlock position, size, and ID within an associated graphic

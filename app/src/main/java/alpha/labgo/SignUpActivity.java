@@ -1,4 +1,4 @@
-package alpha.imsl;
+package alpha.labgo;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import alpha.imsl.models.User;
+import alpha.labgo.models.User;
 
 public class SignUpActivity extends BaseActivity implements View.OnClickListener {
 

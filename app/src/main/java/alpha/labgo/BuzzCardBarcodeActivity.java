@@ -1,4 +1,4 @@
-package alpha.imsl;
+package alpha.labgo;
 
 import android.Manifest;
 import android.content.Context;

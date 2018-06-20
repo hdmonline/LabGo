@@ -1,4 +1,4 @@
-package alpha.imsl;
+package alpha.labgo;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -9,13 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.firebase.ml.common.FirebaseMLException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import alpha.imsl.textrecognition.TextRecognitionProcessor;
+import alpha.labgo.textrecognition.TextRecognitionProcessor;
 
 public class BuzzCardTextActivity extends AppCompatActivity {
 

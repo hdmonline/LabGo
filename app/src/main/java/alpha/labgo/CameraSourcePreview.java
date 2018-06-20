@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package alpha.imsl;
+package alpha.labgo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -25,8 +25,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.common.images.Size;
 
 import java.io.IOException;
-
-import alpha.imsl.CameraSource;
 
 /** Preview the camera image in the screen. */
 public class CameraSourcePreview extends ViewGroup {

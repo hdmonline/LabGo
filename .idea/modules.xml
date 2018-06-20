@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/IMSL.iml" filepath="$PROJECT_DIR$/IMSL.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LabGo.iml" filepath="$PROJECT_DIR$/LabGo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

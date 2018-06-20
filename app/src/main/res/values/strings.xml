@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IMSL</string>
+    <string name="app_name">LabGo</string>
     <string name="login_password_hint">Enter Password</string>
     <string name="login_email_hint">Enter Email</string>
     <string name="sign_in">Sign In</string>

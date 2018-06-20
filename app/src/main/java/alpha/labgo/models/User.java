@@ -1,4 +1,4 @@
-package alpha.imsl.models;
+package alpha.labgo.models;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -21,5 +21,4 @@ public class User {
         this.gtid = gtid;
         this.identity = identity;
     }
-
 }
