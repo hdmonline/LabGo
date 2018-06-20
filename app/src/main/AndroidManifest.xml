@@ -30,7 +30,7 @@
 
         <activity
             android:name=".SignInActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,17 +40,19 @@
         <activity
             android:name=".SignUpActivity"
             android:parentActivityName=".BuzzCardBarcodeActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".BuzzCardBarcodeActivity"
             android:parentActivityName=".SignInActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".BuzzCardTextActivity"
             android:parentActivityName=".SignInActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".DashboardActivity"/>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

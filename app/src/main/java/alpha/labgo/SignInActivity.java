@@ -91,7 +91,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
     private void onAuthSuccess() {
         // Go to DashboardActivity
-        startActivity(new Intent(SignInActivity.this, DashboardActivity.class));
+        startActivity(new Intent(SignInActivity.this, MainActivity.class));
         finish();
     }
 

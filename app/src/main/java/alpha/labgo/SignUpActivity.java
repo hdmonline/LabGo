@@ -168,7 +168,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         writeNewUser(uid, gtid, name, email);
 
         // Go to DashboardActivity
-        startActivity(new Intent(SignUpActivity.this, DashboardActivity.class));
+        startActivity(new Intent(SignUpActivity.this, MainActivity.class));
         finish();
     }
 
