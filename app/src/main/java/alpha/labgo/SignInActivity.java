@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -49,7 +50,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-
         // Views
         mGtidField = findViewById(R.id.field_sign_in_gtid);
         mPasswordField = findViewById(R.id.field_sign_in_password);
@@ -68,7 +68,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         super.onStart();
 
         // Check auth on Activity start
-        if (mAuth.getCurrentUser() != null) {
+        FirebaseUser currUser = mAuth.getCurrentUser();
+        if (currUser != null) {
             onAuthSuccess();
         }
     }
