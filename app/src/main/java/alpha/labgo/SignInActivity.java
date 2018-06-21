@@ -136,8 +136,14 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        String email = documentSnapshot.get("email").toString();
-                        signInWithEmail(email, password);
+                        if (documentSnapshot.exists()){
+                            String email = documentSnapshot.get("email").toString();
+                            signInWithEmail(email, password);
+                        } else {
+                            hideProgressDialog();
+                            Toast.makeText(SignInActivity.this, "The user does not exist",
+                                    Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
 
@@ -155,7 +161,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         if (task.isSuccessful()) {
                             onAuthSuccess();
                         } else {
-                            Toast.makeText(SignInActivity.this, "Sign Up Failed",
+                            Toast.makeText(SignInActivity.this, "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
                             Exception exception = task.getException();
                             Log.d(TAG, exception.toString());
