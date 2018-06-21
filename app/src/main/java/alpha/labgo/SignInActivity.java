@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,6 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInActivity extends BaseActivity implements View.OnClickListener {
 
@@ -30,11 +33,11 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private ImageButton mCameraButton;
     private Button mSignUpButton;
     private Button mSignInButton;
-    private TextInputEditText mEmailField;
+    private TextInputEditText mGtidField;
     private TextInputEditText mPasswordField;
 
     //private DatabaseReference mDatabase;
-    //private FirebaseFirestore mFirestore;
+    private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
 
     @Override
@@ -43,12 +46,12 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.activity_sign_in);
 
         //mDatabase = FirebaseDatabase.getInstance().getReference();
-        //mFirestore = FirebaseFirestore.getInstance();
+        mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
 
         // Views
-        mEmailField = findViewById(R.id.field_sign_in_email);
+        mGtidField = findViewById(R.id.field_sign_in_gtid);
         mPasswordField = findViewById(R.id.field_sign_in_password);
         mCameraButton = findViewById(R.id.button_camera);
         mSignUpButton = findViewById(R.id.button_sign_up);
@@ -82,7 +85,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     Barcode qrCode =  data.getParcelableExtra("qrCode");
-                    mEmailField.setText(qrCode.displayValue);
+                    mGtidField.setText(qrCode.displayValue);
                 }
             }
         }
@@ -99,11 +102,11 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         boolean result = true;
 
         // check email
-        if (TextUtils.isEmpty(mEmailField.getText().toString())) {
-            mEmailField.setError("Required");
+        if (TextUtils.isEmpty(mGtidField.getText().toString())) {
+            mGtidField.setError("Required");
             result = false;
         } else {
-            mEmailField.setError(null);
+            mGtidField.setError(null);
         }
 
         // check password
@@ -117,16 +120,30 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         return result;
     }
 
-    private void signIn() {
+    private void signInWithGtid() {
         Log.d(TAG, "signUp");
         if (!validateForm()) {
             return;
         }
 
         showProgressDialog();
-        final String email = mEmailField.getText().toString();
+        final String gtid = mGtidField.getText().toString();
         final String password = mPasswordField.getText().toString();
 
+
+        mFirestore.collection("gtid").document(gtid).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        String email = documentSnapshot.get("email").toString();
+                        signInWithEmail(email, password);
+                    }
+                });
+
+
+    }
+
+    private void signInWithEmail(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password).
                 addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -158,7 +175,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             toBuzzCard.putExtra("caller", R.integer.FROM_SIGN_UP_BUTTON);
             startActivity(toBuzzCard);
         } else if (id == R.id.button_sign_in) {
-            signIn();
+            signInWithGtid();
         }
     }
 }
