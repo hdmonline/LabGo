@@ -3,43 +3,42 @@ package alpha.labgo;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
-import android.hardware.camera2.CameraManager;
-import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuzzCardTextActivity extends AppCompatActivity {
+public class BuzzCardTextActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PERMISSION_REQUESTS = 2;
     private static final String TAG = "BuzzCardTextActivity";
 
     private int caller;
 
-    private Camera mCamera;
     private CameraPreview  mCameraPreview;
-    private Camera.PictureCallback mPicture;
-    private Context mContext;
     private ImageView mOverlay;
-    private SurfaceView mPreview;
+    private FrameLayout mPreview;
     private ImageButton mShutterButton;
+
+    private int mOrientation;
+    private boolean mCameraRequested;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +48,7 @@ public class BuzzCardTextActivity extends AppCompatActivity {
         // check the caller
         caller = getIntent().getIntExtra("caller", 0);
 
-        mPreview = findViewById(R.id.camera_preview);
+        mPreview = findViewById(R.id.layout_preview);
 
         if (allPermissionsGranted()) {
             createCameraPreview();
@@ -57,27 +56,32 @@ public class BuzzCardTextActivity extends AppCompatActivity {
             getRuntimePermissions();
         }
 
-        mShutterButton = findViewById(R.id.button_shutter);
 
-        mShutterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCamera.takePicture(null,null, mPictureCallBack);
-            }
-        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        if (mCameraRequested) {
+            CameraUtils.startPreview();
+        }
     }
 
     /** Stops the camera. */
     @Override
     protected void onPause() {
         super.onPause();
-        releaseCameraAndPreview();
+        CameraUtils.stopPreview();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.button_shutter:
+                takePicture();
+                break;
+        }
     }
 
     @Override
@@ -86,14 +90,12 @@ public class BuzzCardTextActivity extends AppCompatActivity {
     }
 
     private void createCameraPreview() {
-        // create an instance of rear camera
-        releaseCameraAndPreview();
-        int cameraId = findBackFacingCamera();
-        mCamera = getCameraInstance(cameraId);
-        mCameraPreview = new CameraPreview(getApplicationContext(), mCamera);
-        SurfaceView mPreview = findViewById(R.id.camera_preview);
-        SurfaceHolder surfaceHolder = mPreview.getHolder();
-
+        mPreview = findViewById(R.id.layout_preview);
+        mCameraPreview = new CameraPreview(this);
+        mPreview.addView(mCameraPreview);
+        mOrientation = Surface.ROTATION_90;
+        mShutterButton = findViewById(R.id.button_shutter);
+        mShutterButton.setOnClickListener(this);
     }
 
     private String[] getRequiredPermissions() {
@@ -148,36 +150,14 @@ public class BuzzCardTextActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(
             int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.i(TAG, "Permission granted!");
+        mCameraRequested = true;
         if (allPermissionsGranted()) {
             createCameraPreview();
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private int findBackFacingCamera() {
-        int cameraId = -1;
-        //Search for the back facing camera
-        //get the number of cameras
-        int numberOfCameras = Camera.getNumberOfCameras();
-        //for every camera check
-        for (int i = 0; i < numberOfCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                cameraId = i;
-                break;
-            }
-        }
-        return cameraId;
-    }
-
-    private void releaseCameraAndPreview(){
-        if (mCamera != null){
-            mCamera.release();        // release the camera for other applications
-            mCamera = null;
-        }
-    }
 
     /** A safe way to get an instance of the Camera object. */
     public static Camera getCameraInstance(int id){
@@ -217,32 +197,34 @@ public class BuzzCardTextActivity extends AppCompatActivity {
         return mediaFile;
     }
 
-    /** Create a file Uri for saving an image or video */
-    private static Uri getOutputMediaFileUri(int type){
-        return Uri.fromFile(getOutputMediaFile());
+    private void takePicture() {
+        CameraUtils.takePicture(new Camera.ShutterCallback() {
+            @Override
+            public void onShutter() {
+
+            }
+        }, null, new Camera.PictureCallback() {
+            @Override
+            public void onPictureTaken(byte[] data, Camera camera) {
+                CameraUtils.startPreview();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                if (bitmap != null) {
+                    bitmap = ImageUtils.getRotatedBitmap(bitmap, mOrientation);
+                    String path = Environment.getExternalStorageDirectory() + "/DCIM/Camera/"
+                            + System.currentTimeMillis() + ".jpg";
+                    try {
+                        FileOutputStream fout = new FileOutputStream(path);
+                        BufferedOutputStream bos = new BufferedOutputStream(fout);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                        bos.flush();
+                        bos.close();
+                        fout.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                CameraUtils.startPreview();
+            }
+        });
     }
-
-    // should put this in a handler class
-    private Camera.PictureCallback mPictureCallBack = new Camera.PictureCallback() {
-
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-
-            File pictureFile = getOutputMediaFile();
-            if (pictureFile == null){
-                Log.d(TAG, "Error creating media file, check storage permissions: ");
-                return;
-            }
-
-            try {
-                FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
-                fos.close();
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "File not found: " + e.getMessage());
-            } catch (IOException e) {
-                Log.d(TAG, "Error accessing file: " + e.getMessage());
-            }
-        }
-    };
 }
