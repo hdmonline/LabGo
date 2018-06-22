@@ -10,44 +10,44 @@ import android.widget.ImageView;
 
 public class BuzzCardOverlay extends ImageView {
 
-    private final Paint mPaint;
-    private final Path mMask;
     private static final float CARD_RATIO = 1.59f;
 
     public BuzzCardOverlay(Context context) {
         super(context);
-        mPaint = new Paint();
-        mMask = new Path();
     }
 
     public BuzzCardOverlay(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mPaint = new Paint();
-        mMask = new Path();
     }
 
     public BuzzCardOverlay(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mPaint = new Paint();
-        mMask = new Path();
+
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        drawPolygon(canvas);
+        drawOverlay(canvas);
     }
 
-    private void drawPolygon(Canvas canvas) {
+    private void drawOverlay(Canvas canvas) {
+        Path mMask = new Path();
+        Paint mOverlayPaint = new Paint();
+        Paint mTextPaint = new Paint();
+
         float canvasWidth = canvas.getWidth();
         float canvasHeight = canvas.getHeight();
-
         float canvasRatio = canvasHeight / canvasWidth;
 
+        float cardWith;
+        float cardHeight;
+        float margin;
+
         if (canvasRatio >= CARD_RATIO) {
-            float cardWith = canvasWidth * 3 / 4;
-            float cardHeight = cardWith * CARD_RATIO;
-            float margin = (canvasHeight - cardHeight) / 2;
+            cardWith = canvasWidth * 3 / 4;
+            cardHeight = cardWith * CARD_RATIO;
+            margin = (canvasHeight - cardHeight) / 2;
 
             mMask.moveTo(0, 0);
             mMask.lineTo(canvasWidth, 0);
@@ -61,11 +61,9 @@ public class BuzzCardOverlay extends ImageView {
             mMask.lineTo(canvasWidth/8, canvasHeight-margin);
             mMask.close();
         } else {
-
-            float cardHeight = canvasHeight * 3 / 4;
-            float cardWith = cardHeight / CARD_RATIO;
-
-            float margin = (canvasWidth - cardWith) / 2;
+            cardHeight = canvasHeight * 3 / 4;
+            cardWith = cardHeight / CARD_RATIO;
+            margin = (canvasWidth - cardWith) / 2;
 
             mMask.moveTo(0, 0);
             mMask.lineTo(canvasWidth, 0);
@@ -83,9 +81,22 @@ public class BuzzCardOverlay extends ImageView {
 
         mMask.setFillType(Path.FillType.EVEN_ODD);
 
-        mPaint.setARGB(200, 0, 0, 0);
-        mPaint.setStyle(Paint.Style.FILL);
+        mOverlayPaint.setARGB(200, 0, 0, 0);
+        mOverlayPaint.setStyle(Paint.Style.FILL);
 
-        canvas.drawPath(mMask, mPaint);
+        // draw overlay
+        canvas.drawPath(mMask, mOverlayPaint);
+
+        // draw hint text
+        mTextPaint.setARGB(255, 255, 255, 255);
+        mTextPaint.setStyle(Paint.Style.FILL);
+        float fontSize = canvasWidth/25; // in pixel
+        mTextPaint.setTextSize(canvasWidth/20);
+        canvas.save();
+        float textX = (canvasHeight-cardHeight)/2 + 10;
+        float textY = -((canvasWidth-cardWith)/2 - 1.2f*fontSize);
+        canvas.rotate(90f);
+        canvas.drawText(getResources().getString(R.string.camera_hint) , textX, textY, mTextPaint);
+        canvas.restore();
     }
 }
