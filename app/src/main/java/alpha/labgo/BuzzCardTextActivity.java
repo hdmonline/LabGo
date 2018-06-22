@@ -42,6 +42,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
     private ImageButton mShutterButton;
     private ImageView mImageCaptured;
     private BuzzCardOverlay mBuzzCardOverlay;
+    private ImageButton mConfirmButton;
 
     private int mOrientation = Surface.ROTATION_90;
     private boolean mCameraRequested;
@@ -66,8 +67,6 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
         } else {
             getRuntimePermissions();
         }
-
-
     }
 
     @Override

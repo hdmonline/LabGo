@@ -38,7 +38,8 @@
         android:id="@+id/layout_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="@color/black">
 
         <ImageButton
             android:id="@+id/button_shutter"
