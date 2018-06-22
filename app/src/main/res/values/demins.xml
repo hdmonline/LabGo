@@ -10,9 +10,10 @@
     <dimen name="submit_buttons_topmargin">5dp</dimen>
 
     <dimen name="shutter_buttons_width">80dp</dimen>
-    <dimen name="shutter_buttons_bottom_margin">15dp</dimen>
+    <dimen name="shutter_buttons_vertical_margin">8dp</dimen>
+    <dimen name="shutter_buttons_horizontal_margin">25dp</dimen>
 
     <dimen name="image_captured_width">210dp</dimen>
     <dimen name="image_captured_height">280dp</dimen>
-    <dimen name="image_captured_botton_margin">40dp</dimen>
+    <dimen name="image_captured_botton_margin">10dp</dimen>
 </resources>

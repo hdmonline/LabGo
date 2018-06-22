@@ -39,6 +39,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
     private FrameLayout mPreview;
     private ImageButton mShutterButton;
     private ImageView mImageCaptured;
+    private BuzzCardOverlay mBuzzCardOverlay;
 
     private int mOrientation = Surface.ROTATION_90;
     private boolean mCameraRequested;
@@ -53,6 +54,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
 
         mPreview = findViewById(R.id.layout_preview);
         mImageCaptured = findViewById(R.id.image_captured);
+        mOverlay = findViewById(R.id.camera_overlay);
 
         if (allPermissionsGranted()) {
             createCameraPreview();

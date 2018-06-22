@@ -1,34 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_buzzcard"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <FrameLayout
+        android:id="@+id/layout_camera"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/layout_buttons">
+
+        <FrameLayout
         android:id="@+id/layout_preview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"/>
+        android:layout_height="fill_parent"/>
 
-    <ImageView
-        android:id="@+id/camera_overlay"
-        android:layout_width="wrap_content"
+        <alpha.labgo.BuzzCardOverlay
+            android:id="@+id/camera_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/image_captured"
+            android:layout_width="@dimen/image_captured_width"
+            android:layout_height="@dimen/image_captured_height"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="@dimen/image_captured_botton_margin"/>
+
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/layout_buttons"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_alignParentBottom="true">
 
-    <ImageView
-        android:id="@+id/image_captured"
-        android:layout_width="@dimen/image_captured_width"
-        android:layout_height="@dimen/image_captured_height"
-        android:layout_gravity="right|bottom"
-        android:layout_marginBottom="@dimen/image_captured_botton_margin"/>
+        <ImageButton
+            android:id="@+id/button_shutter"
+            android:layout_width="@dimen/shutter_buttons_width"
+            android:layout_height="@dimen/shutter_buttons_width"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginVertical="@dimen/shutter_buttons_vertical_margin"
+            android:background="@drawable/ic_shutter" />
 
-    <ImageButton
-        android:id="@+id/button_shutter"
-        android:layout_width="@dimen/shutter_buttons_width"
-        android:layout_height="@dimen/shutter_buttons_width"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="@dimen/shutter_buttons_bottom_margin"
-        android:background="@drawable/ic_shutter"/>
-</FrameLayout>
+        <ImageButton
+            android:id="@+id/button_retake"
+            android:layout_width="@dimen/shutter_buttons_width"
+            android:layout_height="@dimen/shutter_buttons_width"
+            android:layout_gravity="left|bottom"
+            android:layout_marginVertical="@dimen/shutter_buttons_vertical_margin"
+            android:layout_marginLeft="@dimen/shutter_buttons_horizontal_margin"
+            android:background="@drawable/ic_shutter"
+            android:visibility="visible"/>
+
+        <ImageButton
+            android:id="@+id/button_confirm"
+            android:layout_width="@dimen/shutter_buttons_width"
+            android:layout_height="@dimen/shutter_buttons_width"
+            android:layout_gravity="right|bottom"
+            android:layout_marginRight="@dimen/shutter_buttons_horizontal_margin"
+            android:layout_marginVertical="@dimen/shutter_buttons_vertical_margin"
+            android:background="@drawable/ic_shutter"
+            android:visibility="visible"/>
+    </FrameLayout>
+
+</RelativeLayout>
