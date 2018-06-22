@@ -173,6 +173,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        // carry "caller" to new activity so that the new activity can track back to prev one.
         if (id == R.id.button_camera) {
             Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardTextActivity.class);
             toBuzzCard.putExtra("caller", R.integer.FROM_CAMERA_BUTTON);

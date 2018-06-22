@@ -29,7 +29,7 @@ public class BuzzCardBarcodeActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUESTS = 2;
     private static final String TAG = "BuzzCardBarcodeActivity";
 
-    SurfaceView mBuzzCardPreview;
+    private SurfaceView mBuzzCardPreview;
     private int caller;
 
     @Override

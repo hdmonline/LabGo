@@ -37,7 +37,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnCl
     private FrameLayout mPreview;
     private ImageButton mShutterButton;
 
-    private int mOrientation;
+    private int mOrientation = Surface.ROTATION_90;
     private boolean mCameraRequested;
 
     @Override
@@ -93,7 +93,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnCl
         mPreview = findViewById(R.id.layout_preview);
         mCameraPreview = new CameraPreview(this);
         mPreview.addView(mCameraPreview);
-        mOrientation = Surface.ROTATION_90;
+        mOrientation = CameraUtils.calculateCameraPreviewOrientation(BuzzCardTextActivity.this);
         mShutterButton = findViewById(R.id.button_shutter);
         mShutterButton.setOnClickListener(this);
     }
