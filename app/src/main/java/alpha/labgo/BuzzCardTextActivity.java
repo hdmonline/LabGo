@@ -38,6 +38,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
     private ImageView mOverlay;
     private FrameLayout mPreview;
     private ImageButton mShutterButton;
+    private ImageView mImageCaptured;
 
     private int mOrientation = Surface.ROTATION_90;
     private boolean mCameraRequested;
@@ -51,6 +52,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
         caller = getIntent().getIntExtra("caller", 0);
 
         mPreview = findViewById(R.id.layout_preview);
+        mImageCaptured = findViewById(R.id.image_captured);
 
         if (allPermissionsGranted()) {
             createCameraPreview();
@@ -231,6 +233,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
                     bitmap = ImageUtils.getRotatedBitmap(bitmap, mOrientation);
                     String path = Environment.getExternalStorageDirectory() + "/DCIM/Camera/"
                             + System.currentTimeMillis() + ".jpg";
+                    mImageCaptured.setImageBitmap(bitmap);
                     try {
                         FileOutputStream fout = new FileOutputStream(path);
                         BufferedOutputStream bos = new BufferedOutputStream(fout);

@@ -17,6 +17,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
+    <ImageView
+        android:id="@+id/image_captured"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"/>
+
     <ImageButton
         android:id="@+id/button_shutter"
         android:layout_width="@dimen/shutter_buttons_width"
