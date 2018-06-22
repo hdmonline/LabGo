@@ -17,9 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -51,11 +49,10 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
     private ImageView mOverlay;
     private FrameLayout mPreview;
     private ImageButton mShutterButton;
-    private ImageButton mButton_confirm;
+    private Button detectBtn;
     private ImageView mImageCaptured;
-    private BuzzCardOverlay mBuzzCardOverlay;
-    private EditText txtView;
     private Bitmap imageBitmap;
+    private TextView recognizeTxtView;
 
     private int mOrientation = Surface.ROTATION_90;
     private boolean mCameraRequested;
@@ -63,9 +60,6 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_buzz_card_text);
 
         // check the caller
@@ -73,17 +67,9 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
 
         mPreview = findViewById(R.id.layout_preview);
         mImageCaptured = findViewById(R.id.image_captured);
-        mOverlay = findViewById(R.id.camera_overlay);
 
         if (allPermissionsGranted()) {
             createCameraPreview();
-            mButton_confirm = findViewById(R.id.button_confirm);
-            mButton_confirm.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    detectTxt();
-                }
-            });
         } else {
             getRuntimePermissions();
         }
@@ -123,6 +109,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     mShutterButton.setBackground(res.getDrawable(R.drawable.ic_shutter_pressed));
                     takePicture();
+                    detectTxt();
                     return true;
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     mShutterButton.setBackground(res.getDrawable(R.drawable.ic_shutter));
@@ -146,37 +133,12 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
         mShutterButton = findViewById(R.id.button_shutter);
         mShutterButton.setOnTouchListener(this);
 
-    }
-
-    private void detectTxt() {
-        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
-        FirebaseVisionTextDetector detector = FirebaseVision.getInstance().getVisionTextDetector();
-        detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-            @Override
-            public void onSuccess(FirebaseVisionText firebaseVisionText) {
-                processTxt(firebaseVisionText);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-            }
-        });
-    }
-
-    private void processTxt(FirebaseVisionText text) {
-        List<FirebaseVisionText.Block> blocks = text.getBlocks();
-        if (blocks.size() == 0) {
-            Toast.makeText(BuzzCardTextActivity.this, "No Text :(", Toast.LENGTH_LONG).show();
-            return;
-        }
-        for (FirebaseVisionText.Block block : text.getBlocks()) {
-            String txt = block.getText();
-            Toast.makeText(BuzzCardTextActivity.this, txt, Toast.LENGTH_LONG).show();
-            txtView = findViewById(R.id.txtView);
-            txtView.setTextSize(24);
-            txtView.setText(txt);
-        }
+//        detectBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                detectTxt();
+//            }
+//        });
     }
 
     private String[] getRequiredPermissions() {
@@ -289,6 +251,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
             public void onPictureTaken(byte[] data, Camera camera) {
                 CameraUtils.startPreview();
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+//                imageBitmap = bitmap;
                 if (bitmap != null) {
                     bitmap = ImageUtils.getRotatedBitmap(bitmap, mOrientation);
                     imageBitmap = bitmap;
@@ -310,4 +273,34 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTo
             }
         });
     }
+
+    private void detectTxt() {
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
+        FirebaseVisionTextDetector detector = FirebaseVision.getInstance().getVisionTextDetector();
+        detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+            @Override
+            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                processTxt(firebaseVisionText);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    private void processTxt(FirebaseVisionText text) {
+        List<FirebaseVisionText.Block> blocks = text.getBlocks();
+        if (blocks.size() == 0) {
+            Toast.makeText(BuzzCardTextActivity.this, "No Text :(", Toast.LENGTH_LONG).show();
+            return;
+        }
+        for (FirebaseVisionText.Block block : text.getBlocks()) {
+            String txt = block.getText();
+            recognizeTxtView.setTextSize(24);
+            recognizeTxtView.setText(txt);
+        }
+    }
+
 }
