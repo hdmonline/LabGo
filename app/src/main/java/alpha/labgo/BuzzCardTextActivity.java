@@ -3,6 +3,7 @@ package alpha.labgo;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -12,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -25,7 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuzzCardTextActivity extends AppCompatActivity implements View.OnClickListener {
+public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private static final int PERMISSION_REQUESTS = 2;
     private static final String TAG = "BuzzCardTextActivity";
@@ -84,12 +86,20 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    public void onClick(View v) {
+    public boolean onTouch(View v, MotionEvent event) {
+        Resources res = getResources();
         switch (v.getId()) {
             case R.id.button_shutter:
-                takePicture();
-                break;
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mShutterButton.setBackground(res.getDrawable(R.drawable.ic_shutter_pressed));
+                    takePicture();
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mShutterButton.setBackground(res.getDrawable(R.drawable.ic_shutter));
+                    return true;
+                }
         }
+        return false;
     }
 
     @Override
@@ -104,7 +114,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnCl
         mOrientation = CameraUtils.calculateCameraPreviewOrientation(BuzzCardTextActivity.this);
         //CameraUtils.setOrientation(mOrientation);
         mShutterButton = findViewById(R.id.button_shutter);
-        mShutterButton.setOnClickListener(this);
+        mShutterButton.setOnTouchListener(this);
     }
 
     private String[] getRequiredPermissions() {
