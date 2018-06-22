@@ -19,9 +19,10 @@
 
     <ImageView
         android:id="@+id/image_captured"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"/>
+        android:layout_width="@dimen/image_captured_width"
+        android:layout_height="@dimen/image_captured_height"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="@dimen/image_captured_botton_margin"/>
 
     <ImageButton
         android:id="@+id/button_shutter"
