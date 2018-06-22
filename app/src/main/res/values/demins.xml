@@ -8,4 +8,7 @@
     <!--<dimen name="sign_in_buttons_horizontal_padding">5dp</dimen>-->
     <dimen name="sign_in_buttons_margin">3dp</dimen>
     <dimen name="submit_buttons_topmargin">5dp</dimen>
+
+    <dimen name="shutter_buttons_width">65dp</dimen>
+    <dimen name="shutter_buttons_bottom_margin">15dp</dimen>
 </resources>

@@ -7,15 +7,21 @@
 
     <SurfaceView
         android:id="@+id/camera_preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
-    </SurfaceView>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"/>
 
     <ImageView
+        android:id="@+id/camera_overlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:alpha=""/>
+        android:layout_gravity="center"/>
+
+    <ImageButton
+        android:id="@+id/button_shutter"
+        android:layout_width="@dimen/shutter_buttons_width"
+        android:layout_height="@dimen/shutter_buttons_width"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/shutter_buttons_bottom_margin"
+        android:background="@drawable/ic_shutter"/>
 </FrameLayout>
