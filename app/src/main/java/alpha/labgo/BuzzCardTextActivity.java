@@ -60,6 +60,14 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnCl
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (mCameraRequested) {
+            CameraUtils.startPreview();
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
@@ -94,6 +102,7 @@ public class BuzzCardTextActivity extends AppCompatActivity implements View.OnCl
         mCameraPreview = new CameraPreview(this);
         mPreview.addView(mCameraPreview);
         mOrientation = CameraUtils.calculateCameraPreviewOrientation(BuzzCardTextActivity.this);
+        //CameraUtils.setOrientation(mOrientation);
         mShutterButton = findViewById(R.id.button_shutter);
         mShutterButton.setOnClickListener(this);
     }

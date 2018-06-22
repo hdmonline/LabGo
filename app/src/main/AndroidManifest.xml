@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true"/>
+    android:name="android.hardware.camera"
+    android:required="true"/>
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
@@ -50,8 +50,8 @@
         <activity
             android:name=".BuzzCardTextActivity"
             android:parentActivityName=".SignInActivity"
-            android:screenOrientation="landscape"
             android:theme="@style/AppTheme" />
+        <!--android:screenOrientation="landscape"-->
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"

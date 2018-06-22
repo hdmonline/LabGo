@@ -22,7 +22,7 @@ public class CameraUtils {
     private static int mCameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
     private static Camera mCamera;
     private static int mCameraPreviewFps;
-    private static int mOrientation = 0;
+    private static int mOrientation = Surface.ROTATION_90;
 
     /**
      * open rear camera
