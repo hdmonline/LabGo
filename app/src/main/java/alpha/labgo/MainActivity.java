@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -41,6 +44,10 @@ public class MainActivity extends AppCompatActivity
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
 
+    // fragment
+    private FragmentPagerAdapter mPagerAdapter;
+    private ViewPager mViewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,49 +63,17 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View view) {
-////                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-////            }
-////        });
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        initDrawer();
 
         // check if the user is still valid
         FirebaseUser currUser = mAuth.getCurrentUser();
-        if (currUser != null) {
-            // check if the user is still valid.
-            currUser.reload().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    signOut();
-                }
-            });
-        }
+        checkUser(currUser);
 
         // Display user name in drawer header
-        String uid = currUser.getUid();
-        mFirestore.collection("users").document(uid).get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        mUserName.setText(documentSnapshot.get("name").toString());
-                        mUserEmail.setText(documentSnapshot.get("email").toString());
-                    }
-                });
+        displayUserName(currUser);
+
+        // Create the adapter that will return a fragment for each section
+        createFragmentAdapter();
     }
 
     @Override
@@ -162,5 +137,74 @@ public class MainActivity extends AppCompatActivity
         mAuth.signOut();
         Intent intent = new Intent(MainActivity.this, SignInActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * display user name in drawer header
+     * @param currUser
+     */
+    private void displayUserName(FirebaseUser currUser) {
+        String uid = currUser.getUid();
+        mFirestore.collection("users").document(uid).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        mUserName.setText(documentSnapshot.get("name").toString());
+                        mUserEmail.setText(documentSnapshot.get("email").toString());
+                    }
+                });
+    }
+
+    private void initDrawer() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void checkUser(FirebaseUser currUser) {
+        if (currUser != null) {
+            // check if the user is still valid.
+            currUser.reload().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    signOut();
+                }
+            });
+        }
+    }
+
+    private void createFragmentAdapter() {
+        mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            private final Fragment[] mFragments = new Fragment[] {
+                    new RecentPostsFragment(),
+                    new MyPostsFragment(),
+                    new MyTopPostsFragment(),
+            };
+            private final String[] mFragmentNames = new String[] {
+                    getString(R.string.heading_recent),
+                    getString(R.string.heading_my_posts),
+                    getString(R.string.heading_my_top_posts)
+            };
+            @Override
+            public Fragment getItem(int position) {
+                return mFragments[position];
+            }
+            @Override
+            public int getCount() {
+                return mFragments.length;
+            }
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return mFragmentNames[position];
+            }
+        };
     }
 }
