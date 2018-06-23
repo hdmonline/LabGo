@@ -3,8 +3,11 @@ package alpha.labgo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -28,6 +31,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import alpha.labgo.fragment.DashboardFragment;
+import alpha.labgo.fragment.InventoryFragment;
+import alpha.labgo.fragment.NotificationFragment;
+import alpha.labgo.fragment.QrCodeScanFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -128,7 +136,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -181,17 +189,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    // Create the adapter that will return a fragment for each section
     private void createFragmentAdapter() {
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    new RecentPostsFragment(),
-                    new MyPostsFragment(),
-                    new MyTopPostsFragment(),
+                    new QrCodeScanFragment(),
+                    new DashboardFragment(),
+                    new InventoryFragment(),
+                    new NotificationFragment()
             };
             private final String[] mFragmentNames = new String[] {
-                    getString(R.string.heading_recent),
-                    getString(R.string.heading_my_posts),
-                    getString(R.string.heading_my_top_posts)
+                    getString(R.string.segment_qr_code),
+                    getString(R.string.segment_dashboard),
+                    getString(R.string.segment_inventory),
+                    getString(R.string.segment_notification)
             };
             @Override
             public Fragment getItem(int position) {
@@ -206,5 +217,35 @@ public class MainActivity extends AppCompatActivity
                 return mFragmentNames[position];
             }
         };
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = findViewById(R.id.container);
+        mViewPager.setAdapter(mPagerAdapter);
+
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_qr_code:
+                    mViewPager.setCurrentItem(0);
+                    return true;
+                case R.id.navigation_dashboard:
+
+                    return true;
+                case R.id.navigation_inventory:
+
+                    return true;
+                case R.id.navigation_notifications:
+
+                    return true;
+            }
+            return false;
+        }
+    };
+
+
 }

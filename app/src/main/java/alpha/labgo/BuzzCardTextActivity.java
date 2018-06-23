@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import alpha.labgo.overlay.BuzzCardOverlay;
+
 public class BuzzCardTextActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private static final int PERMISSION_REQUESTS = 2;

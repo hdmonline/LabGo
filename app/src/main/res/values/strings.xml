@@ -21,8 +21,14 @@
     <string name="action_settings">Settings</string>
 
     <string name="camera_hint">Please take a picture of your BuzzCard with photo facing up</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_home">Home</string>
+
+    <string name="title_qr_code">QR Code</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_inventory">Inventory</string>
+    <string name="title_notification">Notification</string>
+
+    <string name="segment_qr_code">QR CODE</string>
+    <string name="segment_dashboard">DASHBOARD</string>
+    <string name="segment_inventory">INVENTORY</string>
+    <string name="segment_notification">NOTIFICATION</string>
 </resources>

@@ -1,4 +1,4 @@
-package alpha.labgo;
+package alpha.labgo.overlay;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,9 +6,10 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
-public class BuzzCardOverlay extends ImageView {
+import alpha.labgo.R;
+
+public class BuzzCardOverlay extends android.support.v7.widget.AppCompatImageView {
 
     private static final float CARD_RATIO = 1.59f;
 
@@ -151,7 +152,7 @@ public class BuzzCardOverlay extends ImageView {
         mDashLinePaint.setARGB(255, 255, 255, 255);
         mDashLinePaint.setStyle(Paint.Style.STROKE);
         mDashLinePaint.setStrokeWidth(8);
-        mDashLinePaint.setPathEffect(new DashPathEffect(new float[] {canvasWidth/40, canvasWidth/40}, 0));
+        mDashLinePaint.setPathEffect(new DashPathEffect(new float[] {canvasWidth/150, canvasWidth/150}, 0));
         canvas.drawPath(mLinesPath, mDashLinePaint);
     }
 }
