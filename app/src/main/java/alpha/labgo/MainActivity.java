@@ -37,7 +37,7 @@ import alpha.labgo.fragment.InventoryFragment;
 import alpha.labgo.fragment.NotificationFragment;
 import alpha.labgo.fragment.QrCodeScanFragment;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     // firebase
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
+    private String gtid;
 
     // fragment
     private FragmentPagerAdapter mPagerAdapter;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
+        gtid = getIntent().getStringExtra("gtid");
         // Views
         mNavigationView = findViewById(R.id.nav_view);
         mHeaderView = mNavigationView.getHeaderView(0);
@@ -79,6 +81,10 @@ public class MainActivity extends AppCompatActivity
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         // switch button to dashboard as first page.
         mBottomNavigationView.getMenu().getItem(1).setChecked(true);
+
+        if (!allPermissionsGranted()) {
+            getRuntimePermissions();
+        }
 
         // check if the user is still valid
         FirebaseUser currUser = mAuth.getCurrentUser();
@@ -200,7 +206,7 @@ public class MainActivity extends AppCompatActivity
     private void createFragmentAdapter() {
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    new QrCodeScanFragment(),
+                    QrCodeScanFragment.newInstance(gtid),
                     new DashboardFragment(),
                     new InventoryFragment(),
                     new NotificationFragment()

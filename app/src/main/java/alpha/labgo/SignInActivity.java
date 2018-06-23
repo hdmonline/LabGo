@@ -41,6 +41,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
 
+    private String gtid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +97,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
     private void onAuthSuccess() {
         // Go to DashboardActivity
-        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+        intent.putExtra("gtid", gtid);
+        startActivity(intent);
         finish();
     }
 
@@ -128,16 +132,17 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         }
 
         showProgressDialog();
-        final String gtid = mGtidField.getText().toString();
+        final String gtidInput = mGtidField.getText().toString();
         final String password = mPasswordField.getText().toString();
 
 
-        mFirestore.collection("gtid").document(gtid).get()
+        mFirestore.collection("gtid").document(gtidInput).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()){
                             String email = documentSnapshot.get("email").toString();
+                            gtid = gtidInput;
                             signInWithEmail(email, password);
                         } else {
                             hideProgressDialog();

@@ -4,22 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Scanner;
 
-import alpha.labgo.R;
 import alpha.labgo.models.TaskParams;
 
 public class RestUtils {
@@ -61,70 +56,78 @@ public class RestUtils {
      */
     public static String postResponseFromHttpUrl(URL url) throws IOException {
         // TODO: figure out post request!
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        urlConnection.setRequestMethod("POST");
-        urlConnection.setReadTimeout(10000);
-        urlConnection.setConnectTimeout(15000);
-        urlConnection.setDoInput(true);
-        urlConnection.setDoOutput(true);
-
-        OutputStream outputStream = urlConnection.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-
-        urlConnection.connect();
-
-
+        StringBuffer response = new StringBuffer();
+        HttpURLConnection urlConnection = null;
+        String responseJSON = null;
         try {
-            InputStream in = urlConnection.getInputStream();
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setReadTimeout(10000);
+            urlConnection.setConnectTimeout(15000);
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
 
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-
-            boolean hasInput = scanner.hasNext();
-            if (hasInput) {
-                return scanner.next();
+            int status = urlConnection.getResponseCode();
+            if (status != 200) {
+                throw new IOException("Post failed with error code " + status);
             } else {
-                return null;
+                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
             }
+        } catch (Exception e){
+            e.printStackTrace();
         } finally {
-            urlConnection.disconnect();
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            // json response string
+            responseJSON = response.toString();
         }
+        return responseJSON;
     }
 
-    public class AddStudetInventory extends AsyncTask<TaskParams, Void, String> {
-        private static final String TAG = "AddStudentInventory";
+    public static class StudentCheckInOrOut extends AsyncTask<String, Void, String> {
+        private static final String TAG = "StudentCheckInOrOut";
         private static final String REST_TAG = "/studentinventories";
         private static final String GTID = "student_id";
-        private static final String CHECK_IN_TIME = "checkin_timestamp";
-        private static final String CHECK_OUT_TIME = "checkout_timestamp";
+        private static final String CHECK_IN = "/checkin";
+        private static final String CHECK_OUT = "/checkout";
+        private int direction = -1; // 0 is check in and 1 is check out
 
-        // for temporary use
-        private static final String RFID_TAG = "1234";
+        private Context context;
+
+        public StudentCheckInOrOut(Context context) {
+            this.context = context;
+        }
 
         @Override
-        protected String doInBackground(TaskParams... params) {
-            String gtid = params[0].strings[0];
-            String direction = params[0].strings[1];
-            Context context = params[0].context;
-            String addStudentInventoryResult = null;
+        protected String doInBackground(String... strings) {
+            String gtid = strings[0];
+            String qrCode = strings[1];
+            String studentCheckInOrOutResult = null;
 
             String urlBase = REST_BASE_URL + REST_TAG;
-            String checkTime;
-            if (direction == "checkIn") {
-                checkTime = CHECK_IN_TIME;
-            } else if (direction == "checkOut") {
-                checkTime = CHECK_OUT_TIME;
+            //String checkTime;
+            if (qrCode.equals("checkIn")) {
+                urlBase += CHECK_IN;
+                direction = 0;
+            } else if (qrCode.equals("checkOut")) {
+                urlBase += CHECK_OUT;
+                direction = 1;
             } else {
-                Log.e(TAG, "Wrong QR code!");
+                Log.w(TAG, "Wrong QR code!");
                 Toast.makeText(context, "Wrong QR code!",
                         Toast.LENGTH_LONG).show();
                 return null;
             }
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd' 'HH:mm:ss.SSS'Z'");
-            String timestamp = format.format(new Date());
+            //SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd' 'HH:mm:ss.SSS'Z'");
+            //String timestamp = format.format(new Date());
             Uri buildUri = Uri.parse(urlBase).buildUpon()
                     .appendQueryParameter(GTID, gtid)
-                    .appendQueryParameter(checkTime, timestamp)
                     .build();
 
             URL url = null;
@@ -135,10 +138,31 @@ public class RestUtils {
             }
             Log.d(TAG, "URL:"+ url.toString());
 
-//            try {
-//                addStudentInventoryResult =
-//            }
-            return null;
+            try {
+                studentCheckInOrOutResult = postResponseFromHttpUrl(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return studentCheckInOrOutResult;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s != null && !s.equals("")) {
+                if (direction == 0) {
+                    Log.d(TAG, "check in successfully");
+                    Toast.makeText(context, "Check in successfully!",
+                            Toast.LENGTH_LONG).show();
+                } else if (direction == 1) {
+                    Log.d(TAG, "check out successfully");
+                    Toast.makeText(context, "Check in successfully!",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Log.e(TAG, "Wrong QR code!");
+                    return;
+                }
+            }
         }
     }
 }

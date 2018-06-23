@@ -25,8 +25,11 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
+import alpha.labgo.BaseActivity;
 import alpha.labgo.BuzzCardBarcodeActivity;
 import alpha.labgo.R;
+import alpha.labgo.database.RestUtils;
+import alpha.labgo.models.TaskParams;
 
 // TODO: figure out fragment usage
 public class QrCodeScanFragment extends Fragment {
@@ -35,6 +38,23 @@ public class QrCodeScanFragment extends Fragment {
 
     private SurfaceView mQrCodePreview;
     private ViewPager mViewPager;
+    private String gtid;
+
+    // newInstance constructor for creating fragment with arguments
+    public static QrCodeScanFragment newInstance(String gtid) {
+        QrCodeScanFragment qrCodeScanFragment = new QrCodeScanFragment();
+        Bundle args = new Bundle();
+        args.putString("gtid", gtid);
+        qrCodeScanFragment.setArguments(args);
+        return qrCodeScanFragment;
+    }
+
+    // Store instance variables based on arguments passed
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        gtid = getArguments().getString("gtid");
+    }
 
     @Nullable
     @Override
@@ -93,10 +113,12 @@ public class QrCodeScanFragment extends Fragment {
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
                 if (qrCodes.size() > 0) {
                     String code = qrCodes.valueAt(0).displayValue;
-                    cameraSource.release();
-                    mViewPager = getActivity().findViewById(R.id.container);
-                    mViewPager.setCurrentItem(1);
-                    barcodeDetector.release();
+                    //cameraSource.release();
+                    //mViewPager = getActivity().findViewById(R.id.container);
+                    //mViewPager.setCurrentItem(1);
+                    // send check in/out request
+                    String[] paramStrings = {gtid, code};
+                    new RestUtils.StudentCheckInOrOut(getActivity().getApplicationContext()).execute(paramStrings);
                     
                 }
             }

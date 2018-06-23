@@ -138,7 +138,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             return;
         }
 
-        gtid = mGtidField.getText().toString();
         email = mEmailField.getText().toString();
         name = mNameField.getText().toString();
         password = mPasswordField.getText().toString();
@@ -167,8 +166,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         // Write new user
         writeNewUser(uid, gtid, name, email);
 
-        // Go to DashboardActivity
-        startActivity(new Intent(SignUpActivity.this, MainActivity.class));
+        // Go to MainActivity
+        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+        intent.putExtra("gtid", gtid);
+        startActivity(intent);
         finish();
     }
 
