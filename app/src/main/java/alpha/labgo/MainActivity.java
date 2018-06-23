@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity
     private View mHeaderView;
     private TextView mUserName;
     private TextView mUserEmail;
+    private BottomNavigationView mBottomNavigationView;
+    private MenuItem mPrevMenuItem;
 
     // firebase
     private FirebaseFirestore mFirestore;
@@ -67,11 +69,16 @@ public class MainActivity extends AppCompatActivity
         mHeaderView = mNavigationView.getHeaderView(0);
         mUserName = mHeaderView.findViewById(R.id.field_drawer_user_name);
         mUserEmail = mHeaderView.findViewById(R.id.field_drawer_user_email);
+        mBottomNavigationView = findViewById(R.id.bottom_navigation);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
         initDrawer();
+
+        mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        // switch button to dashboard as first page.
+        mBottomNavigationView.getMenu().getItem(1).setChecked(true);
 
         // check if the user is still valid
         FirebaseUser currUser = mAuth.getCurrentUser();
@@ -221,7 +228,33 @@ public class MainActivity extends AppCompatActivity
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setCurrentItem(1);
 
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (mPrevMenuItem != null) {
+                    mPrevMenuItem.setChecked(false);
+                }
+                else
+                {
+                    mBottomNavigationView.getMenu().getItem(0).setChecked(false);
+                }
+
+                mBottomNavigationView.getMenu().getItem(position).setChecked(true);
+                mPrevMenuItem = mBottomNavigationView.getMenu().getItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

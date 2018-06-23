@@ -51,7 +51,7 @@ public class QrCodeScanFragment extends Fragment {
 
         Context context = getActivity().getApplicationContext();
 
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
+        final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
         final CameraSource cameraSource = new CameraSource.Builder(context, barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setAutoFocusEnabled(true)
@@ -90,11 +90,14 @@ public class QrCodeScanFragment extends Fragment {
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
-                final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-                if (barcodes.size() > 0) {
+                final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
+                if (qrCodes.size() > 0) {
+                    String code = qrCodes.valueAt(0).displayValue;
                     cameraSource.release();
                     mViewPager = getActivity().findViewById(R.id.container);
                     mViewPager.setCurrentItem(1);
+                    barcodeDetector.release();
+                    
                 }
             }
         });
