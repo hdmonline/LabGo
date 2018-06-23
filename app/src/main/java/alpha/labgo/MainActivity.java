@@ -234,13 +234,13 @@ public class MainActivity extends AppCompatActivity
                     mViewPager.setCurrentItem(0);
                     return true;
                 case R.id.navigation_dashboard:
-
+                    mViewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_inventory:
-
+                    mViewPager.setCurrentItem(2);
                     return true;
                 case R.id.navigation_notifications:
-
+                    mViewPager.setCurrentItem(3);
                     return true;
             }
             return false;

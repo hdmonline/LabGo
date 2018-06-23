@@ -46,7 +46,7 @@ public class QrCodeOverlay extends android.support.v7.widget.AppCompatImageView 
         int lineWidth = 10;
         float halfLineWidth = lineWidth / 2;
 
-        // TODO: draw overlay
+        // draw overlay
         mMaskPath.moveTo(0, 0);
         mMaskPath.lineTo(canvasWidth, 0);
         mMaskPath.lineTo(canvasWidth, canvasHeight);
@@ -59,7 +59,7 @@ public class QrCodeOverlay extends android.support.v7.widget.AppCompatImageView 
         mMaskPath.lineTo(canvasWidth/4, canvasHeight-margin);
         mMaskPath.close();
 
-        // TODO: draw lines
+        // draw lines
         float lineLength = cardWith / 8;
         // --
         //
