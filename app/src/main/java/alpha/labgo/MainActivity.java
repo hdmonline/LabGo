@@ -72,6 +72,7 @@ public class MainActivity extends BaseActivity
         mUserName = mHeaderView.findViewById(R.id.field_drawer_user_name);
         mUserEmail = mHeaderView.findViewById(R.id.field_drawer_user_email);
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
+        mViewPager = findViewById(R.id.container);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
@@ -232,8 +233,9 @@ public class MainActivity extends BaseActivity
         };
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = findViewById(R.id.container);
+
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
         mViewPager.setCurrentItem(1);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

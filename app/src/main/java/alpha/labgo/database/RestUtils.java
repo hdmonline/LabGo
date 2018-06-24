@@ -15,8 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-import alpha.labgo.models.TaskParams;
-
 public class RestUtils {
     private static final String TAG = "RestUtils";
     private static final String REST_BASE_URL = "http://ec2-52-90-6-153.compute-1.amazonaws.com:1880/v1";

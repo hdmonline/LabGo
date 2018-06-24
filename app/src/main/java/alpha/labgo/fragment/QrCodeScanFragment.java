@@ -25,11 +25,8 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
 
-import alpha.labgo.BaseActivity;
-import alpha.labgo.BuzzCardBarcodeActivity;
 import alpha.labgo.R;
 import alpha.labgo.database.RestUtils;
-import alpha.labgo.models.TaskParams;
 
 // TODO: figure out fragment usage
 public class QrCodeScanFragment extends Fragment {
@@ -39,6 +36,9 @@ public class QrCodeScanFragment extends Fragment {
     private SurfaceView mQrCodePreview;
     private ViewPager mViewPager;
     private String gtid;
+    private Context context;
+    private BarcodeDetector barcodeDetector;
+    private CameraSource cameraSource;
 
     // newInstance constructor for creating fragment with arguments
     public static QrCodeScanFragment newInstance(String gtid) {
@@ -56,6 +56,33 @@ public class QrCodeScanFragment extends Fragment {
         gtid = getArguments().getString("gtid");
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+//        try {
+//            cameraSource.start(mQrCodePreview.getHolder());
+//        } catch (SecurityException | IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //cameraSource.stop();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,10 +96,10 @@ public class QrCodeScanFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mQrCodePreview = getView().findViewById(R.id.qr_code_preview);
 
-        Context context = getActivity().getApplicationContext();
+        context = getActivity().getApplicationContext();
 
-        final BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
-        final CameraSource cameraSource = new CameraSource.Builder(context, barcodeDetector)
+        barcodeDetector = new BarcodeDetector.Builder(context).build();
+        cameraSource = new CameraSource.Builder(context, barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setAutoFocusEnabled(true)
                 .setRequestedPreviewSize(1600, 900)
@@ -81,7 +108,7 @@ public class QrCodeScanFragment extends Fragment {
         mQrCodePreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 try {
@@ -119,15 +146,11 @@ public class QrCodeScanFragment extends Fragment {
                     // send check in/out request
                     String[] paramStrings = {gtid, code};
                     new RestUtils.StudentCheckInOrOut(getActivity().getApplicationContext()).execute(paramStrings);
-                    
+                    // stop detector and camera then move to dashboard.
+                    cameraSource.stop();
+
                 }
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
     }
 }

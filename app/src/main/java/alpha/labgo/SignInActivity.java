@@ -181,10 +181,12 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         // carry "caller" to new activity so that the new activity can track back to prev one.
         if (id == R.id.button_camera) {
             Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardTextActivity.class);
+            toBuzzCard.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             toBuzzCard.putExtra("caller", R.integer.FROM_CAMERA_BUTTON);
             startActivityForResult(toBuzzCard, GTID_REQUEST);
         } else if (id == R.id.button_sign_up) {
             Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardTextActivity.class);
+            toBuzzCard.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             toBuzzCard.putExtra("caller", R.integer.FROM_SIGN_UP_BUTTON);
             startActivity(toBuzzCard);
         } else if (id == R.id.button_sign_in) {

@@ -19,4 +19,24 @@ public class DashboardFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_tool_list, container, false);
         return rootView;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 }
