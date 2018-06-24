@@ -1,6 +1,7 @@
 package alpha.labgo.database;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -14,6 +15,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
+
+import alpha.labgo.MainActivity;
 
 public class RestUtils {
     private static final String TAG = "RestUtils";
@@ -160,6 +163,7 @@ public class RestUtils {
                     Log.e(TAG, "Wrong QR code!");
                     return;
                 }
+                context.startActivity(new Intent(context, MainActivity.class));
             }
         }
     }

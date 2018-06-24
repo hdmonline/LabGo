@@ -4,29 +4,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -35,7 +27,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import alpha.labgo.fragment.DashboardFragment;
 import alpha.labgo.fragment.InventoryFragment;
 import alpha.labgo.fragment.NotificationFragment;
-import alpha.labgo.fragment.QrCodeScanFragment;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -81,7 +72,7 @@ public class MainActivity extends BaseActivity
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         // switch button to dashboard as first page.
-        mBottomNavigationView.getMenu().getItem(1).setChecked(true);
+        mBottomNavigationView.getMenu().getItem(0).setChecked(true);
 
         if (!allPermissionsGranted()) {
             getRuntimePermissions();
@@ -123,7 +114,11 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_qr_code) {
+            Intent intent = new Intent(MainActivity.this, QrCodeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("gtid", gtid);
+            startActivity(intent);
             return true;
         }
 
@@ -207,13 +202,11 @@ public class MainActivity extends BaseActivity
     private void createFragmentAdapter() {
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    QrCodeScanFragment.newInstance(gtid),
                     new DashboardFragment(),
                     new InventoryFragment(),
                     new NotificationFragment()
             };
             private final String[] mFragmentNames = new String[] {
-                    getString(R.string.segment_qr_code),
                     getString(R.string.segment_dashboard),
                     getString(R.string.segment_inventory),
                     getString(R.string.segment_notification)
@@ -271,22 +264,17 @@ public class MainActivity extends BaseActivity
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_qr_code:
+                case R.id.navigation_dashboard:
                     mViewPager.setCurrentItem(0);
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_inventory:
                     mViewPager.setCurrentItem(1);
                     return true;
-                case R.id.navigation_inventory:
-                    mViewPager.setCurrentItem(2);
-                    return true;
                 case R.id.navigation_notifications:
-                    mViewPager.setCurrentItem(3);
+                    mViewPager.setCurrentItem(2);
                     return true;
             }
             return false;
         }
     };
-
-
 }
