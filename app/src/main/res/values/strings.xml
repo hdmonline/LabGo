@@ -23,6 +23,7 @@
     <string name="action_refresh">Refresh</string>
 
     <string name="camera_hint">Please take a picture of your BuzzCard with photo facing up</string>
+    <string name="camera_gtid_hint">GTID will be displayed \nhere after taking a picture</string>
 
     <string name="title_qr_code">QR Code</string>
     <string name="title_dashboard">Dashboard</string>

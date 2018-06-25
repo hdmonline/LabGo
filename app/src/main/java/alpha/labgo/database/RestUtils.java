@@ -157,7 +157,7 @@ public class RestUtils {
                             Toast.LENGTH_LONG).show();
                 } else if (direction == 1) {
                     Log.d(TAG, "check out successfully");
-                    Toast.makeText(context, "Check in successfully!",
+                    Toast.makeText(context, "Check out successfully!",
                             Toast.LENGTH_LONG).show();
                 } else {
                     Log.e(TAG, "Wrong QR code!");

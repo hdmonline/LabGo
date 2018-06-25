@@ -13,6 +13,22 @@ public class BuzzCardOverlay extends android.support.v7.widget.AppCompatImageVie
 
     private static final float CARD_RATIO = 1.59f;
 
+    private Paint mTextPaint;
+    private float textX;
+    private float textYBottom;
+    private float textYTop;
+    private float fontSize;
+
+    private float canvasWidth;
+    private float canvasHeight;
+    private float canvasRatio;
+
+    private float cardWith;
+    private float cardHeight;
+    private float margin;
+
+    private Canvas canvas;
+
     public BuzzCardOverlay(Context context) {
         super(context);
     }
@@ -29,23 +45,27 @@ public class BuzzCardOverlay extends android.support.v7.widget.AppCompatImageVie
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        this.canvas = canvas;
         drawOverlay(canvas);
+    }
+
+    public void drawTextOnTop(String text) {
+        canvas.rotate(90f);
+        textYTop = -(canvasWidth/2 - 1.8f*fontSize);
+        canvas.drawText(text, textX, textYTop, mTextPaint);
+        canvas.restore();
     }
 
     private void drawOverlay(Canvas canvas) {
         Path mMaskPath = new Path();
         Path mLinesPath = new Path();
         Paint mOverlayPaint = new Paint();
-        Paint mTextPaint = new Paint();
+        mTextPaint = new Paint();
         Paint mDashLinePaint = new Paint();
 
-        float canvasWidth = canvas.getWidth();
-        float canvasHeight = canvas.getHeight();
-        float canvasRatio = canvasHeight / canvasWidth;
-
-        float cardWith;
-        float cardHeight;
-        float margin;
+        canvasWidth = canvas.getWidth();
+        canvasHeight = canvas.getHeight();
+        canvasRatio = canvasHeight / canvasWidth;
 
         if (canvasRatio >= CARD_RATIO) {
             // draw overlay
@@ -139,14 +159,16 @@ public class BuzzCardOverlay extends android.support.v7.widget.AppCompatImageVie
         // draw hint text
         mTextPaint.setARGB(255, 255, 255, 255);
         mTextPaint.setStyle(Paint.Style.FILL);
-        float fontSize = canvasWidth/25; // in pixel
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
+        fontSize = canvasWidth/25; // in pixel
         mTextPaint.setTextSize(canvasWidth/20);
         canvas.save();
-        float textX = (canvasHeight-cardHeight)/2 + 10;
-        float textY = -((canvasWidth-cardWith)/2 - 1.2f*fontSize);
+        textX = canvasHeight/2;
+        textYBottom = -((canvasWidth-cardWith)/2 - 1.2f*fontSize);
         canvas.rotate(90f);
-        canvas.drawText(getResources().getString(R.string.camera_hint) , textX, textY, mTextPaint);
+        canvas.drawText(getResources().getString(R.string.camera_hint) , textX, textYBottom, mTextPaint);
         canvas.restore();
+        canvas.save();
 
         // draw dashline
         mDashLinePaint.setARGB(255, 255, 255, 255);
@@ -154,5 +176,6 @@ public class BuzzCardOverlay extends android.support.v7.widget.AppCompatImageVie
         mDashLinePaint.setStrokeWidth(8);
         mDashLinePaint.setPathEffect(new DashPathEffect(new float[] {canvasWidth/150, canvasWidth/150}, 0));
         canvas.drawPath(mLinesPath, mDashLinePaint);
+        canvas.save();
     }
 }

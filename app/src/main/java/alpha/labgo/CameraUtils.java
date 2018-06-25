@@ -15,8 +15,10 @@ import java.util.List;
 public class CameraUtils {
 
     // default camera width and height. they are opposite from screen coordinate
-    public static final int DEFAULT_WIDTH = 1280;
-    public static final int DEFAULT_HEIGHT = 720;
+    public static int previewDefaultWidth = 1280;
+    public static int previewDefaultHeight = 720;
+    public static final int PICTURE_DEFAULT_WIDTH = 3200;
+    public static final int PICTURE_DEFAULT_HEIGHT = 2400;
     public static final int DESIRED_PREVIEW_FPS = 30;
 
     private static int mCameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
@@ -52,8 +54,8 @@ public class CameraUtils {
         parameters.setRecordingHint(true);
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         mCamera.setParameters(parameters);
-        setPreviewSize(mCamera, CameraUtils.DEFAULT_WIDTH, CameraUtils.DEFAULT_HEIGHT);
-        setPictureSize(mCamera, CameraUtils.DEFAULT_WIDTH, CameraUtils.DEFAULT_HEIGHT);
+        setPreviewSize(mCamera, CameraUtils.previewDefaultWidth, CameraUtils.previewDefaultHeight);
+        setPictureSize(mCamera, CameraUtils.PICTURE_DEFAULT_WIDTH, CameraUtils.PICTURE_DEFAULT_HEIGHT);
         mCamera.setDisplayOrientation(mOrientation);
     }
 
@@ -76,8 +78,8 @@ public class CameraUtils {
         parameters.setRecordingHint(true);
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         mCamera.setParameters(parameters);
-        setPreviewSize(mCamera, CameraUtils.DEFAULT_WIDTH, CameraUtils.DEFAULT_HEIGHT);
-        setPictureSize(mCamera, CameraUtils.DEFAULT_WIDTH, CameraUtils.DEFAULT_HEIGHT);
+        setPreviewSize(mCamera, CameraUtils.previewDefaultWidth, CameraUtils.previewDefaultHeight);
+        setPictureSize(mCamera, CameraUtils.PICTURE_DEFAULT_WIDTH, CameraUtils.PICTURE_DEFAULT_HEIGHT);
         mCamera.setDisplayOrientation(mOrientation);
     }
 
@@ -168,6 +170,11 @@ public class CameraUtils {
         camera.setParameters(parameters);
     }
 
+    public static void setPreviewDefaultSize(int defaultWidth, int defaultHeight) {
+        previewDefaultHeight = defaultHeight;
+        previewDefaultWidth = defaultWidth;
+    }
+
     /**
      * get preview size
      * @return
@@ -241,10 +248,8 @@ public class CameraUtils {
             }
             // the closest height and width
             else if (!widthOrHeight) {
-                if (Math.abs(result.width - expectWidth)
-                        > Math.abs(size.width - expectWidth)
-                        && Math.abs(result.height - expectHeight)
-                        > Math.abs(size.height - expectHeight)) {
+                if ((Math.abs(result.width - expectWidth) + Math.abs(result.height - expectHeight))
+                        > (Math.abs(size.width - expectWidth) + Math.abs(size.height - expectHeight))) {
                     result = size;
                 }
             }

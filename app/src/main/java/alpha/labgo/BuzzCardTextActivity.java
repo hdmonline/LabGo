@@ -1,26 +1,46 @@
 package alpha.labgo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.hardware.Camera;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextDetector;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -33,20 +53,21 @@ import alpha.labgo.overlay.BuzzCardOverlay;
 
 public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchListener {
 
-
     private static final String TAG = "BuzzCardTextActivity";
 
     private int caller;
 
     private CameraPreview  mCameraPreview;
-    private ImageView mOverlay;
     private FrameLayout mPreview;
-    private ImageButton mShutterButton;
     private ImageView mImageCaptured;
-    private BuzzCardOverlay mBuzzCardOverlay;
+    private ImageButton mShutterButton;
+    private ImageButton mRetakeButton;
     private ImageButton mConfirmButton;
+    //private TextView mDetectedText;
+    private BuzzCardOverlay mOverlay;
 
-    private int mOrientation = Surface.ROTATION_90;
+    private int mPreviewOrientation = Surface.ROTATION_0;
+    private int mPictureOrientation = Surface.ROTATION_90;
     private boolean mCameraRequested;
 
     @Override
@@ -63,12 +84,42 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         mPreview = findViewById(R.id.layout_preview);
         mImageCaptured = findViewById(R.id.image_captured);
         mOverlay = findViewById(R.id.camera_overlay);
+        mRetakeButton = findViewById(R.id.button_retake);
+        mConfirmButton = findViewById(R.id.button_confirm);
 
+        mRetakeButton.setVisibility(View.INVISIBLE);
+        mConfirmButton.setVisibility(View.INVISIBLE);
+        //mDetectedText = findViewById(R.id.detected_text);
+
+        // rotate the text view.
+//        mDetectedText.getViewTreeObserver()
+//                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                mDetectedText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//                int height = mDetectedText.getHeight();
+//                int width = mDetectedText.getWidth();
+//                AnimationSet animText = new AnimationSet(true);
+//                RotateAnimation rotate = new RotateAnimation(0, 90,
+//                        Animation.RELATIVE_TO_SELF, 0.5f,
+//                        Animation.RELATIVE_TO_SELF, 0.5f);
+//                rotate.setDuration(0);
+//                rotate.setRepeatCount(-1);
+//                animText.addAnimation(rotate);
+//                TranslateAnimation translate = new TranslateAnimation(
+//                        Animation.ABSOLUTE, width/2-height,
+//                        Animation.ABSOLUTE, 0);
+//                animText.addAnimation(translate);
+//                mDetectedText.startAnimation(animText);
+//            }
+//        });
         if (allPermissionsGranted()) {
             createCameraPreview();
         } else {
             getRuntimePermissions();
         }
+
+
     }
 
     @Override
@@ -119,10 +170,11 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
 
     private void createCameraPreview() {
         mPreview = findViewById(R.id.layout_preview);
+        //CameraUtils.setPreviewDefaultSize(mCameraFrameLayout.getWidth(), mCameraFrameLayout.getHeight());
+        CameraUtils.setOrientation(mPreviewOrientation);
         mCameraPreview = new CameraPreview(this);
         mPreview.addView(mCameraPreview);
-        mOrientation = CameraUtils.calculateCameraPreviewOrientation(BuzzCardTextActivity.this);
-        //CameraUtils.setOrientation(mOrientation);
+        mPreviewOrientation = CameraUtils.calculateCameraPreviewOrientation(BuzzCardTextActivity.this);
         mShutterButton = findViewById(R.id.button_shutter);
         mShutterButton.setOnTouchListener(this);
     }
@@ -183,7 +235,7 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         CameraUtils.takePicture(new Camera.ShutterCallback() {
             @Override
             public void onShutter() {
-
+                // TODO: decide if anything is needed for this action
             }
         }, null, new Camera.PictureCallback() {
             @Override
@@ -191,23 +243,81 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
                 CameraUtils.startPreview();
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                 if (bitmap != null) {
-                    bitmap = ImageUtils.getRotatedBitmap(bitmap, mOrientation);
-                    String path = Environment.getExternalStorageDirectory() + "/DCIM/Camera/"
-                            + System.currentTimeMillis() + ".jpg";
-                    mImageCaptured.setImageBitmap(bitmap);
-                    try {
-                        FileOutputStream fout = new FileOutputStream(path);
-                        BufferedOutputStream bos = new BufferedOutputStream(fout);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                        bos.flush();
-                        bos.close();
-                        fout.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    bitmap = ImageUtils.getRotatedBitmap(bitmap, mPictureOrientation);
+                    // detect Text from image
+                    detectText(bitmap);
+                    // save the image to storage.
+                    //savePicture(bitmap);
                 }
                 CameraUtils.startPreview();
             }
         });
+    }
+
+    private void detectText(Bitmap bitmap) {
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
+        FirebaseVisionTextDetector detector = FirebaseVision.getInstance().getVisionTextDetector();
+        detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+            @Override
+            public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                processText(firebaseVisionText);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                String fail = "Please retake a picture";
+                //mOverlay.drawTextOnTop(fail);
+            }
+        });
+    }
+
+    private void processText(FirebaseVisionText text) {
+        List<FirebaseVisionText.Block> blocks = text.getBlocks();
+        if (blocks.size() == 0) {
+            Toast.makeText(BuzzCardTextActivity.this, "No Text :(", Toast.LENGTH_LONG).show();
+            return;
+        }
+        // remove all non-digit characters in each block and exam it.
+        for (FirebaseVisionText.Block block : text.getBlocks()) {
+            String detectedText = block.getText();
+            String gtid = detectedText.replaceAll("\\D+", "");
+            if (gtid.length() == 9) {
+                String display = "GTID: " + gtid;
+                Toast.makeText(BuzzCardTextActivity.this, display, Toast.LENGTH_LONG).show();
+                //mOverlay.drawTextOnTop(display);
+
+                Intent intent;
+                switch (caller) {
+                    case 2:
+                        intent = new Intent(BuzzCardTextActivity.this, SignInActivity.class);
+                        setResult(CommonStatusCodes.SUCCESS, intent);
+                        intent.putExtra("gtid", gtid);
+                        finish();
+                        break;
+                    default:
+                        intent = new Intent(BuzzCardTextActivity.this, SignUpActivity.class);
+                        intent.putExtra("gtid", gtid);
+                        startActivity(intent);
+                        finish();
+                        break;
+                }
+            }
+        }
+    }
+
+    private void savePicture(Bitmap bitmap) {
+        String path = Environment.getExternalStorageDirectory() + "/DCIM/Camera/"
+                + System.currentTimeMillis() + ".jpg";
+        mImageCaptured.setImageBitmap(bitmap);
+        try {
+            FileOutputStream fout = new FileOutputStream(path);
+            BufferedOutputStream bos = new BufferedOutputStream(fout);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+            fout.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

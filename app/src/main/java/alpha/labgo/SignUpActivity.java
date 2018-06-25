@@ -61,8 +61,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         mPasswordField = findViewById(R.id.field_user_password);
         mSubmitButton = findViewById(R.id.button_submit);
 
-        Barcode gtidData = getIntent().getParcelableExtra("qrCode");
-        mGtidField.setText(gtidData.displayValue);
+        // Barcode gtidData = getIntent().getParcelableExtra("qrCode");
+        String gtid = getIntent().getStringExtra("gtid");
+        mGtidField.setText(gtid);
 
         mSubmitButton.setOnClickListener(this);
     }
@@ -143,7 +144,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         password = mPasswordField.getText().toString();
 
         showProgressDialog();
-        final String gtid = mGtidField.getText().toString();
+        gtid = mGtidField.getText().toString();
 
 
         // check if gtid is valid

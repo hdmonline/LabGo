@@ -16,4 +16,5 @@
     <dimen name="image_captured_width">210dp</dimen>
     <dimen name="image_captured_height">280dp</dimen>
     <dimen name="image_captured_botton_margin">10dp</dimen>
+    <dimen name="text_detected_top_margin">20dp</dimen>
 </resources>

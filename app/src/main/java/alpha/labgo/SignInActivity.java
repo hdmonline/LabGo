@@ -87,8 +87,10 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         if (requestCode == GTID_REQUEST) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
-                    Barcode qrCode =  data.getParcelableExtra("qrCode");
-                    mGtidField.setText(qrCode.displayValue);
+                    //Barcode qrCode =  data.getParcelableExtra("gtid");
+                    gtid =  data.getStringExtra("gtid");
+                    //mGtidField.setText(qrCode.displayValue);
+                    mGtidField.setText(gtid);
                 }
             }
         }
@@ -182,12 +184,12 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         if (id == R.id.button_camera) {
             Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardTextActivity.class);
             toBuzzCard.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            toBuzzCard.putExtra("caller", R.integer.FROM_CAMERA_BUTTON);
+            toBuzzCard.putExtra("caller", getResources().getInteger(R.integer.FROM_CAMERA_BUTTON));
             startActivityForResult(toBuzzCard, GTID_REQUEST);
         } else if (id == R.id.button_sign_up) {
             Intent toBuzzCard = new Intent(SignInActivity.this, BuzzCardTextActivity.class);
             toBuzzCard.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            toBuzzCard.putExtra("caller", R.integer.FROM_SIGN_UP_BUTTON);
+            toBuzzCard.putExtra("caller", getResources().getInteger(R.integer.FROM_SIGN_UP_BUTTON));
             startActivity(toBuzzCard);
         } else if (id == R.id.button_sign_in) {
             signInWithGtid();
