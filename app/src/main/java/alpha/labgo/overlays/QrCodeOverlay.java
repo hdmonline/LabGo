@@ -1,4 +1,4 @@
-package alpha.labgo.overlay;
+package alpha.labgo.overlays;
 
 import android.content.Context;
 import android.graphics.Canvas;

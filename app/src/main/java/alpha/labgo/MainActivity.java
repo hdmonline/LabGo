@@ -24,9 +24,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import alpha.labgo.fragment.DashboardFragment;
-import alpha.labgo.fragment.InventoryFragment;
-import alpha.labgo.fragment.NotificationFragment;
+import alpha.labgo.fragments.DashboardFragment;
+import alpha.labgo.fragments.InventoryFragment;
+import alpha.labgo.fragments.NotificationFragment;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {

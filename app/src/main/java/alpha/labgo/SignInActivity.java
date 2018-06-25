@@ -153,8 +153,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         }
                     }
                 });
-
-
     }
 
     private void signInWithEmail(String email, String password) {

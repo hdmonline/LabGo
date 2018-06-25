@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <alpha.labgo.overlay.QrCodeOverlay
+    <alpha.labgo.overlays.QrCodeOverlay
         android:id="@+id/qr_code_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -1,4 +1,4 @@
-package alpha.labgo.fragment;
+package alpha.labgo.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

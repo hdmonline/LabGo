@@ -1,4 +1,4 @@
-package alpha.labgo.overlay;
+package alpha.labgo.overlays;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -174,7 +174,7 @@ public class BuzzCardOverlay extends android.support.v7.widget.AppCompatImageVie
         mDashLinePaint.setARGB(255, 255, 255, 255);
         mDashLinePaint.setStyle(Paint.Style.STROKE);
         mDashLinePaint.setStrokeWidth(8);
-        mDashLinePaint.setPathEffect(new DashPathEffect(new float[] {canvasWidth/150, canvasWidth/150}, 0));
+        mDashLinePaint.setPathEffect(new DashPathEffect(new float[] {20, 20}, 0));
         canvas.drawPath(mLinesPath, mDashLinePaint);
         canvas.save();
     }

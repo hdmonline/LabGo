@@ -18,7 +18,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
 
-        <alpha.labgo.overlay.BuzzCardOverlay
+        <alpha.labgo.overlays.BuzzCardOverlay
             android:id="@+id/camera_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
