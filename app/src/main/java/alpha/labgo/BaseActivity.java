@@ -29,15 +29,8 @@ public class BaseActivity extends AppCompatActivity {
 
         // when signed out, the mProgressDialog is still stored in the BaseActivity
         // but the actual activity is gone. check mProgressDialog for different scenarios.
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setMessage("Loading...");
-        } else if (mProgressDialog.getOwnerActivity() == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setMessage("Loading...");
-        } else if (mProgressDialog.getOwnerActivity().isDestroyed() || mProgressDialog.getOwnerActivity().isFinishing()) {
+        if (mProgressDialog == null || mProgressDialog.getOwnerActivity() == null
+                || mProgressDialog.getOwnerActivity().isDestroyed() || mProgressDialog.getOwnerActivity().isFinishing()) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setCancelable(false);
             mProgressDialog.setMessage("Loading...");
