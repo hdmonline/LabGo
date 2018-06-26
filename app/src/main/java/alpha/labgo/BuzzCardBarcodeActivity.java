@@ -54,10 +54,9 @@ public class BuzzCardBarcodeActivity extends BaseActivity {
     }
 
     private void createCameraSource() {
-        Context context = getApplicationContext();
 
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build();
-        final CameraSource cameraSource = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
+        final CameraSource cameraSource = new CameraSource.Builder(BuzzCardBarcodeActivity.this, barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setAutoFocusEnabled(true)
                 .setRequestedPreviewSize(1600, 900)

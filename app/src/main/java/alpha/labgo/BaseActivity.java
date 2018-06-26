@@ -26,7 +26,16 @@ public class BaseActivity extends AppCompatActivity {
     private static String gtid;
 
     public void showProgressDialog() {
+
         if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setMessage("Loading...");
+        } else if (mProgressDialog.getOwnerActivity() == null) {
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setMessage("Loading...");
+        } else if (mProgressDialog.getOwnerActivity().isDestroyed() || mProgressDialog.getOwnerActivity().isFinishing()) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setCancelable(false);
             mProgressDialog.setMessage("Loading...");

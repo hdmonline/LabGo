@@ -155,6 +155,7 @@ public class MainActivity extends BaseActivity
         mAuth.signOut();
         Intent intent = new Intent(MainActivity.this, SignInActivity.class);
         startActivity(intent);
+        finish();
     }
 
     /**

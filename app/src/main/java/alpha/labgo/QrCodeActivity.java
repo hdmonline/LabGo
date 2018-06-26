@@ -44,7 +44,7 @@ public class QrCodeActivity extends BaseActivity {
         if (!allPermissionsGranted()) {
             getRuntimePermissions();
         }
-        mContext = getApplicationContext();
+        mContext = QrCodeActivity.this;
     }
 
     @Override
@@ -52,8 +52,8 @@ public class QrCodeActivity extends BaseActivity {
         super.onStart();
         mQrCodePreview = findViewById(R.id.qr_code_preview);
 
-        mBarcodeDetector = new BarcodeDetector.Builder(this).build();
-        mCameraSource = new CameraSource.Builder(getApplicationContext(), mBarcodeDetector)
+        mBarcodeDetector = new BarcodeDetector.Builder(mContext).build();
+        mCameraSource = new CameraSource.Builder(mContext, mBarcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setAutoFocusEnabled(true)
                 .setRequestedPreviewSize(1280, 720)
@@ -62,7 +62,7 @@ public class QrCodeActivity extends BaseActivity {
         mQrCodePreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                if (ActivityCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
                 try {
@@ -98,11 +98,11 @@ public class QrCodeActivity extends BaseActivity {
                     // check if the code is valid
                     if (!(code.equals(CHECK_IN) || code.equals(CHECK_OUT))) {
                         Log.w(TAG, "Wrong QR code!");
-                        Toast.makeText(getApplicationContext(), "Wrong QR code!",
+                        Toast.makeText(mContext, "Wrong QR code!",
                                 Toast.LENGTH_LONG).show();
                     } else {
                         String[] paramStrings = {mGtid, code};
-                        new RestUtils.StudentCheckInOrOut(getApplicationContext()).execute(paramStrings);
+                        new RestUtils.StudentCheckInOrOut(mContext).execute(paramStrings);
                         // stop detector and camera then move to dashboard.
                         mBarcodeDetector.release();
                     }

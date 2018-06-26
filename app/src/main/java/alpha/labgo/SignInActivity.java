@@ -157,7 +157,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
     private void signInWithEmail(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password).
-                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUser:onComplete" + task.isSuccessful());

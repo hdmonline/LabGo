@@ -57,6 +57,6 @@ public class SectionRecyclerViewAdapter extends RecyclerView.Adapter<SectionRecy
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mSectionLabels.size();
     }
 }
