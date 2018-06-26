@@ -27,6 +27,8 @@ public class BaseActivity extends AppCompatActivity {
 
     public void showProgressDialog() {
 
+        // when signed out, the mProgressDialog is still stored in the BaseActivity
+        // but the actual activity is gone. check mProgressDialog for different scenarios.
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setCancelable(false);
