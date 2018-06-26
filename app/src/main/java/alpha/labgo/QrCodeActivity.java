@@ -8,9 +8,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -23,23 +25,26 @@ import alpha.labgo.database.RestUtils;
 
 public class QrCodeActivity extends BaseActivity {
     private static final String TAG = "QrCodeActivity";
+    private static final String CHECK_IN = "checkIn";
+    private static final String CHECK_OUT = "checkOut";
 
     private SurfaceView mQrCodePreview;
     private ViewPager mViewPager;
-    private String gtid;
-    private Context context;
-    private BarcodeDetector barcodeDetector;
-    private CameraSource cameraSource;
+    private String mGtid;
+    private Context mContext;
+    private BarcodeDetector mBarcodeDetector;
+    private CameraSource mCameraSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_code);
-        gtid = getIntent().getStringExtra("gtid");
+        mGtid = getIntent().getStringExtra("gtid");
 
         if (!allPermissionsGranted()) {
             getRuntimePermissions();
         }
+        mContext = getApplicationContext();
     }
 
     @Override
@@ -47,11 +52,11 @@ public class QrCodeActivity extends BaseActivity {
         super.onStart();
         mQrCodePreview = findViewById(R.id.qr_code_preview);
 
-        barcodeDetector = new BarcodeDetector.Builder(this).build();
-        cameraSource = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
+        mBarcodeDetector = new BarcodeDetector.Builder(this).build();
+        mCameraSource = new CameraSource.Builder(getApplicationContext(), mBarcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(1600, 900)
+                .setRequestedPreviewSize(1280, 720)
                 .build();
 
         mQrCodePreview.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -61,7 +66,7 @@ public class QrCodeActivity extends BaseActivity {
                     return;
                 }
                 try {
-                    cameraSource.start(mQrCodePreview.getHolder());
+                    mCameraSource.start(mQrCodePreview.getHolder());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -78,7 +83,7 @@ public class QrCodeActivity extends BaseActivity {
             }
         });
 
-        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+        mBarcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
 
@@ -89,14 +94,18 @@ public class QrCodeActivity extends BaseActivity {
                 final SparseArray<Barcode> qrCodes = detections.getDetectedItems();
                 if (qrCodes.size() > 0) {
                     String code = qrCodes.valueAt(0).displayValue;
-                    //cameraSource.release();
-                    //mViewPager = getActivity().findViewById(R.id.container);
-                    //mViewPager.setCurrentItem(1);
-                    // send check in/out request
-                    String[] paramStrings = {gtid, code};
-                    new RestUtils.StudentCheckInOrOut(getApplicationContext()).execute(paramStrings);
-                    // stop detector and camera then move to dashboard.
-                    barcodeDetector.release();
+
+                    // check if the code is valid
+                    if (!(code.equals(CHECK_IN) || code.equals(CHECK_OUT))) {
+                        Log.w(TAG, "Wrong QR code!");
+                        Toast.makeText(getApplicationContext(), "Wrong QR code!",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        String[] paramStrings = {mGtid, code};
+                        new RestUtils.StudentCheckInOrOut(getApplicationContext()).execute(paramStrings);
+                        // stop detector and camera then move to dashboard.
+                        mBarcodeDetector.release();
+                    }
                 }
             }
         });

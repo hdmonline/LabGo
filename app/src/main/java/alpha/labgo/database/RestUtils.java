@@ -99,10 +99,10 @@ public class RestUtils {
         private static final String CHECK_OUT = "/checkout";
         private int direction = -1; // 0 is check in and 1 is check out
 
-        private Context context;
+        private Context mContext;
 
         public StudentCheckInOrOut(Context context) {
-            this.context = context;
+            this.mContext = context;
         }
 
         @Override
@@ -121,7 +121,7 @@ public class RestUtils {
                 direction = 1;
             } else {
                 Log.w(TAG, "Wrong QR code!");
-                Toast.makeText(context, "Wrong QR code!",
+                Toast.makeText(mContext, "Wrong QR code!",
                         Toast.LENGTH_LONG).show();
                 return null;
             }
@@ -133,6 +133,7 @@ public class RestUtils {
 
             URL url = null;
             try {
+                Log.d(TAG, buildUri.toString());
                 url = new URL(buildUri.toString());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -153,18 +154,35 @@ public class RestUtils {
             if (s != null && !s.equals("")) {
                 if (direction == 0) {
                     Log.d(TAG, "check in successfully");
-                    Toast.makeText(context, "Check in successfully!",
+                    Toast.makeText(mContext, "Check in successfully!",
                             Toast.LENGTH_LONG).show();
                 } else if (direction == 1) {
                     Log.d(TAG, "check out successfully");
-                    Toast.makeText(context, "Check out successfully!",
+                    Toast.makeText(mContext, "Check out successfully!",
                             Toast.LENGTH_LONG).show();
                 } else {
                     Log.e(TAG, "Wrong QR code!");
                     return;
                 }
-                context.startActivity(new Intent(context, MainActivity.class));
+                mContext.startActivity(new Intent(mContext, MainActivity.class));
             }
+        }
+    }
+
+    public static class StudentBorrowedTools extends AsyncTask<String, Void, String> {
+        private static final String REST_TAG = "/studentinventories/";
+
+        private Context mContext;
+
+        // constructor
+        public StudentBorrowedTools(Context context) {
+            this.mContext = context;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            return null;
         }
     }
 }

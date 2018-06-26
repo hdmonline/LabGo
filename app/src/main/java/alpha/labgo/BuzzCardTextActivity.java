@@ -258,7 +258,7 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
     private void processText(FirebaseVisionText text) {
         List<FirebaseVisionText.Block> blocks = text.getBlocks();
         if (blocks.size() == 0) {
-            Toast.makeText(BuzzCardTextActivity.this, "No Text :(", Toast.LENGTH_LONG).show();
+            Toast.makeText(BuzzCardTextActivity.this, "No GTID found :( Please take a picture again.", Toast.LENGTH_LONG).show();
             return;
         }
         // remove all non-digit characters in each block and exam it.

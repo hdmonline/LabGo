@@ -11,13 +11,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import alpha.labgo.R;
+import alpha.labgo.RecyclerItemType;
 
 public class SectionRecyclerViewAdapter extends RecyclerView.Adapter<SectionRecyclerViewAdapter.SectionViewHolder> {
 
     private static final String TAG = "SectionRecyclerViewAdapter";
 
-    private ArrayList<String> mToolNames = new ArrayList<>();
-    private ArrayList<String> mToolImages = new ArrayList<>();
+    private ArrayList<String> mSectionLabels = new ArrayList<>();
+    private ArrayList<RecyclerItemType> mRecyclerItemTypes = new ArrayList<>();
     private Context mContext;
 
     public class SectionViewHolder extends RecyclerView.ViewHolder {
@@ -31,8 +32,9 @@ public class SectionRecyclerViewAdapter extends RecyclerView.Adapter<SectionRecy
         }
     }
 
-    public SectionRecyclerViewAdapter(Context context) {
+    public SectionRecyclerViewAdapter(Context context, ArrayList<RecyclerItemType> recyclerItemTypes) {
         this.mContext = context;
+        this.mRecyclerItemTypes = recyclerItemTypes;
     }
 
     @NonNull
@@ -44,6 +46,13 @@ public class SectionRecyclerViewAdapter extends RecyclerView.Adapter<SectionRecy
 
     @Override
     public void onBindViewHolder(@NonNull SectionViewHolder holder, int position) {
+        holder.mSectionLabel.setText(mSectionLabels.get(position));
+        RecyclerItemType type = mRecyclerItemTypes.get(position);
+//        switch (type) {
+//            case BORROWED_ITEM:
+//                BorrowedItemAdapter adapter =
+//                        new BorrowedItemAdapter(mContext, )
+//        }
     }
 
     @Override

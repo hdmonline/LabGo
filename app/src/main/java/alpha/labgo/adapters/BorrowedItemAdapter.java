@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import alpha.labgo.R;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerViewAdapter.BorrowedItemViewHolder> {
+public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapter.BorrowedItemViewHolder> {
 
-    private static final String TAG = "ItemRecyclerViewAdapter";
+    private static final String TAG = "BorrowedItemAdapter";
 
     private Context mContext;
     private ArrayList<String> mToolImages = new ArrayList<>();
@@ -42,7 +42,13 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         }
     }
 
-    public ItemRecyclerViewAdapter(Context mContext, ArrayList<String> mToolImages, ArrayList<String> mToolNames, ArrayList<String> mCheckOutTimes) {
+    // default constructor
+    public BorrowedItemAdapter() {
+
+    }
+
+    // constructor passing parameters
+    public BorrowedItemAdapter(Context mContext, ArrayList<String> mToolImages, ArrayList<String> mToolNames, ArrayList<String> mCheckOutTimes) {
         this.mContext = mContext;
         this.mToolImages = mToolImages;
         this.mToolNames = mToolNames;
@@ -57,7 +63,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemRecyclerViewAdapter.BorrowedItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BorrowedItemAdapter.BorrowedItemViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
         Glide.with(mContext)
@@ -67,7 +73,6 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
 
         holder.mToolName.setText(mToolNames.get(position));
         holder.mCheckOutTime.setText(mCheckOutTimes.get(position));
-
     }
 
     @Override
@@ -75,5 +80,19 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         return mCheckOutTimes.size();
     }
 
-
+    /**
+     * This method is used to set all the data of the list
+     *
+     * @param toolImages The new URLS of tool images to be displayed.
+     * @param toolNames The new tool names to be displayed.
+     * @param checkOutTimes The new tool check out times to be displayed.
+     */
+    public void setList(ArrayList<String> toolImages,
+                        ArrayList<String> toolNames,
+                        ArrayList<String> checkOutTimes) {
+        mToolImages = toolImages;
+        mToolNames = toolNames;
+        mCheckOutTimes = checkOutTimes;
+        notifyDataSetChanged();
+    }
 }

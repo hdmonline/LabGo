@@ -41,7 +41,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
 
-    private String gtid;
+    private String mGtid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +88,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     //Barcode qrCode =  data.getParcelableExtra("gtid");
-                    gtid =  data.getStringExtra("gtid");
+                    mGtid =  data.getStringExtra("gtid");
                     //mGtidField.setText(qrCode.displayValue);
-                    mGtidField.setText(gtid);
+                    mGtidField.setText(mGtid);
                 }
             }
         }
@@ -100,7 +100,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private void onAuthSuccess() {
         // Go to DashboardActivity
         Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-        intent.putExtra("gtid", gtid);
+        intent.putExtra("gtid", mGtid);
         startActivity(intent);
         finish();
     }
@@ -144,7 +144,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()){
                             String email = documentSnapshot.get("email").toString();
-                            gtid = gtidInput;
+                            mGtid = gtidInput;
                             signInWithEmail(email, password);
                         } else {
                             hideProgressDialog();

@@ -44,7 +44,8 @@ public class MainActivity extends BaseActivity
     // firebase
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
-    private String gtid;
+    private String mGtid;
+    private FirebaseUser mCurrUser;
 
     // fragment
     private FragmentPagerAdapter mPagerAdapter;
@@ -56,7 +57,7 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
 
-        gtid = getIntent().getStringExtra("gtid");
+        mGtid = getIntent().getStringExtra("gtid");
         // Views
         mNavigationView = findViewById(R.id.nav_view);
         mHeaderView = mNavigationView.getHeaderView(0);
@@ -79,11 +80,11 @@ public class MainActivity extends BaseActivity
         }
 
         // check if the user is still valid
-        FirebaseUser currUser = mAuth.getCurrentUser();
-        checkUser(currUser);
+        mCurrUser = mAuth.getCurrentUser();
+        checkUser(mCurrUser);
 
         // Display user name in drawer header
-        displayUserName(currUser);
+        displayUserName(mCurrUser);
 
         // Create the adapter that will return a fragment for each section
         createFragmentAdapter();
@@ -117,7 +118,7 @@ public class MainActivity extends BaseActivity
         if (id == R.id.action_qr_code) {
             Intent intent = new Intent(MainActivity.this, QrCodeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.putExtra("gtid", gtid);
+            intent.putExtra("gtid", mGtid);
             startActivity(intent);
             return true;
         }
@@ -193,6 +194,18 @@ public class MainActivity extends BaseActivity
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     signOut();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    String uid = mCurrUser.getUid();
+                    mFirestore.collection("users").document(uid).get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    mGtid = documentSnapshot.get("gtid").toString();
+                                }
+                            });
                 }
             });
         }

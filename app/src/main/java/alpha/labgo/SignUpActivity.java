@@ -39,10 +39,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private FirebaseAuth mAuth;
 
     // global variables
-    private String gtid;
-    private String name;
-    private String email;
-    private String password;
+    private String mGtid;
+    private String mName;
+    private String mEmail;
+    private String mPassword;
 
 
     @Override
@@ -109,7 +109,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private void validateGtidCallback(boolean valid) {
 
         if (valid) {
-            mAuth.createUserWithEmailAndPassword(email, password).
+            mAuth.createUserWithEmailAndPassword(mEmail, mPassword).
                     addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -117,7 +117,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             hideProgressDialog();
 
                             if (task.isSuccessful()) {
-                                onAuthSuccess(task.getResult().getUser().getUid(), gtid, name, email);
+                                onAuthSuccess(task.getResult().getUser().getUid(), mGtid, mName, mEmail);
                             } else {
                                 Toast.makeText(SignUpActivity.this, "Sign Up Failed",
                                         Toast.LENGTH_SHORT).show();
@@ -139,16 +139,16 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             return;
         }
 
-        email = mEmailField.getText().toString();
-        name = mNameField.getText().toString();
-        password = mPasswordField.getText().toString();
+        mEmail = mEmailField.getText().toString();
+        mName = mNameField.getText().toString();
+        mPassword = mPasswordField.getText().toString();
 
         showProgressDialog();
-        gtid = mGtidField.getText().toString();
+        mGtid = mGtidField.getText().toString();
 
 
         // check if gtid is valid
-        mFirestore.collection("gtid").document(gtid).get()
+        mFirestore.collection("gtid").document(mGtid).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
