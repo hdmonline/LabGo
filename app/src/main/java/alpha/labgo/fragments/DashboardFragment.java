@@ -42,6 +42,9 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
 
     private ProgressBar mLoadingIndicator;
 
+    // TODO: delete this when done!
+    private static final String test="[ { \"item_name\": \"powerdrill\", \"item_image_url\": \"https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg\", \"checkout_time\": \"asdfasdf\" }, { \"item_name\": \"powerdrill2\", \"item_image_url\": \"https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg\", \"checkout_time\": \"asdfasdf2\" }, { \"item_name\": \"powerdrill3\", \"item_image_url\": \"https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg\", \"checkout_time\": \"asdfasdf3\" }]";
+
     /**
      * This method is to pass GTID from main activity to this fragment.
      *
@@ -84,10 +87,10 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
         Bundle bundleDashboard = null;
 
         // TODO: check getActivity().getSupportLoaderManager()
-        //getLoaderManager().initLoader(loaderId, bundleDashboard, callback);
+        getLoaderManager().initLoader(loaderId, bundleDashboard, callback);
 
         // for testing views
-        loadBorrowedTools();
+        //loadBorrowedTools();
         return rootView;
     }
 
@@ -113,6 +116,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
 
     /**
      * only for testing recycler view
+     * TODO: delete this when done!
      */
     private void loadBorrowedTools() {
         ArrayList<BorrowedItem> borrowedItems = new ArrayList<>();
@@ -148,7 +152,8 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
              */
             @Override
             public ArrayList<BorrowedItem> loadInBackground() {
-                return RestUtils.studentBorrowedItems(mGtid);
+                //return RestUtils.studentBorrowedItems(mGtid);
+                return RestUtils.testJson(test);
             }
 
             /**

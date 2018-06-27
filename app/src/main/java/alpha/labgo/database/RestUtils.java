@@ -4,8 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.JsonReader;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +32,11 @@ public class RestUtils {
     private static final String GTID = "student_id";
     private static final String CHECK_IN = "/checkin";
     private static final String CHECK_OUT = "/checkout";
+
+    // tags for borrowed items
+    private static final String ITEM_NAME = "item_name";
+    private static final String ITEM_IMAGE_URL = "item_image_url";
+    private static final String CHECK_OUT_TIME = "checkout_time";
     /**
      * This method returns the entire result from the HTTP response.
      *
@@ -34,23 +44,25 @@ public class RestUtils {
      * @return The contents of the HTTP response.
      * @throws IOException Related to network and stream reading
      */
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
+    public static JSONArray getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        String result = "";
+        JSONArray ja = null;
         try {
             InputStream in = urlConnection.getInputStream();
-
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-
-            boolean hasInput = scanner.hasNext();
-            if (hasInput) {
-                return scanner.next();
-            } else {
-                return null;
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while (line != null) {
+                line = buffer.readLine();
+                result += line;
             }
+            ja = new JSONArray(result);
+        } catch (JSONException e) {
+            e.printStackTrace();
         } finally {
             urlConnection.disconnect();
         }
+        return ja;
     }
 
     /**
@@ -175,6 +187,63 @@ public class RestUtils {
     public static ArrayList<BorrowedItem> studentBorrowedItems(String gtid) {
 
         String baseUrl = REST_BASE_URL + REST_TAG;
+        baseUrl += "/" + gtid;
+        URL url = null;
+
+        ArrayList<BorrowedItem> borrowedItems = new ArrayList<>();
+
+        try {
+            url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray jaResult = null;
+        try {
+            jaResult = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for (int i = 0; i < jaResult.length(); i++) {
+                JSONObject jo = (JSONObject) jaResult.get(i);
+                borrowedItems.add(new BorrowedItem(jo.getString(ITEM_IMAGE_URL),
+                        jo.getString(ITEM_NAME),
+                        jo.getString(CHECK_OUT_TIME))
+                );
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
         return new ArrayList<BorrowedItem>();
+    }
+
+    // test if json parser is working
+    // success!
+    // TODO: delete this when done!
+    public static ArrayList<BorrowedItem> testJson (String json) {
+        JSONArray ja = null;
+        ArrayList<BorrowedItem> borrowedItems = new ArrayList<>();
+        try {
+            ja = new JSONArray(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for (int i = 0; i < ja.length(); i++) {
+                JSONObject jo = (JSONObject) ja.get(i);
+                borrowedItems.add(new BorrowedItem(jo.getString(ITEM_IMAGE_URL),
+                        jo.getString(ITEM_NAME),
+                        jo.getString(CHECK_OUT_TIME))
+                );
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return borrowedItems;
     }
 }
