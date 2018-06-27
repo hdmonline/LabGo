@@ -12,9 +12,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import alpha.labgo.R;
+import alpha.labgo.models.BorrowedItem;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapter.BorrowedItemViewHolder> {
@@ -22,9 +24,7 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
     private static final String TAG = "BorrowedItemAdapter";
 
     private Context mContext;
-    private ArrayList<String> mToolImages = new ArrayList<>();
-    private ArrayList<String> mToolNames = new ArrayList<>();
-    private ArrayList<String> mCheckOutTimes = new ArrayList<>();
+    private ArrayList<BorrowedItem> mBorrowedItems = new ArrayList<>();
 
     public class BorrowedItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -48,11 +48,9 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
     }
 
     // constructor passing parameters
-    public BorrowedItemAdapter(Context mContext, ArrayList<String> mToolImages, ArrayList<String> mToolNames, ArrayList<String> mCheckOutTimes) {
+    public BorrowedItemAdapter(Context mContext, ArrayList<BorrowedItem> borrowedItems) {
         this.mContext = mContext;
-        this.mToolImages = mToolImages;
-        this.mToolNames = mToolNames;
-        this.mCheckOutTimes = mCheckOutTimes;
+        this.mBorrowedItems = borrowedItems;
     }
 
     @NonNull
@@ -66,33 +64,29 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
     public void onBindViewHolder(@NonNull BorrowedItemAdapter.BorrowedItemViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
+        BorrowedItem borrowedItem = mBorrowedItems.get(position);
+
         Glide.with(mContext)
                 .asBitmap()
-                .load(mToolImages.get(position))
+                .load(borrowedItem.itemImage)
                 .into(holder.mToolImage);
 
-        holder.mToolName.setText(mToolNames.get(position));
-        holder.mCheckOutTime.setText(mCheckOutTimes.get(position));
+        holder.mToolName.setText(borrowedItem.itemName);
+        holder.mCheckOutTime.setText(borrowedItem.checkOutTime);
     }
 
     @Override
     public int getItemCount() {
-        return mCheckOutTimes.size();
+        return mBorrowedItems.size();
     }
 
     /**
      * This method is used to set all the data of the list
      *
-     * @param toolImages The new URLS of tool images to be displayed.
-     * @param toolNames The new tool names to be displayed.
-     * @param checkOutTimes The new tool check out times to be displayed.
+     * @param borrowedItems List of borrowed items.
      */
-    public void setList(ArrayList<String> toolImages,
-                        ArrayList<String> toolNames,
-                        ArrayList<String> checkOutTimes) {
-        mToolImages = toolImages;
-        mToolNames = toolNames;
-        mCheckOutTimes = checkOutTimes;
+    public void setList(ArrayList<BorrowedItem> borrowedItems) {
+        mBorrowedItems = borrowedItems;
         notifyDataSetChanged();
     }
 }

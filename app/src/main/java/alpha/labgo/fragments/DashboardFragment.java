@@ -20,9 +20,11 @@ import java.util.ArrayList;
 
 import alpha.labgo.R;
 import alpha.labgo.adapters.BorrowedItemAdapter;
+import alpha.labgo.database.RestUtils;
+import alpha.labgo.models.BorrowedItem;
 
 // TODO
-public class DashboardFragment extends Fragment implements LoaderCallbacks<String[]> {
+public class DashboardFragment extends Fragment implements LoaderCallbacks<ArrayList<BorrowedItem>> {
 
     private static final String TAG = "DashboardFragment";
 
@@ -31,12 +33,29 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Strin
     private static final int DASHBOARD_LOADER_ID = 0;
 
 
+    private String mGtid;
+
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
 
     private BorrowedItemAdapter mBorrowedItemAdapter;
 
     private ProgressBar mLoadingIndicator;
+
+    /**
+     * This method is to pass GTID from main activity to this fragment.
+     *
+     * @param gtid Student GTID
+     * @return
+     */
+    public static DashboardFragment newInstance(String gtid) {
+        DashboardFragment dashboardFragment = new DashboardFragment();
+        Bundle args = new Bundle();
+        args.putString("gtid", gtid);
+        dashboardFragment.setArguments(args);
+        return dashboardFragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,11 +80,11 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Strin
         mLoadingIndicator = rootView.findViewById(R.id.pb_loading_indicator);
 
         int loaderId = DASHBOARD_LOADER_ID;
-        LoaderCallbacks<String[]> callback = DashboardFragment.this;
+        LoaderCallbacks<ArrayList<BorrowedItem>> callback = DashboardFragment.this;
         Bundle bundleDashboard = null;
 
         // TODO: check getActivity().getSupportLoaderManager()
-        getLoaderManager().initLoader(loaderId, bundleDashboard, callback);
+        //getLoaderManager().initLoader(loaderId, bundleDashboard, callback);
 
         // for testing views
         loadBorrowedTools();
@@ -96,22 +115,19 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Strin
      * only for testing recycler view
      */
     private void loadBorrowedTools() {
-        ArrayList<String> toolImages = new ArrayList<>();
-        ArrayList<String> toolNames = new ArrayList<>();
-        ArrayList<String> checkOutTimes = new ArrayList<>();
-        toolImages.add("https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg");
-        toolNames.add("powerdrill");
-        checkOutTimes.add("asdfasdfasdfasdf");
-        mBorrowedItemAdapter.setList(toolImages, toolNames, checkOutTimes);
+        ArrayList<BorrowedItem> borrowedItems = new ArrayList<>();
+        borrowedItems.add(new BorrowedItem("https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg",
+                "powerdrill", "asdfasdfasdfasdf"));
+        mBorrowedItemAdapter.setList(borrowedItems);
     }
 
     @NonNull
     @Override
-    public Loader<String[]> onCreateLoader(int id, @Nullable Bundle args) {
+    public Loader<ArrayList<BorrowedItem>> onCreateLoader(int id, @Nullable Bundle args) {
         // TODO: check the context here
-        return new AsyncTaskLoader<String[]>(getContext()) {
+        return new AsyncTaskLoader<ArrayList<BorrowedItem>>(getContext()) {
 
-            String[] mBorrowedItems = null;
+            ArrayList<BorrowedItem> mBorrowedItems = null;
 
             @Override
             protected void onStartLoading() {
@@ -131,15 +147,15 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Strin
              * @return Borrowed item data
              */
             @Override
-            public String[] loadInBackground() {
-                return new String[0];
+            public ArrayList<BorrowedItem> loadInBackground() {
+                return RestUtils.studentBorrowedItems(mGtid);
             }
 
             /**
              * Send the result of the load to the registered listener.
              * @param data The result of the load
              */
-            public void deliverResult(String[] data) {
+            public void deliverResult(ArrayList<BorrowedItem> data) {
                 mBorrowedItems = data;
                 super.deliverResult(data);
             }
@@ -147,7 +163,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Strin
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<String[]> loader, String[] data) {
+    public void onLoadFinished(@NonNull Loader<ArrayList<BorrowedItem>> loader, ArrayList<BorrowedItem> data) {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         mBorrowedItemAdapter.setList(data);
         if (data == null) {
@@ -158,7 +174,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Strin
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<String[]> loader) {
+    public void onLoaderReset(@NonNull Loader<ArrayList<BorrowedItem>> loader) {
 
     }
 

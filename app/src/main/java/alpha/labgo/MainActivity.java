@@ -216,7 +216,7 @@ public class MainActivity extends BaseActivity
     private void createFragmentAdapter() {
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    new DashboardFragment(),
+                    DashboardFragment.newInstance(mGtid),
                     new InventoryFragment(),
                     new NotificationFragment()
             };
@@ -243,7 +243,7 @@ public class MainActivity extends BaseActivity
 
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOffscreenPageLimit(2);
-        mViewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(0);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

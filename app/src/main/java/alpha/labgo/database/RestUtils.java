@@ -14,14 +14,19 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import alpha.labgo.MainActivity;
+import alpha.labgo.models.BorrowedItem;
 
 public class RestUtils {
     private static final String TAG = "RestUtils";
     private static final String REST_BASE_URL = "http://ec2-52-90-6-153.compute-1.amazonaws.com:1880/v1";
-
+    private static final String REST_TAG = "/studentinventories";
+    private static final String GTID = "student_id";
+    private static final String CHECK_IN = "/checkin";
+    private static final String CHECK_OUT = "/checkout";
     /**
      * This method returns the entire result from the HTTP response.
      *
@@ -92,11 +97,9 @@ public class RestUtils {
     }
 
     public static class StudentCheckInOrOut extends AsyncTask<String, Void, String> {
+
         private static final String TAG = "StudentCheckInOrOut";
-        private static final String REST_TAG = "/studentinventories";
-        private static final String GTID = "student_id";
-        private static final String CHECK_IN = "/checkin";
-        private static final String CHECK_OUT = "/checkout";
+
         private int direction = -1; // 0 is check in and 1 is check out
 
         private Context mContext;
@@ -111,13 +114,13 @@ public class RestUtils {
             String qrCode = strings[1];
             String studentCheckInOrOutResult = null;
 
-            String urlBase = REST_BASE_URL + REST_TAG;
+            String baseUrl = REST_BASE_URL + REST_TAG;
             //String checkTime;
             if (qrCode.equals("checkIn")) {
-                urlBase += CHECK_IN;
+                baseUrl += CHECK_IN;
                 direction = 0;
             } else if (qrCode.equals("checkOut")) {
-                urlBase += CHECK_OUT;
+                baseUrl += CHECK_OUT;
                 direction = 1;
             } else {
                 Log.w(TAG, "Wrong QR code!");
@@ -127,7 +130,7 @@ public class RestUtils {
             }
             //SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd' 'HH:mm:ss.SSS'Z'");
             //String timestamp = format.format(new Date());
-            Uri buildUri = Uri.parse(urlBase).buildUpon()
+            Uri buildUri = Uri.parse(baseUrl).buildUpon()
                     .appendQueryParameter(GTID, gtid)
                     .build();
 
@@ -169,20 +172,9 @@ public class RestUtils {
         }
     }
 
-    public static class StudentBorrowedTools extends AsyncTask<String, Void, String> {
-        private static final String REST_TAG = "/studentinventories/";
+    public static ArrayList<BorrowedItem> studentBorrowedItems(String gtid) {
 
-        private Context mContext;
-
-        // constructor
-        public StudentBorrowedTools(Context context) {
-            this.mContext = context;
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-
-            return null;
-        }
+        String baseUrl = REST_BASE_URL + REST_TAG;
+        return new ArrayList<BorrowedItem>();
     }
 }
