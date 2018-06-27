@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,6 +32,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private static final int GTID_REQUEST = 1;
 
     // views
+    private ImageView mAppIcon;
     private ImageButton mCameraButton;
     private Button mSignUpButton;
     private Button mSignInButton;
@@ -53,6 +55,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         mAuth = FirebaseAuth.getInstance();
 
         // Views
+        mAppIcon = findViewById(R.id.image_app_icon);
         mGtidField = findViewById(R.id.field_sign_in_gtid);
         mPasswordField = findViewById(R.id.field_sign_in_password);
         mCameraButton = findViewById(R.id.button_camera);

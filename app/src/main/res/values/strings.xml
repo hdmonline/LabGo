@@ -34,4 +34,8 @@
     <string name="segment_dashboard">DASHBOARD</string>
     <string name="segment_inventory">INVENTORY</string>
     <string name="segment_notification">NOTIFICATION</string>
+
+    <string name="error_message">
+        An error has occurred. Please try again by clicking REFRESH
+    </string>
 </resources>

@@ -16,7 +16,7 @@
         android:id="@+id/item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/item_image"
+        android:layout_toEndOf="@+id/item_image"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:layout_marginLeft="30dp"
@@ -26,9 +26,9 @@
         android:id="@+id/item_checkout_time_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/item_image"
+        android:layout_toEndOf="@+id/item_image"
         android:layout_below="@+id/item_name"
-        android:layout_alignLeft="@+id/item_name"
+        android:layout_alignStart="@+id/item_name"
         android:layout_marginTop="5dp"
         android:textSize="15sp"
         android:textColor="@color/dark_gray"
@@ -38,11 +38,21 @@
         android:id="@+id/item_checkout_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/item_checkout_time_title"
+        android:layout_toEndOf="@+id/item_checkout_time_title"
         android:layout_below="@+id/item_name"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="3dp"
+        android:layout_marginStart="3dp"
         android:textSize="15sp"
         android:textColor="@color/dark_gray"
         android:text="06-21 22:34"/>
+
+    <!--This View serves as a visual divider between list items-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#dadada"
+        android:layout_alignStart="@+id/item_checkout_time_title"
+        android:layout_below="@+id/item_image"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="8dp" />
 </RelativeLayout>
