@@ -47,9 +47,14 @@ public class MainActivity extends BaseActivity
     private String mGtid;
     private FirebaseUser mCurrUser;
 
-    // fragment
+    // ViewPager and PagerAdapter
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
+
+    // Fragments
+    private DashboardFragment dashboardFragment;
+    private InventoryFragment inventoryFragment;
+    private NotificationFragment notificationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +92,7 @@ public class MainActivity extends BaseActivity
         displayUserName(mCurrUser);
 
         // Create the adapter that will return a fragment for each section
-        createFragmentAdapter();
+        // createFragmentAdapter();
     }
 
     @Override
@@ -107,20 +112,36 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
+    /**
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // QR code activity handled here
         if (id == R.id.action_qr_code) {
             Intent intent = new Intent(MainActivity.this, QrCodeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putExtra("gtid", mGtid);
             startActivity(intent);
             return true;
+        }
+
+        // refresh button
+        if (id == R.id.action_refresh) {
+            int currentPage = mViewPager.getCurrentItem();
+            switch (currentPage) {
+                case 0:
+                    dashboardFragment.refreshData();
+                    break;
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -205,6 +226,8 @@ public class MainActivity extends BaseActivity
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     mGtid = documentSnapshot.get("gtid").toString();
+                                    // Create the adapter that will return a fragment for each section
+                                    createFragmentAdapter();
                                 }
                             });
                 }
@@ -214,11 +237,14 @@ public class MainActivity extends BaseActivity
 
     // Create the adapter that will return a fragment for each section
     private void createFragmentAdapter() {
+        dashboardFragment = DashboardFragment.newInstance(mGtid);
+        inventoryFragment = new InventoryFragment();
+        notificationFragment = new NotificationFragment();
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    DashboardFragment.newInstance(mGtid),
-                    new InventoryFragment(),
-                    new NotificationFragment()
+                    dashboardFragment,
+                    inventoryFragment,
+                    notificationFragment
             };
             private final String[] mFragmentNames = new String[] {
                     getString(R.string.segment_dashboard),
@@ -263,6 +289,10 @@ public class MainActivity extends BaseActivity
 
                 mBottomNavigationView.getMenu().getItem(position).setChecked(true);
                 mPrevMenuItem = mBottomNavigationView.getMenu().getItem(position);
+                switch (position) {
+                    case 0:
+
+                }
             }
 
             @Override

@@ -4,45 +4,57 @@
     android:id="@+id/layout_borrowed_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp">
+    android:paddingTop="15dp"
+    android:paddingHorizontal="15dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/item_image"
+        android:id="@+id/image_item"
+        android:layout_alignParentStart="true"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:src="@mipmap/ic_launcher"/>
 
     <TextView
-        android:id="@+id/item_name"
+        android:id="@+id/text_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/item_image"
+        android:layout_toEndOf="@+id/image_item"
+        android:layout_alignParentTop="true"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:layout_marginLeft="30dp"
         android:text="test" />
 
     <TextView
-        android:id="@+id/item_checkout_time_title"
+        android:id="@+id/text_item_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/item_image"
-        android:layout_below="@+id/item_name"
-        android:layout_alignStart="@+id/item_name"
-        android:layout_marginTop="5dp"
+        android:layout_below="@+id/text_item_name"
+        android:layout_marginTop="3dp"
+        android:layout_alignStart="@+id/text_item_name"
         android:textSize="15sp"
-        android:textColor="@color/dark_gray"
-        android:text="Check Out Time:"/>
+        android:text="description"/>
+
+    <!--<TextView-->
+        <!--android:id="@+id/text_checkout_time_title"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_toEndOf="@+id/image_item"-->
+        <!--android:layout_below="@+id/text_item_description"-->
+        <!--android:layout_alignStart="@+id/text_item_name"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:textSize="12sp"-->
+        <!--android:textColor="@color/dark_gray"-->
+        <!--android:text="Check Out Time:"/>-->
 
     <TextView
-        android:id="@+id/item_checkout_time"
+        android:id="@+id/text_checkout_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/item_checkout_time_title"
-        android:layout_below="@+id/item_name"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="3dp"
-        android:textSize="15sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"
+        android:textSize="12sp"
         android:textColor="@color/dark_gray"
         android:text="06-21 22:34"/>
 
@@ -51,8 +63,9 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="#dadada"
-        android:layout_alignStart="@+id/item_checkout_time_title"
-        android:layout_below="@+id/item_image"
+        android:layout_alignStart="@+id/text_item_description"
+        android:layout_below="@+id/image_item"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="8dp" />
 </RelativeLayout>
+

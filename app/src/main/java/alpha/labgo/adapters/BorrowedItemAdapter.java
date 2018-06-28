@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -30,13 +31,15 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
         private CircleImageView mToolImage;
         private TextView mToolName;
         private TextView mCheckOutTime;
+        private TextView mDescription;
         private RelativeLayout mParentLayout;
 
         public BorrowedItemViewHolder(View itemView) {
             super(itemView);
-            mToolImage = itemView.findViewById(R.id.item_image);
-            mToolName = itemView.findViewById(R.id.item_name);
-            mCheckOutTime = itemView.findViewById(R.id.item_checkout_time);
+            mToolImage = itemView.findViewById(R.id.image_item);
+            mToolName = itemView.findViewById(R.id.text_item_name);
+            mCheckOutTime = itemView.findViewById(R.id.text_checkout_time);
+            mDescription = itemView.findViewById(R.id.text_item_description);
             mParentLayout = itemView.findViewById(R.id.layout_borrowed_parent);
         }
     }
@@ -71,6 +74,7 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
                 .into(holder.mToolImage);
 
         holder.mToolName.setText(borrowedItem.itemName);
+        holder.mDescription.setText(borrowedItem.itemDescription);
         holder.mCheckOutTime.setText(borrowedItem.checkOutTime);
     }
 

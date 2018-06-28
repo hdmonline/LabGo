@@ -4,6 +4,7 @@ public class BorrowedItem {
 
     public String itemImage;
     public String itemName;
+    public String itemDescription;
     public String checkOutTime;
 
     /**
@@ -15,13 +16,16 @@ public class BorrowedItem {
 
     /**
      * Constructor
-     * @param image Image URL
-     * @param name  Tool name
-     * @param time  Tool check out time
+     *
+     * @param image
+     * @param name
+     * @param description
+     * @param time
      */
-    public BorrowedItem(String image, String name, String time) {
+    public BorrowedItem(String image, String name, String description, String time) {
         this.itemImage = image;
         this.itemName = name;
+        this.itemDescription = description;
         this.checkOutTime = time;
     }
 }

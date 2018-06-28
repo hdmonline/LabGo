@@ -28,9 +28,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
 
     private static final String TAG = "DashboardFragment";
 
-    private static final int REST_DASHBOARD_LOADER = 22;
-
-    private static final int DASHBOARD_LOADER_ID = 0;
+    private static final int DASHBOARD_LOADER_ID = 22;
 
 
     private String mGtid;
@@ -66,6 +64,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
         mRecyclerView = rootView.findViewById(R.id.recyclerview_dashboard);
         mErrorMessageDisplay = rootView.findViewById(R.id.tv_error_message_display);
+        mGtid = getArguments().getString("gtid");
 
         // Set the layoutManager on mRecyclerView
         LinearLayoutManager layoutManager
@@ -121,7 +120,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
     private void loadBorrowedTools() {
         ArrayList<BorrowedItem> borrowedItems = new ArrayList<>();
         borrowedItems.add(new BorrowedItem("https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg",
-                "powerdrill", "asdfasdfasdfasdf"));
+                "powerdrill", "description", "asdfasdfasdfasdf"));
         mBorrowedItemAdapter.setList(borrowedItems);
     }
 
@@ -152,8 +151,10 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
              */
             @Override
             public ArrayList<BorrowedItem> loadInBackground() {
-                //return RestUtils.studentBorrowedItems(mGtid);
-                return RestUtils.testJson(test);
+                // COMPLETE: this should be mGtid not "903235213". it's for testing right now.
+                ArrayList<BorrowedItem> data = RestUtils.studentBorrowedItems(mGtid);
+                return data;
+                //return RestUtils.testJson(test);
             }
 
             /**
@@ -207,5 +208,21 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
     private void showBorrowedItemView() {
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * This method is used when we are resetting data, so that at one point in time during a
+     * refresh of our data, you can see that there is no data showing.
+     */
+    public void invalidateData() {
+        mBorrowedItemAdapter.setList(new ArrayList<BorrowedItem>());
+    }
+
+    /**
+     * refresh data
+     */
+    public void refreshData() {
+        invalidateData();
+        getLoaderManager().restartLoader(DASHBOARD_LOADER_ID, null, DashboardFragment.this);
     }
 }
