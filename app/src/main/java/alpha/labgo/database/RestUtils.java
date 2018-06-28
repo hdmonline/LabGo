@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import alpha.labgo.MainActivity;
 import alpha.labgo.models.BorrowedItem;
@@ -270,6 +271,7 @@ public class RestUtils {
         SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         SimpleDateFormat dayFormat = new SimpleDateFormat("MM-dd");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        dbFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         String today = dayFormat.format(new Date());
         String day = "";
         String time = "";
