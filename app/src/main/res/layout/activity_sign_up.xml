@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignUpActivity">
+    tools:context=".SignUpActivity"
+    android:background="@color/brightGray">
 
     <RelativeLayout
         android:id="@+id/layout_sign_up"
@@ -30,8 +31,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:editable="false"
-                    android:inputType="number"/>
+                    android:inputType="none"
+                    android:editable="false"/>
 
             </android.support.design.widget.TextInputLayout>
 
