@@ -38,4 +38,6 @@
     <string name="error_message">
         An error has occurred. Please try again by clicking REFRESH
     </string>
+
+    <string name="no_items">No checked out items</string>
 </resources>

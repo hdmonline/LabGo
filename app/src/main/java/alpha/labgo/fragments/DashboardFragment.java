@@ -35,6 +35,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
 
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
+    private TextView mNoItemText;
 
     private BorrowedItemAdapter mBorrowedItemAdapter;
 
@@ -63,7 +64,8 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
         mRecyclerView = rootView.findViewById(R.id.recyclerview_dashboard);
-        mErrorMessageDisplay = rootView.findViewById(R.id.tv_error_message_display);
+        mErrorMessageDisplay = rootView.findViewById(R.id.text_error_message_display);
+        mNoItemText = rootView.findViewById(R.id.text_no_item);
         mGtid = getArguments().getString("gtid");
 
         // Set the layoutManager on mRecyclerView
@@ -174,10 +176,14 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
         mBorrowedItemAdapter.setList(data);
         if (data == null) {
             showErrorMessage();
+        } else if (data.size() == 0) {
+            showNoItemText();
         } else {
             showBorrowedItemView();
         }
     }
+
+
 
     @Override
     public void onLoaderReset(@NonNull Loader<ArrayList<BorrowedItem>> loader) {
@@ -196,6 +202,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
         mRecyclerView.setVisibility(View.INVISIBLE);
         /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
+        /* hide no item text */
     }
 
     /**
@@ -206,6 +213,16 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
      * need to check whether each view is currently visible or invisible.
      */
     private void showBorrowedItemView() {
+        mNoItemText.setVisibility(View.INVISIBLE);
+        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * This method will show a text on the view when there is no items checked out.
+     */
+    private void showNoItemText() {
+        mNoItemText.setVisibility(View.VISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }

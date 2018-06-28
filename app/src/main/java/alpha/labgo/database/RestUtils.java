@@ -298,5 +298,4 @@ public class RestUtils {
         cal.add(Calendar.DATE, -1);
         return cal.getTime();
     }
-
 }
