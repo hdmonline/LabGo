@@ -27,22 +27,16 @@ import alpha.labgo.models.BorrowedItem;
 public class DashboardFragment extends Fragment implements LoaderCallbacks<ArrayList<BorrowedItem>> {
 
     private static final String TAG = "DashboardFragment";
-
     private static final int DASHBOARD_LOADER_ID = 22;
-
 
     private String mGtid;
 
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
     private TextView mNoItemText;
-
-    private BorrowedItemAdapter mBorrowedItemAdapter;
-
     private ProgressBar mLoadingIndicator;
 
-    // TODO: delete this when done!
-    private static final String test="[ { \"item_name\": \"powerdrill\", \"item_image_url\": \"https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg\", \"checkout_time\": \"asdfasdf\" }, { \"item_name\": \"powerdrill2\", \"item_image_url\": \"https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg\", \"checkout_time\": \"asdfasdf2\" }, { \"item_name\": \"powerdrill3\", \"item_image_url\": \"https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg\", \"checkout_time\": \"asdfasdf3\" }]";
+    private BorrowedItemAdapter mBorrowedItemAdapter;
 
     /**
      * This method is to pass GTID from main activity to this fragment.
@@ -62,10 +56,14 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        // Views
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
         mRecyclerView = rootView.findViewById(R.id.recyclerview_dashboard);
-        mErrorMessageDisplay = rootView.findViewById(R.id.text_error_message_display);
-        mNoItemText = rootView.findViewById(R.id.text_no_item);
+        mErrorMessageDisplay = rootView.findViewById(R.id.text_dashboard_error_message_display);
+        mNoItemText = rootView.findViewById(R.id.text_dashboard_no_item);
+        mLoadingIndicator = rootView.findViewById(R.id.pb_dashboard_loading_indicator);
+
         mGtid = getArguments().getString("gtid");
 
         // Set the layoutManager on mRecyclerView
@@ -80,8 +78,6 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
 
         // set adapter
         mRecyclerView.setAdapter(mBorrowedItemAdapter);
-
-        mLoadingIndicator = rootView.findViewById(R.id.pb_loading_indicator);
 
         int loaderId = DASHBOARD_LOADER_ID;
         LoaderCallbacks<ArrayList<BorrowedItem>> callback = DashboardFragment.this;
@@ -115,18 +111,6 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
         super.onStop();
     }
 
-    /**
-     * only for testing recycler view
-     * TODO: delete this when done!
-     */
-    private void loadBorrowedTools() {
-        ArrayList<BorrowedItem> borrowedItems = new ArrayList<>();
-        borrowedItems.add(new BorrowedItem("https://images.homedepot-static.com/productImages/1f89a066-4101-4ade-b0c9-40f55ea30692/svn/ryobi-power-drills-p1810-64_1000.jpg",
-                "powerdrill", "description", "asdfasdfasdfasdf"));
-        mBorrowedItemAdapter.setList(borrowedItems);
-    }
-
-    @NonNull
     @Override
     public Loader<ArrayList<BorrowedItem>> onCreateLoader(int id, @Nullable Bundle args) {
         // TODO: check the context here
@@ -153,10 +137,8 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
              */
             @Override
             public ArrayList<BorrowedItem> loadInBackground() {
-                // COMPLETE: this should be mGtid not "903235213". it's for testing right now.
                 ArrayList<BorrowedItem> data = RestUtils.studentBorrowedItems(mGtid);
                 return data;
-                //return RestUtils.testJson(test);
             }
 
             /**

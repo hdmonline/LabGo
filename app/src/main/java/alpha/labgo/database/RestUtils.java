@@ -27,28 +27,36 @@ import java.util.TimeZone;
 
 import alpha.labgo.MainActivity;
 import alpha.labgo.models.BorrowedItem;
+import alpha.labgo.models.InventoryItem;
 
 
 /**
  * This class contains methods for communication between the app and the database through REST API.
  *
- * @auther  Dongmin Han
- * @since   2018-6-27
+ * @auther  Dongmin Han <dongminhanme@gmail.com>
+ * @version 0.1
+ * @since   0.1
  */
 public class RestUtils {
     private static final String TAG = "RestUtils";
     private static final String REST_BASE_URL = "http://ec2-52-90-6-153.compute-1.amazonaws.com:1880/v1";
-    private static final String REST_TAG = "/studentinventories";
     private static final String GTID = "student_id";
     private static final String CHECK_IN = "/checkin";
     private static final String CHECK_OUT = "/checkout";
 
-    // tags for borrowed items
+    // tags for items
     private static final String ITEM_NAME = "item_name";
     private static final String ITEM_IMAGE_URL = "item_image_url";
     private static final String ITEM_DESCRIPTION = "item_description";
+
+    // tags for borrowed items
+    private static final String STUDENT_INVENTORY = "/studentinventories";
     private static final String CHECK_OUT_TIME = "checkout_timestamp";
     private static final String CHECK_IN_TIME = "checkin_timestamp";
+
+    // tags for inventory items
+    private static final String INVENTORY = "/inventories";
+
     /**
      * This method returns the entire result from the HTTP response.
      *
@@ -57,6 +65,9 @@ public class RestUtils {
      * @throws IOException Related to network and stream reading
      */
     public static JSONArray getResponseFromHttpUrl(URL url) throws IOException {
+
+        Log.d(TAG, "sending GET http request");
+
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         String result = "";
         JSONArray ja = null;
@@ -85,7 +96,9 @@ public class RestUtils {
      * @throws IOException Related to network and stream reading
      */
     public static String postResponseFromHttpUrl(URL url, String gtid) throws IOException {
-        // TODO: figure out post request!
+
+        Log.d(TAG, "sending POST http request");
+
         StringBuffer response = new StringBuffer();
         HttpURLConnection urlConnection = null;
         String responseJSON = null;
@@ -159,7 +172,7 @@ public class RestUtils {
             String qrCode = strings[1];
             String studentCheckInOrOutResult = null;
 
-            String baseUrl = REST_BASE_URL + REST_TAG;
+            String baseUrl = REST_BASE_URL + STUDENT_INVENTORY;
             //String checkTime;
             if (qrCode.equals("checkIn")) {
                 baseUrl += CHECK_IN;
@@ -222,7 +235,7 @@ public class RestUtils {
      */
     public static ArrayList<BorrowedItem> studentBorrowedItems(String gtid) {
 
-        String baseUrl = REST_BASE_URL + REST_TAG;
+        String baseUrl = REST_BASE_URL + STUDENT_INVENTORY;
         baseUrl += "/" + gtid;
         URL url = null;
 
@@ -257,8 +270,54 @@ public class RestUtils {
             e.printStackTrace();
         }
 
-
         return borrowedItems;
+    }
+
+    public static ArrayList<InventoryItem> inventoryItems() {
+
+        String baseUrl = REST_BASE_URL + INVENTORY;
+
+        ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
+        ArrayList<Integer> itemQuantities = new ArrayList<>();
+        ArrayList<String> itemNames = new ArrayList<>();
+
+        URL url = null;
+
+        try {
+            url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray jaResult = null;
+        try {
+            jaResult = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for (int i = 0; i < jaResult.length(); i++) {
+                JSONObject jo = (JSONObject) jaResult.get(i);
+                int index = itemNames.indexOf(jo.getString(ITEM_NAME));
+                if (index > -1) {
+                    InventoryItem currItem = inventoryItems.get(index);
+                    currItem.itemQuantity++;
+                    inventoryItems.set(index, currItem);
+                } else {
+                    InventoryItem newItem = new InventoryItem(
+                            jo.getString(ITEM_IMAGE_URL),
+                            jo.getString(ITEM_NAME),
+                            jo.getString(ITEM_DESCRIPTION),
+                            1);
+                    inventoryItems.add(newItem);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return inventoryItems;
     }
 
     /**
@@ -291,7 +350,7 @@ public class RestUtils {
     }
 
     /**
-     * The method returns the {@Date} of yesterday. It will be used in timeHandler()
+     * The method returns the {@Date} of yesterday. See {@link #timeHandler(String)} for detail.
      *
      * @return
      */

@@ -141,6 +141,9 @@ public class MainActivity extends BaseActivity
                 case 0:
                     dashboardFragment.refreshData();
                     break;
+                case 1:
+                    inventoryFragment.refreshData();
+                    break;
             }
         }
 
@@ -239,7 +242,7 @@ public class MainActivity extends BaseActivity
     // Create the adapter that will return a fragment for each section
     private void createFragmentAdapter() {
         dashboardFragment = DashboardFragment.newInstance(mGtid);
-        inventoryFragment = new InventoryFragment();
+        inventoryFragment = InventoryFragment.newInstance(mGtid);
         notificationFragment = new NotificationFragment();
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {

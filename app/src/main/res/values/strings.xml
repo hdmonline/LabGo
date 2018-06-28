@@ -39,5 +39,6 @@
         An error has occurred. Please try again by clicking REFRESH
     </string>
 
-    <string name="no_items">No checked out items</string>
+    <string name="no_checked_out_items">No checked out items</string>
+    <string name="no_inventory_items">The inventory is EMPTY!</string>
 </resources>

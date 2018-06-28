@@ -45,13 +45,13 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
     }
 
     // default constructor
-    public BorrowedItemAdapter(Context mContext) {
-        this.mContext = mContext;
+    public BorrowedItemAdapter(Context context) {
+        this.mContext = context;
     }
 
     // constructor passing parameters
-    public BorrowedItemAdapter(Context mContext, ArrayList<BorrowedItem> borrowedItems) {
-        this.mContext = mContext;
+    public BorrowedItemAdapter(Context context, ArrayList<BorrowedItem> borrowedItems) {
+        this.mContext = context;
         this.mBorrowedItems = borrowedItems;
     }
 

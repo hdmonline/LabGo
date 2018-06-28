@@ -105,6 +105,7 @@ public class QrCodeActivity extends BaseActivity {
                         new RestUtils.StudentCheckInOrOut(mContext).execute(paramStrings);
                         // stop detector and camera then move to dashboard.
                         mBarcodeDetector.release();
+                        finish();
                     }
                 }
             }
