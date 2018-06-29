@@ -10,9 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -32,16 +35,19 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private static final int GTID_REQUEST = 1;
 
     // views
+    private RelativeLayout mSignInLayout;
     private ImageView mAppIcon;
     private ImageButton mCameraButton;
     private Button mSignUpButton;
     private Button mSignInButton;
     private TextInputEditText mGtidField;
     private TextInputEditText mPasswordField;
+    private ProgressBar mLoadingIndicator;
 
     //private DatabaseReference mDatabase;
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
+    private FirebaseUser mCurrUser;
 
     private String mGtid;
 
@@ -55,17 +61,23 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         mAuth = FirebaseAuth.getInstance();
 
         // Views
+        mSignInLayout = findViewById(R.id.layout_sign_in);
         mAppIcon = findViewById(R.id.image_app_icon);
         mGtidField = findViewById(R.id.field_sign_in_gtid);
         mPasswordField = findViewById(R.id.field_sign_in_password);
         mCameraButton = findViewById(R.id.button_camera);
         mSignUpButton = findViewById(R.id.button_sign_up);
         mSignInButton = findViewById(R.id.button_sign_in);
+        mLoadingIndicator = findViewById(R.id.pb_sign_in_loading_indicator);
 
         // Click listeners
         mCameraButton.setOnClickListener(this);
         mSignUpButton.setOnClickListener(this);
         mSignInButton.setOnClickListener(this);
+
+        // check if the user is still valid
+        mCurrUser = mAuth.getCurrentUser();
+
     }
 
     @Override
@@ -73,9 +85,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         super.onStart();
 
         // Check auth on Activity start
-        FirebaseUser currUser = mAuth.getCurrentUser();
-        if (currUser != null) {
-            onAuthSuccess();
+        if (mCurrUser != null) {
+            checkUser(mCurrUser);
         }
     }
 
@@ -176,6 +187,38 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         }
                     }
                 });
+    }
+
+    private void checkUser(FirebaseUser currUser) {
+
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+        mSignInLayout.setVisibility(View.INVISIBLE);
+
+        if (currUser != null) {
+            // check if the user is still valid.
+            currUser.reload().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mSignInLayout.setVisibility(View.VISIBLE);
+                    mAuth.signOut();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    String uid = mCurrUser.getUid();
+                    mFirestore.collection("users").document(uid).get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                                    mGtid = documentSnapshot.get("gtid").toString();
+                                    onAuthSuccess();
+                                }
+                            });
+                }
+            });
+        }
     }
 
     @Override

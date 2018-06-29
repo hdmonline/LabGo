@@ -52,8 +52,6 @@
                 android:layout_gravity="end|center_vertical"/>
         </FrameLayout>
 
-
-
         <android.support.design.widget.TextInputLayout
             android:id="@+id/layout_sign_in_password"
             android:layout_width="match_parent"
@@ -101,5 +99,12 @@
         </LinearLayout>
 
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_sign_in_loading_indicator"
+        android:layout_height="42dp"
+        android:layout_width="42dp"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
 
 </RelativeLayout>

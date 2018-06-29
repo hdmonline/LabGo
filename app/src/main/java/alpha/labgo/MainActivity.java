@@ -45,7 +45,6 @@ public class MainActivity extends BaseActivity
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
     private String mGtid;
-    private FirebaseUser mCurrUser;
 
     // ViewPager and PagerAdapter
     private FragmentPagerAdapter mPagerAdapter;
@@ -84,15 +83,11 @@ public class MainActivity extends BaseActivity
             getRuntimePermissions();
         }
 
-        // check if the user is still valid
-        mCurrUser = mAuth.getCurrentUser();
-        checkUser(mCurrUser);
-
         // Display user name in drawer header
-        displayUserName(mCurrUser);
+        displayUserName(mGtid);
 
         // Create the adapter that will return a fragment for each section
-        // createFragmentAdapter();
+        createFragmentAdapter();
     }
 
     @Override
@@ -185,11 +180,10 @@ public class MainActivity extends BaseActivity
 
     /**
      * display user name in drawer header
-     * @param currUser
+     * @param gtid  User's GTID
      */
-    private void displayUserName(FirebaseUser currUser) {
-        String uid = currUser.getUid();
-        mFirestore.collection("users").document(uid).get()
+    private void displayUserName(String gtid) {
+        mFirestore.collection("gtid").document(gtid).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -211,32 +205,6 @@ public class MainActivity extends BaseActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    private void checkUser(FirebaseUser currUser) {
-        if (currUser != null) {
-            // check if the user is still valid.
-            currUser.reload().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    signOut();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    String uid = mCurrUser.getUid();
-                    mFirestore.collection("users").document(uid).get()
-                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                @Override
-                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                    mGtid = documentSnapshot.get("gtid").toString();
-                                    // Create the adapter that will return a fragment for each section
-                                    createFragmentAdapter();
-                                }
-                            });
-                }
-            });
-        }
     }
 
     // Create the adapter that will return a fragment for each section
