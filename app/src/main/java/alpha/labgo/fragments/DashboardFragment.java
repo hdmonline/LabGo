@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,14 +24,16 @@ import alpha.labgo.adapters.BorrowedItemAdapter;
 import alpha.labgo.database.RestUtils;
 import alpha.labgo.models.BorrowedItem;
 
-// TODO
-public class DashboardFragment extends Fragment implements LoaderCallbacks<ArrayList<BorrowedItem>> {
+public class DashboardFragment extends Fragment implements
+        SwipeRefreshLayout.OnRefreshListener,
+        LoaderCallbacks<ArrayList<BorrowedItem>> {
 
     private static final String TAG = "DashboardFragment";
     private static final int DASHBOARD_LOADER_ID = 22;
 
     private String mGtid;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
     private TextView mNoItemText;
@@ -63,6 +66,26 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
         mErrorMessageDisplay = rootView.findViewById(R.id.text_dashboard_error_message_display);
         mNoItemText = rootView.findViewById(R.id.text_dashboard_no_item);
         mLoadingIndicator = rootView.findViewById(R.id.pb_dashboard_loading_indicator);
+
+        // SwipeRefreshLayout
+        mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        // TODO: may need to change color of it
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+
+//        /**
+//         * Showing Swipe Refresh animation on activity create
+//         * As animation won't start on onCreate, post runnable is used
+//         */
+//        mSwipeRefreshLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mSwipeRefreshLayout.setRefreshing(true);
+//            }
+//        });
 
         mGtid = getArguments().getString("gtid");
 
@@ -195,6 +218,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
      * need to check whether each view is currently visible or invisible.
      */
     private void showBorrowedItemView() {
+        mSwipeRefreshLayout.setRefreshing(false);
         mNoItemText.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -204,6 +228,7 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
      * This method will show a text on the view when there is no items checked out.
      */
     private void showNoItemText() {
+        mSwipeRefreshLayout.setRefreshing(false);
         mNoItemText.setVisibility(View.VISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -223,5 +248,10 @@ public class DashboardFragment extends Fragment implements LoaderCallbacks<Array
     public void refreshData() {
         invalidateData();
         getLoaderManager().restartLoader(DASHBOARD_LOADER_ID, null, DashboardFragment.this);
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshData();
     }
 }
