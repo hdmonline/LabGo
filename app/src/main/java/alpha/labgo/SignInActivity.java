@@ -50,6 +50,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private FirebaseUser mCurrUser;
 
     private String mGtid;
+    private boolean mIsTa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
         // check if the user is still valid
         mCurrUser = mAuth.getCurrentUser();
-
     }
 
     @Override
@@ -111,11 +111,17 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void onAuthSuccess() {
+    private void onAuthSuccess(boolean isTa) {
         // Go to DashboardActivity
-        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-        intent.putExtra("gtid", mGtid);
-        startActivity(intent);
+        if (isTa) {
+            Intent intent = new Intent(SignInActivity.this, MainTaActivity.class);
+            intent.putExtra("gtid", mGtid);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+            intent.putExtra("gtid", mGtid);
+            startActivity(intent);
+        }
         finish();
     }
 
@@ -157,7 +163,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()){
-                            String email = documentSnapshot.get("email").toString();
+                            String email = documentSnapshot.getString("email");
+                            mIsTa = documentSnapshot.getBoolean("ta");
                             mGtid = gtidInput;
                             signInWithEmail(email, password);
                         } else {
@@ -178,7 +185,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         hideProgressDialog();
 
                         if (task.isSuccessful()) {
-                            onAuthSuccess();
+                            onAuthSuccess(mIsTa);
                         } else {
                             Toast.makeText(SignInActivity.this, "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
@@ -212,8 +219,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     mLoadingIndicator.setVisibility(View.INVISIBLE);
-                                    mGtid = documentSnapshot.get("gtid").toString();
-                                    onAuthSuccess();
+                                    mGtid = documentSnapshot.getString("gtid");
+                                    mIsTa = documentSnapshot.getBoolean("ta");
+                                    onAuthSuccess(mIsTa);
                                 }
                             });
                 }

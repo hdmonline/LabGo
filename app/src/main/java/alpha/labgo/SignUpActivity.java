@@ -175,10 +175,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void writeNewUser(String uid, String gtid, String name, String email) {
-        boolean identity = false;
+        boolean isTa = false;
 
-        UserByUid userByUid = new UserByUid(gtid, name, email, identity);
-        UserByGtid UserByGtid = new UserByGtid(uid, name, email, identity);
+        UserByUid userByUid = new UserByUid(gtid, name, email, isTa);
+        UserByGtid UserByGtid = new UserByGtid(uid, name, email, isTa);
 
         // write user information into "users"
         mFirestore.collection("users").document(uid).set(userByUid.user);
@@ -187,11 +187,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         mFirestore.collection("gtid").document(gtid).set(UserByGtid.user);
 
         /* write to real-time database */
-        //User user = new User(gtid, name, email, identity);
+        //User user = new User(gtid, name, email, isTa);
         //mDatabase.child("users").child(uid).setValue(user);
         //mDatabase.child("gtid").child(gtid).child("uid").setValue(uid);
         //mDatabase.child("gtid").child(gtid).child("email").setValue(email);
         //mDatabase.child("gtid").child(gtid).child("name").setValue(name);
-        //mDatabase.child("gtid").child(gtid).child("identify").setValue(identity);
+        //mDatabase.child("gtid").child(gtid).child("ta").setValue(isTa);
     }
 }

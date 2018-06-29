@@ -11,10 +11,10 @@ public class UserByGtid {
 
     }
 
-    public UserByGtid(String uid, String name, String email, boolean identity) {
+    public UserByGtid(String uid, String name, String email, boolean isTa) {
         user.put("name", name);
         user.put("email", email);
         user.put("uid", uid);
-        user.put("identity", identity);
+        user.put("ta", isTa);
     }
 }

@@ -7,10 +7,10 @@ public class UserByUid {
 
     public Map<String, Object> user = new HashMap<>();
 
-    public UserByUid(String gtid, String name, String email, boolean identity) {
+    public UserByUid(String gtid, String name, String email, boolean isTa) {
         user.put("name", name);
         user.put("email", email);
         user.put("gtid", gtid);
-        user.put("identity", identity);
+        user.put("ta", isTa);
     }
 }
