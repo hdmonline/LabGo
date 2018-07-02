@@ -14,8 +14,8 @@
   },
   "S3TransferUtility": {
     "Default": {
-      "Bucket": "labgo-userfiles-mobilehub-1217538729",
-      "Region": "us-east-2"
+      "Bucket": "photo-collection-1",
+      "Region": "us-east-1"
     }
   },
   "PinpointAnalytics": {

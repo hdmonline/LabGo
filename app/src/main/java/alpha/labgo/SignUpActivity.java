@@ -187,14 +187,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private void onAuthSuccess() {
 
         // Write new user
-        //writeNewUser(mUid, mGtid, mName, mEmail);
+        writeNewUser(mUid, mGtid, mName, mEmail);
 
         hideProgressDialog();
         initProgressDialog();
 
         // Upload image to S3
-        //String fileName = "/" + mGtid + ".jpg";
-        String fileName = "/Ethan.jpg";
+        String fileName = mGtid + ".jpg";
         credentials = new BasicAWSCredentials(KEY, SECRET);
         s3Client = new AmazonS3Client(credentials);
 
@@ -205,10 +204,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                         .s3Client(s3Client)
                         .build();
 
-        String path = Environment.getExternalStorageDirectory() + "/DCIM/Camera/download"
-                + "test.jpg";
         TransferObserver uploadObserver =
-                transferUtility.download(fileName, new File(path));
+                transferUtility.upload(fileName, new File(mPath));
 
         // Attach a listener to the observer to get state update and progress notifications
         uploadObserver.setTransferListener(new TransferListener() {
