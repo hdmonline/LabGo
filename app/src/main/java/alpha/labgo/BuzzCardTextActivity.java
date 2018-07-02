@@ -54,6 +54,8 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
     private int mPictureOrientation = Surface.ROTATION_90;
     private boolean mCameraRequested;
 
+    private Bitmap bitmap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,13 +227,11 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
                 CameraUtils.startPreview();
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                 if (bitmap != null) {
                     bitmap = ImageUtils.getRotatedBitmap(bitmap, mPictureOrientation);
                     // detect Text from image
                     detectText(bitmap);
-                    // save the image to storage.
-                    //savePicture(bitmap);
                 }
                 CameraUtils.startPreview();
             }
@@ -281,6 +281,9 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
                     default:
                         intent = new Intent(BuzzCardTextActivity.this, SignUpActivity.class);
                         intent.putExtra("gtid", gtid);
+                        // Save the image to storage.
+                        String path = savePicture(bitmap);
+                        intent.putExtra("path", path);
                         startActivity(intent);
                         finish();
                         break;
@@ -289,10 +292,9 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         }
     }
 
-    private void savePicture(Bitmap bitmap) {
+    private String savePicture(Bitmap bitmap) {
         String path = Environment.getExternalStorageDirectory() + "/DCIM/Camera/"
                 + System.currentTimeMillis() + ".jpg";
-        mImageCaptured.setImageBitmap(bitmap);
         try {
             FileOutputStream fout = new FileOutputStream(path);
             BufferedOutputStream bos = new BufferedOutputStream(fout);
@@ -303,5 +305,6 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return path;
     }
 }

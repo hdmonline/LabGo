@@ -1,7 +1,10 @@
 package alpha.labgo;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.text.TextUtils;
@@ -10,17 +13,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import alpha.labgo.models.User;
+import java.io.File;
+
 import alpha.labgo.models.UserByGtid;
 import alpha.labgo.models.UserByUid;
 
@@ -28,22 +36,33 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     private static final String TAG = "SignUpActivity";
 
+    // AWS S3 credential
+    private static final String KEY = "AKIAIVMUFQ7N7SN6UX2Q";
+    private static final String SECRET = "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";
+
     private TextInputEditText mGtidField;
     private TextInputEditText mNameField;
     private TextInputEditText mEmailField;
     private TextInputEditText mPasswordField;
     private Button mSubmitButton;
+    private ProgressDialog mProgressDialog;
 
     //private DatabaseReference mDatabase;
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
 
     // global variables
+    private String mUid;
     private String mGtid;
     private String mName;
     private String mEmail;
     private String mPassword;
+    private String mPath;
+    private Context mContext;
 
+    private BasicAWSCredentials credentials;
+    private AmazonS3Client s3Client;
+    private TransferUtility transferUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +82,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         // Barcode gtidData = getIntent().getParcelableExtra("qrCode");
         String gtid = getIntent().getStringExtra("gtid");
+        mPath = getIntent().getStringExtra("path");
         mGtidField.setText(gtid);
 
         mSubmitButton.setOnClickListener(this);
+        mContext = SignUpActivity.this;
     }
 
     @Override
@@ -114,11 +135,12 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             Log.d(TAG, "createUser:onComplete" + task.isSuccessful());
-                            hideProgressDialog();
 
                             if (task.isSuccessful()) {
-                                onAuthSuccess(task.getResult().getUser().getUid(), mGtid, mName, mEmail);
+                                mUid = task.getResult().getUser().getUid();
+                                onAuthSuccess();
                             } else {
+                                hideProgressDialog();
                                 Toast.makeText(SignUpActivity.this, "Sign Up Failed",
                                         Toast.LENGTH_SHORT).show();
                                 Exception exception = task.getException();
@@ -162,16 +184,65 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 });
     }
 
-    private void onAuthSuccess(String uid, String gtid, String name, String email) {
+    private void onAuthSuccess() {
 
         // Write new user
-        writeNewUser(uid, gtid, name, email);
+        //writeNewUser(mUid, mGtid, mName, mEmail);
 
-        // Go to MainActivity
-        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-        intent.putExtra("gtid", gtid);
-        startActivity(intent);
-        finish();
+        hideProgressDialog();
+        initProgressDialog();
+
+        // Upload image to S3
+        //String fileName = "/" + mGtid + ".jpg";
+        String fileName = "/Ethan.jpg";
+        credentials = new BasicAWSCredentials(KEY, SECRET);
+        s3Client = new AmazonS3Client(credentials);
+
+        transferUtility =
+                TransferUtility.builder()
+                        .context(mContext)
+                        .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                        .s3Client(s3Client)
+                        .build();
+
+        String path = Environment.getExternalStorageDirectory() + "/DCIM/Camera/download"
+                + "test.jpg";
+        TransferObserver uploadObserver =
+                transferUtility.download(fileName, new File(path));
+
+        // Attach a listener to the observer to get state update and progress notifications
+        uploadObserver.setTransferListener(new TransferListener() {
+
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                if (TransferState.COMPLETED == state) {
+                    mProgressDialog.dismiss();
+                    Log.d(TAG, "upload completed");
+                    // Go to MainActivity
+                    Intent intent = new Intent(mContext, MainActivity.class);
+                    intent.putExtra("gtid", mGtid);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
+                int percentDone = (int)percentDonef;
+                mProgressDialog.setProgress(percentDone);
+                Log.d("YourActivity", "ID:" + id + " bytesCurrent: " + bytesCurrent
+                        + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                Log.d(TAG, "upload failed");
+                hideProgressDialog();
+                ex.printStackTrace();
+            }
+
+        });
     }
 
     private void writeNewUser(String uid, String gtid, String name, String email) {
@@ -193,5 +264,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         //mDatabase.child("gtid").child(gtid).child("email").setValue(email);
         //mDatabase.child("gtid").child(gtid).child("name").setValue(name);
         //mDatabase.child("gtid").child(gtid).child("ta").setValue(isTa);
+    }
+
+    private void initProgressDialog() {
+        mProgressDialog = new ProgressDialog(mContext);
+        mProgressDialog.setMax(100);
+        mProgressDialog.setMessage("Uploading picture...");
+        mProgressDialog.setProgress(0);
+        mProgressDialog.show();
     }
 }

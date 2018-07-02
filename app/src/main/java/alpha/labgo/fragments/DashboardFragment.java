@@ -188,8 +188,6 @@ public class DashboardFragment extends Fragment implements
         }
     }
 
-
-
     @Override
     public void onLoaderReset(@NonNull Loader<ArrayList<BorrowedItem>> loader) {
 
