@@ -165,7 +165,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         mName = mNameField.getText().toString();
         mPassword = mPasswordField.getText().toString();
 
-        showProgressDialog();
+        showProgressDialog("Signing up...");
         mGtid = mGtidField.getText().toString();
 
 

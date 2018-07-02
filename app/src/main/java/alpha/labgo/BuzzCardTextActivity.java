@@ -45,8 +45,6 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
     private FrameLayout mPreview;
     private ImageView mImageCaptured;
     private ImageButton mShutterButton;
-    private ImageButton mRetakeButton;
-    private ImageButton mConfirmButton;
     //private TextView mDetectedText;
     private BuzzCardOverlay mOverlay;
 
@@ -70,11 +68,6 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         mPreview = findViewById(R.id.layout_preview);
         mImageCaptured = findViewById(R.id.image_captured);
         mOverlay = findViewById(R.id.camera_overlay);
-        mRetakeButton = findViewById(R.id.button_retake);
-        mConfirmButton = findViewById(R.id.button_confirm);
-
-        mRetakeButton.setVisibility(View.INVISIBLE);
-        mConfirmButton.setVisibility(View.INVISIBLE);
         //mDetectedText = findViewById(R.id.detected_text);
 
         // rotate the text view.
@@ -132,6 +125,14 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         CameraUtils.stopPreview();
     }
 
+    /**
+     * This method is a handler for shutter button. When the button is pressed,
+     * it changes color to notify user.
+     *
+     * @param v
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         Resources res = getResources();
@@ -234,6 +235,7 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
                     detectText(bitmap);
                 }
                 CameraUtils.startPreview();
+                showProgressDialog("Detecting GTID...");
             }
         });
     }
@@ -249,7 +251,9 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                hideProgressDialog();
                 String fail = "Please retake a picture";
+                Toast.makeText(BuzzCardTextActivity.this, fail, Toast.LENGTH_LONG).show();
                 //mOverlay.drawTextOnTop(fail);
             }
         });
@@ -257,15 +261,23 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
 
     private void processText(FirebaseVisionText text) {
         List<FirebaseVisionText.Block> blocks = text.getBlocks();
+        String detectionFail = "No GTID found :( Please take a picture again.";
         if (blocks.size() == 0) {
-            Toast.makeText(BuzzCardTextActivity.this, "No GTID found :( Please take a picture again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(BuzzCardTextActivity.this,
+                    detectionFail,
+                    Toast.LENGTH_LONG)
+                    .show();
             return;
         }
+
         // remove all non-digit characters in each block and exam it.
+        boolean found = false;
         for (FirebaseVisionText.Block block : text.getBlocks()) {
             String detectedText = block.getText();
             String gtid = detectedText.replaceAll("\\D+", "");
             if (gtid.length() == 9) {
+                found = true;
+                hideProgressDialog();
                 String display = "GTID: " + gtid;
                 Toast.makeText(BuzzCardTextActivity.this, display, Toast.LENGTH_LONG).show();
                 //mOverlay.drawTextOnTop(display);
@@ -289,6 +301,13 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
                         break;
                 }
             }
+        }
+        hideProgressDialog();
+        if (!found) {
+            Toast.makeText(BuzzCardTextActivity.this,
+                    detectionFail,
+                    Toast.LENGTH_LONG)
+                    .show();
         }
     }
 

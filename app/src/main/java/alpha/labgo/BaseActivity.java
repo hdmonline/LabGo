@@ -25,7 +25,7 @@ public class BaseActivity extends AppCompatActivity {
     private static ProgressDialog mProgressDialog;
     private static String gtid;
 
-    public void showProgressDialog() {
+    public void showProgressDialog(String message) {
 
         // when signed out, the mProgressDialog is still stored in the BaseActivity
         // but the actual activity is gone. check mProgressDialog for different scenarios.
@@ -33,7 +33,7 @@ public class BaseActivity extends AppCompatActivity {
                 || mProgressDialog.getOwnerActivity().isDestroyed() || mProgressDialog.getOwnerActivity().isFinishing()) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setCancelable(false);
-            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setMessage(message);
         }
 
         mProgressDialog.show();

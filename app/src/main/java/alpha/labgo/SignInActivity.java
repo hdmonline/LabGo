@@ -158,7 +158,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             return;
         }
 
-        showProgressDialog();
+        showProgressDialog("Signing in...");
         final String gtidInput = mGtidField.getText().toString();
         final String password = mPasswordField.getText().toString();
 
