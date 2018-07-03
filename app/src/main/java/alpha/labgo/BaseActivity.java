@@ -32,10 +32,9 @@ public class BaseActivity extends AppCompatActivity {
         if (mProgressDialog == null || mProgressDialog.getOwnerActivity() == null
                 || mProgressDialog.getOwnerActivity().isDestroyed() || mProgressDialog.getOwnerActivity().isFinishing()) {
             mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.setMessage(message);
         }
-
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage(message);
         mProgressDialog.show();
     }
 
@@ -43,6 +42,14 @@ public class BaseActivity extends AppCompatActivity {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
+    }
+
+    public void setProgressDialog(int progress) {
+        mProgressDialog.setProgress(progress);
+    }
+
+    public void setMaxDialog(int max) {
+        mProgressDialog.setMax(max);
     }
 
     public static String getUid() {

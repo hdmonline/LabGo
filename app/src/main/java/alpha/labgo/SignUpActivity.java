@@ -45,7 +45,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private TextInputEditText mEmailField;
     private TextInputEditText mPasswordField;
     private Button mSubmitButton;
-    private ProgressDialog mProgressDialog;
 
     //private DatabaseReference mDatabase;
     private FirebaseFirestore mFirestore;
@@ -189,7 +188,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         // Write new user
         writeNewUser(mUid, mGtid, mName, mEmail);
 
-        hideProgressDialog();
+        // Initialize progress dialog for uploading picture
         initProgressDialog();
 
         // Upload image to S3
@@ -213,7 +212,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onStateChanged(int id, TransferState state) {
                 if (TransferState.COMPLETED == state) {
-                    mProgressDialog.dismiss();
+                    hideProgressDialog();
                     Log.d(TAG, "upload completed");
                     // Go to MainActivity
                     Intent intent = new Intent(mContext, MainActivity.class);
@@ -227,7 +226,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
                 float percentDonef = ((float) bytesCurrent / (float) bytesTotal) * 100;
                 int percentDone = (int)percentDonef;
-                mProgressDialog.setProgress(percentDone);
+                setProgressDialog(percentDone);
                 Log.d("YourActivity", "ID:" + id + " bytesCurrent: " + bytesCurrent
                         + " bytesTotal: " + bytesTotal + " " + percentDone + "%");
             }
@@ -264,10 +263,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void initProgressDialog() {
-        mProgressDialog = new ProgressDialog(mContext);
-        mProgressDialog.setMax(100);
-        mProgressDialog.setMessage("Uploading picture...");
-        mProgressDialog.setProgress(0);
-        mProgressDialog.show();
+        setMaxDialog(100);
+        setProgressDialog(0);
+        showProgressDialog("Uploading picture...");
     }
 }

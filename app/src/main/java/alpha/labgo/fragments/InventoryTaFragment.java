@@ -1,12 +1,11 @@
 package alpha.labgo.fragments;
 
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,19 +14,15 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import alpha.labgo.R;
-import alpha.labgo.adapters.BorrowedItemAdapter;
 import alpha.labgo.adapters.InventoryItemAdapter;
 import alpha.labgo.database.RestUtils;
-import alpha.labgo.models.BorrowedItem;
 import alpha.labgo.models.InventoryItem;
 
 // TODO
-public class InventoryFragment extends BaseFragment implements LoaderCallbacks<ArrayList<InventoryItem>> {
+public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks<ArrayList<InventoryItem>> {
 
     private static final String TAG = "InventoryFragment";
 
@@ -41,15 +36,15 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
 
     private InventoryItemAdapter mInventoryItemAdapter;
     private ProgressBar mLoadingIndicator;
-
+    
     /**
      * This method is to pass GTID from main activity to this fragment.
      *
      * @param gtid Student GTID
      * @return
      */
-    public static InventoryFragment newInstance(String gtid) {
-        InventoryFragment inventoryFragment = new InventoryFragment();
+    public static InventoryTaFragment newInstance(String gtid) {
+        InventoryTaFragment inventoryFragment = new InventoryTaFragment();
         Bundle args = new Bundle();
         args.putString("gtid", gtid);
         inventoryFragment.setArguments(args);
@@ -84,7 +79,7 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
         mRecyclerView.setAdapter(mInventoryItemAdapter);
 
         int loaderId = INVENTORY_LOADER_ID;
-        LoaderCallbacks<ArrayList<InventoryItem>> callback = InventoryFragment.this;
+        LoaderCallbacks<ArrayList<InventoryItem>> callback = InventoryTaFragment.this;
         Bundle bundleInventory = null;
 
         getLoaderManager().initLoader(loaderId, bundleInventory, callback);
@@ -192,6 +187,6 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
      */
     public void refreshData() {
         invalidateData();
-        getLoaderManager().restartLoader(INVENTORY_LOADER_ID, null, InventoryFragment.this);
+        getLoaderManager().restartLoader(INVENTORY_LOADER_ID, null, InventoryTaFragment.this);
     }
 }

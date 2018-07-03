@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -33,15 +34,17 @@ public class MainActivity extends BaseActivity
 
     private static final String TAG = "MainActivity";
 
-    // views
+    // Views
     private NavigationView mNavigationView;
     private View mHeaderView;
     private TextView mUserName;
     private TextView mUserEmail;
     private BottomNavigationView mBottomNavigationView;
     private MenuItem mPrevMenuItem;
+    private DrawerLayout mDrawer;
+    private FloatingActionButton mFabAddInventoryItem;
 
-    // firebase
+    // Firebase
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
     private String mGtid;
@@ -51,9 +54,9 @@ public class MainActivity extends BaseActivity
     private ViewPager mViewPager;
 
     // Fragments
-    private DashboardFragment dashboardFragment;
-    private InventoryFragment inventoryFragment;
-    private NotificationFragment notificationFragment;
+    private DashboardFragment mDashboardFragment;
+    private InventoryFragment mInventoryFragment;
+    private NotificationFragment mNotificationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,10 @@ public class MainActivity extends BaseActivity
         mUserEmail = mHeaderView.findViewById(R.id.field_drawer_user_email);
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
         mViewPager = findViewById(R.id.container);
+        mDrawer = findViewById(R.id.layout_drawer);
+        mFabAddInventoryItem = findViewById(R.id.fab);
+
+        mFabAddInventoryItem.setVisibility(View.INVISIBLE);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
@@ -92,9 +99,8 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -134,10 +140,10 @@ public class MainActivity extends BaseActivity
             int currentPage = mViewPager.getCurrentItem();
             switch (currentPage) {
                 case 0:
-                    dashboardFragment.refreshData();
+                    mDashboardFragment.refreshData();
                     break;
                 case 1:
-                    inventoryFragment.refreshData();
+                    mInventoryFragment.refreshData();
                     break;
             }
         }
@@ -166,8 +172,8 @@ public class MainActivity extends BaseActivity
 //
 //        }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+
+        mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -197,26 +203,27 @@ public class MainActivity extends BaseActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    // Create the adapter that will return a fragment for each section
+    /**
+     * Create the adapter that will return a fragment for each section
+     */
     private void createFragmentAdapter() {
-        dashboardFragment = DashboardFragment.newInstance(mGtid);
-        inventoryFragment = InventoryFragment.newInstance(mGtid);
-        notificationFragment = new NotificationFragment();
+        mDashboardFragment = DashboardFragment.newInstance(mGtid);
+        mInventoryFragment = InventoryFragment.newInstance(mGtid);
+        mNotificationFragment = new NotificationFragment();
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    dashboardFragment,
-                    inventoryFragment,
-                    notificationFragment
+                    mDashboardFragment,
+                    mInventoryFragment,
+                    mNotificationFragment
             };
             private final String[] mFragmentNames = new String[] {
                     getString(R.string.segment_dashboard),
@@ -238,7 +245,6 @@ public class MainActivity extends BaseActivity
         };
 
         // Set up the ViewPager with the sections adapter.
-
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOffscreenPageLimit(2);
         mViewPager.setCurrentItem(0);

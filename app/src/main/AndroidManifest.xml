@@ -59,9 +59,13 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme" />
         <activity android:name=".QrCodeActivity" />
-        <activity android:name=".MainTaActivity"></activity>
+        <activity android:name=".MainTaActivity" />
 
-        <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
+
+        <activity android:name=".AddInventoryActivity"></activity>
     </application>
 
 </manifest>

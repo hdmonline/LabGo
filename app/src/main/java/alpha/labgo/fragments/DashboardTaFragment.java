@@ -24,7 +24,7 @@ import alpha.labgo.adapters.BorrowedItemAdapter;
 import alpha.labgo.database.RestUtils;
 import alpha.labgo.models.BorrowedItem;
 
-public class DashboardFragment extends BaseFragment implements
+public class DashboardTaFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener,
         LoaderCallbacks<ArrayList<BorrowedItem>> {
 
@@ -47,8 +47,8 @@ public class DashboardFragment extends BaseFragment implements
      * @param gtid Student GTID
      * @return
      */
-    public static DashboardFragment newInstance(String gtid) {
-        DashboardFragment dashboardFragment = new DashboardFragment();
+    public static DashboardTaFragment newInstance(String gtid) {
+        DashboardTaFragment dashboardFragment = new DashboardTaFragment();
         Bundle args = new Bundle();
         args.putString("gtid", gtid);
         dashboardFragment.setArguments(args);
@@ -61,31 +61,20 @@ public class DashboardFragment extends BaseFragment implements
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Views
-        View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
-        mRecyclerView = rootView.findViewById(R.id.recyclerview_dashboard);
-        mErrorMessageDisplay = rootView.findViewById(R.id.text_dashboard_error_message_display);
-        mNoItemText = rootView.findViewById(R.id.text_dashboard_no_item);
-        mLoadingIndicator = rootView.findViewById(R.id.pb_dashboard_loading_indicator);
+        View rootView = inflater.inflate(R.layout.fragment_dashboard_ta, container, false);
+        mRecyclerView = rootView.findViewById(R.id.recyclerview_dashboard_ta);
+        mErrorMessageDisplay = rootView.findViewById(R.id.text_dashboard_error_message_display_ta);
+        mNoItemText = rootView.findViewById(R.id.text_dashboard_no_item_ta);
+        mLoadingIndicator = rootView.findViewById(R.id.pb_dashboard_loading_indicator_ta);
 
         // SwipeRefreshLayout
-        mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_container_dashboard);
+        mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_container_dashboard_ta);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         // TODO: may need to change color of it
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
-
-//        /**
-//         * Showing Swipe Refresh animation on activity create
-//         * As animation won't start on onCreate, post runnable is used
-//         */
-//        mSwipeRefreshLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mSwipeRefreshLayout.setRefreshing(true);
-//            }
-//        });
 
         mGtid = getArguments().getString("gtid");
 
@@ -103,7 +92,7 @@ public class DashboardFragment extends BaseFragment implements
         mRecyclerView.setAdapter(mBorrowedItemAdapter);
 
         int loaderId = DASHBOARD_LOADER_ID;
-        LoaderCallbacks<ArrayList<BorrowedItem>> callback = DashboardFragment.this;
+        LoaderCallbacks<ArrayList<BorrowedItem>> callback = DashboardTaFragment.this;
         Bundle bundleDashboard = null;
 
         // TODO: check getActivity().getSupportLoaderManager()
@@ -112,26 +101,6 @@ public class DashboardFragment extends BaseFragment implements
         // for testing views
         //loadBorrowedTools();
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     @Override
@@ -245,7 +214,7 @@ public class DashboardFragment extends BaseFragment implements
      */
     public void refreshData() {
         invalidateData();
-        getLoaderManager().restartLoader(DASHBOARD_LOADER_ID, null, DashboardFragment.this);
+        getLoaderManager().restartLoader(DASHBOARD_LOADER_ID, null, DashboardTaFragment.this);
     }
 
     @Override
