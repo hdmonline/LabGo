@@ -43,7 +43,7 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
     private ProgressBar mLoadingIndicator;
 
     /**
-     * This method is to pass GTID from main activity to this fragment.
+     * This method is to pass GTID from toolbar activity to this fragment.
      *
      * @param gtid Student GTID
      * @return
@@ -118,7 +118,7 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
             @Override
             public ArrayList<InventoryItem> loadInBackground() {
 
-                ArrayList<InventoryItem> data = RestUtils.inventoryItems();
+                ArrayList<InventoryItem> data = RestUtils.getInventoryItems();
                 return data;
             }
         };

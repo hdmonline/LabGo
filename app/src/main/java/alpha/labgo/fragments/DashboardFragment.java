@@ -42,7 +42,7 @@ public class DashboardFragment extends BaseFragment implements
     private BorrowedItemAdapter mBorrowedItemAdapter;
 
     /**
-     * This method is to pass GTID from main activity to this fragment.
+     * This method is to pass GTID from toolbar activity to this fragment.
      *
      * @param gtid Student GTID
      * @return
@@ -99,7 +99,7 @@ public class DashboardFragment extends BaseFragment implements
         // TODO: chech if this constructor usable
         mBorrowedItemAdapter = new BorrowedItemAdapter(getContext());
 
-        // set adapter
+        // Set adapter
         mRecyclerView.setAdapter(mBorrowedItemAdapter);
 
         int loaderId = DASHBOARD_LOADER_ID;
@@ -109,29 +109,7 @@ public class DashboardFragment extends BaseFragment implements
         // TODO: check getActivity().getSupportLoaderManager()
         getLoaderManager().initLoader(loaderId, bundleDashboard, callback);
 
-        // for testing views
-        //loadBorrowedTools();
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     @Override
@@ -160,7 +138,7 @@ public class DashboardFragment extends BaseFragment implements
              */
             @Override
             public ArrayList<BorrowedItem> loadInBackground() {
-                ArrayList<BorrowedItem> data = RestUtils.studentBorrowedItems(mGtid);
+                ArrayList<BorrowedItem> data = RestUtils.getStudentBorrowedItems(mGtid);
                 return data;
             }
 

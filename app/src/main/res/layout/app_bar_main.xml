@@ -33,7 +33,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/fab_right_margin"
         android:layout_marginBottom="@dimen/fab_bottom_margin"
+        android:clickable="true"
+        app:fabSize="normal"
         android:background="@color/buzzGold"
         android:src="@drawable/ic_add_inventory" />
-
 </RelativeLayout>

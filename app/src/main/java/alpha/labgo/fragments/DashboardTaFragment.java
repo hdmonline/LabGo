@@ -42,7 +42,7 @@ public class DashboardTaFragment extends Fragment implements
     private BorrowedItemAdapter mBorrowedItemAdapter;
 
     /**
-     * This method is to pass GTID from main activity to this fragment.
+     * This method is to pass GTID from toolbar activity to this fragment.
      *
      * @param gtid Student GTID
      * @return
@@ -129,7 +129,7 @@ public class DashboardTaFragment extends Fragment implements
              */
             @Override
             public ArrayList<BorrowedItem> loadInBackground() {
-                ArrayList<BorrowedItem> data = RestUtils.studentBorrowedItems(mGtid);
+                ArrayList<BorrowedItem> data = RestUtils.getStudentBorrowedItems(mGtid);
                 return data;
             }
 
