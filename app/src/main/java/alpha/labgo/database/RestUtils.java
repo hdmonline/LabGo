@@ -1,9 +1,15 @@
 package alpha.labgo.database;
 
+import android.app.Activity;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -25,9 +31,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import alpha.labgo.AddInventoryActivity;
 import alpha.labgo.MainActivity;
+import alpha.labgo.R;
+import alpha.labgo.models.Item;
 import alpha.labgo.models.BorrowedItem;
 import alpha.labgo.models.InventoryItem;
+import alpha.labgo.models.ScannedItem;
 
 
 /**
@@ -38,24 +48,41 @@ import alpha.labgo.models.InventoryItem;
  * @since   0.1
  */
 public class RestUtils {
-    private static final String TAG = "RestUtils";
-    private static final String REST_BASE_URL = "http://ec2-52-90-6-153.compute-1.amazonaws.com:1880/v1";
-    private static final String GTID = "student_id";
-    private static final String CHECK_IN = "/checkin";
-    private static final String CHECK_OUT = "/checkout";
 
-    // tags for items
+    private static final String TAG = "RestUtils";
+
+    private static final String REST_BASE_URL = "http://ec2-52-90-6-153.compute-1.amazonaws.com:1880/v1";
+
+    // Keys for inventory items
     private static final String ITEM_NAME = "item_name";
     private static final String ITEM_IMAGE_URL = "item_image_url";
     private static final String ITEM_DESCRIPTION = "item_description";
-
-    // tags for borrowed items
-    private static final String STUDENT_INVENTORY = "/studentinventories";
     private static final String CHECK_OUT_TIME = "checkout_timestamp";
     private static final String CHECK_IN_TIME = "checkin_timestamp";
 
-    // tags for inventory items
+    // Keys for RFID
+    private static final String RFID_TAG = "rfid_tag";
+
+    // Keys for student
+    private static final String GTID = "student_id";
+
+    // Parameters for check in/out
+    private static final String CHECK_IN = "/checkin";
+    private static final String CHECK_OUT = "/checkout";
+
+    // Parameters for borrowed items
+    private static final String STUDENT_INVENTORY = "/studentinventories";
+
+    // Parameters for inventory items
     private static final String INVENTORY = "/inventories";
+
+    // Parameters for RFID tags
+    private static final String INCOMING_TAGS = "/incomingrfidtags";
+    private static final String OUTGOING_TAGS = "/outgoingrfidtags";
+
+    // Parameters for items
+    private static final String ITEMS = "/items";
+
 
     /**
      * This method returns the entire result from the HTTP response.
@@ -150,7 +177,7 @@ public class RestUtils {
     }
 
     /**
-     * This method is called when the student is checking in or out the tools by scanning QR codes
+     * This AsyncTask class is called when the student is checking in or out the tools by scanning QR codes
      * on the door. (This is a backup method when the face recognition is not working.)
      */
     public static class StudentCheckInOrOut extends AsyncTask<String, Void, String> {
@@ -226,6 +253,33 @@ public class RestUtils {
         }
     }
 
+    public static class ListItems extends AsyncTask<Void, Void, ArrayList<ScannedItem>> {
+
+        private AddInventoryActivity mActivity;
+
+
+        public ListItems(AddInventoryActivity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected ArrayList<ScannedItem> doInBackground(Void... voids) {
+            ArrayList<ScannedItem> scannedItems = getScannedItems();
+            return scannedItems;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<ScannedItem> scannedItems) {
+            mActivity.updataUi(scannedItems);
+            super.onPostExecute(scannedItems);
+        }
+    }
+
     /**
      * This method lodas the items/tools that the student has borrowed.
      * Then convert the received data objects to {@link BorrowedItem} objects.
@@ -233,7 +287,7 @@ public class RestUtils {
      * @param gtid Student GTID
      * @return ArrayList of {@link BorrowedItem}. Will be fed into {@link alpha.labgo.adapters.BorrowedItemAdapter}.
      */
-    public static ArrayList<BorrowedItem> studentBorrowedItems(String gtid) {
+    public static ArrayList<BorrowedItem> getStudentBorrowedItems(String gtid) {
 
         String baseUrl = REST_BASE_URL + STUDENT_INVENTORY;
         baseUrl += "/" + gtid;
@@ -273,7 +327,7 @@ public class RestUtils {
         return borrowedItems;
     }
 
-    public static ArrayList<InventoryItem> inventoryItems() {
+    public static ArrayList<InventoryItem> getInventoryItems() {
 
         String baseUrl = REST_BASE_URL + INVENTORY;
 
@@ -318,6 +372,80 @@ public class RestUtils {
         }
 
         return inventoryItems;
+    }
+
+    /**
+     * This method gets the RFID tags that are being scanned.
+     *
+     * @return The RFIDs that is being scanned
+     */
+    public static ArrayList<ScannedItem> getScannedItems() {
+
+        String baseUrl = REST_BASE_URL + INCOMING_TAGS;
+        ArrayList<ScannedItem> scannedItems = new ArrayList<>();
+
+        URL url = null;
+
+        try {
+            url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray jaResult = null;
+        try {
+            jaResult = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for (int i = 0; i < jaResult.length(); i++) {
+                JSONObject jo = (JSONObject) jaResult.get(i);
+                ScannedItem newItem = new ScannedItem(jo.getString(RFID_TAG));
+                scannedItems.add(newItem);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return scannedItems;
+    }
+
+    public static ArrayList<Item> getItems() {
+
+        String baseUrl = REST_BASE_URL + ITEMS;
+        ArrayList<Item> items = new ArrayList<>();
+
+        URL url = null;
+
+        try {
+            url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray jaResult = null;
+        try {
+            jaResult = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for (int i = 0; i < jaResult.length(); i++) {
+                JSONObject jo = (JSONObject) jaResult.get(i);
+                Item newItem = new Item(
+                        jo.getString(ITEM_IMAGE_URL),
+                        jo.getString(ITEM_NAME),
+                        jo.getString(ITEM_DESCRIPTION));
+                items.add(newItem);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return items;
     }
 
     /**

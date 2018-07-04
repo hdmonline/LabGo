@@ -78,6 +78,10 @@ public class MainTaActivity extends BaseActivity
         mDrawer = findViewById(R.id.layout_drawer_ta);
         mFabAddInventoryItem = findViewById(R.id.fab);
 
+        mFabAddInventoryItem.setVisibility(View.INVISIBLE);
+        mFabAddInventoryItem.setClickable(false);
+        mFabAddInventoryItem.setOnClickListener(this);
+
         mIdentity.setText("TA");
 
         // Firebase
@@ -113,7 +117,7 @@ public class MainTaActivity extends BaseActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
     }
 
@@ -254,15 +258,19 @@ public class MainTaActivity extends BaseActivity
                 switch (position) {
                     case 0:
                         mFabAddInventoryItem.setVisibility(View.INVISIBLE);
+                        mFabAddInventoryItem.setClickable(false);
                         break;
                     case 1:
                         mFabAddInventoryItem.setVisibility(View.VISIBLE);
+                        mFabAddInventoryItem.setClickable(true);
                         break;
                     case 2:
                         mFabAddInventoryItem.setVisibility(View.INVISIBLE);
+                        mFabAddInventoryItem.setClickable(false);
                         break;
                     default:
                         mFabAddInventoryItem.setVisibility(View.INVISIBLE);
+                        mFabAddInventoryItem.setClickable(false);
                         break;
                 }
             }
@@ -280,10 +288,10 @@ public class MainTaActivity extends BaseActivity
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_ta_inventory:
+                case R.id.navigation_ta_dashboard:
                     mViewPager.setCurrentItem(0);
                     return true;
-                case R.id.navigation_ta_dashboard:
+                case R.id.navigation_ta_inventory:
                     mViewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_ta_notifications:
