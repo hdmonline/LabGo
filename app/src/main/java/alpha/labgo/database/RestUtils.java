@@ -279,10 +279,11 @@ public class RestUtils {
 
         @Override
         protected void onPostExecute(ArrayList<ScannedItem> scannedItems) {
-            mActivity.updataUi(scannedItems);
+            mActivity.refreshUi(scannedItems);
             super.onPostExecute(scannedItems);
         }
     }
+
 
     /**
      * This method lodas the items/tools that the student has borrowed.

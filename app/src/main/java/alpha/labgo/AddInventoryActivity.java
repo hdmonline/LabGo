@@ -22,12 +22,14 @@ import java.util.ArrayList;
 
 import alpha.labgo.adapters.ItemAdapter;
 import alpha.labgo.database.RestUtils;
+import alpha.labgo.dialogs.AddItemConfirmDialog;
 import alpha.labgo.models.Item;
 import alpha.labgo.models.ScannedItem;
 
 
 public class AddInventoryActivity extends BaseActivity implements
         SwipeRefreshLayout.OnRefreshListener,
+        AddItemConfirmDialog.OnAddInventoryListener,
         LoaderCallbacks<ArrayList<Item>> {
 
     private static final String TAG = "AddInventoryActivity";
@@ -145,8 +147,16 @@ public class AddInventoryActivity extends BaseActivity implements
             default:
                 break;
         }
+
+        if (item == mSearch) {
+            // TODO: check if this is working
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mRfidTag.setVisibility(View.INVISIBLE);
+        }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     @NonNull
     @Override
@@ -220,7 +230,7 @@ public class AddInventoryActivity extends BaseActivity implements
                 null, AddInventoryActivity.this);
     }
 
-    public void updataUi(ArrayList<ScannedItem> scannedItems) {
+    public void refreshUi(ArrayList<ScannedItem> scannedItems) {
         mSwipeRefreshLayout.setRefreshing(false);
         if (scannedItems.size() > 1) {
             mScannedSingleItem = false;
@@ -245,5 +255,14 @@ public class AddInventoryActivity extends BaseActivity implements
     @Override
     public void onRefresh() {
         new RestUtils.ListItems(AddInventoryActivity.this).execute();
+    }
+
+    @Override
+    public void updateUi() {
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mRfidTag.setVisibility(View.VISIBLE);
+        mRfidTag.setText(R.string.refresh_scanned_item_hint);
+        mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
+        mRfidTag.setTextColor(Color.parseColor("#80000000"));
     }
 }

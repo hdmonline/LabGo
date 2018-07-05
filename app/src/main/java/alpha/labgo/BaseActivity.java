@@ -25,6 +25,11 @@ public class BaseActivity extends AppCompatActivity {
     private static ProgressDialog mProgressDialog;
     private static String gtid;
 
+    /**
+     * This method shows progress dialog with desired message.
+     *
+     * @param message The message needs to be shown on the dialog
+     */
     public void showProgressDialog(String message) {
 
         // when signed out, the mProgressDialog is still stored in the BaseActivity
