@@ -60,7 +60,7 @@ public class AddInventoryActivity extends BaseActivity implements
         // Views
         mToolbar = findViewById(R.id.toolbar_add_inventory);
         mRecyclerView = findViewById(R.id.recyclerview_search_item);
-        mLoadingIndicator = findViewById(R.id.pb_add_item_loading);
+        mLoadingIndicator = findViewById(R.id.pb_add_inventory_loading);
         mRfidTag = findViewById(R.id.text_item_tag);
 
         // Display toolbar and add back button
@@ -257,6 +257,9 @@ public class AddInventoryActivity extends BaseActivity implements
         new RestUtils.ListItems(AddInventoryActivity.this).execute();
     }
 
+    /**
+     * This method updates UI after hitting the OK button on the dialog.
+     */
     @Override
     public void updateUi() {
         mRecyclerView.setVisibility(View.INVISIBLE);
@@ -264,5 +267,11 @@ public class AddInventoryActivity extends BaseActivity implements
         mRfidTag.setText(R.string.refresh_scanned_item_hint);
         mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
         mRfidTag.setTextColor(Color.parseColor("#80000000"));
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void finishing() {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        finish();
     }
 }

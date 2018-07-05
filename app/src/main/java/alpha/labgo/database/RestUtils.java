@@ -122,21 +122,13 @@ public class RestUtils {
      * @return The contents of the HTTP response.
      * @throws IOException Related to network and stream reading
      */
-    public static String postResponseFromHttpUrl(URL url, String gtid) throws IOException {
+    public static String postResponseFromHttpUrl(URL url, JSONObject postJson) throws IOException {
 
         Log.d(TAG, "sending POST http request");
 
         StringBuffer response = new StringBuffer();
         HttpURLConnection urlConnection = null;
-        String responseJSON = null;
-
-        JSONObject postJson = new JSONObject();
-
-        try {
-            postJson.put(GTID, gtid);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String responseJSON;
 
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -187,7 +179,6 @@ public class RestUtils {
         private int mDirection = -1; // 0 is check in and 1 is check out
 
         private Context mContext;
-        private String mGtid;
 
         public StudentCheckInOrOut(Context context) {
             this.mContext = context;
@@ -195,7 +186,7 @@ public class RestUtils {
 
         @Override
         protected String doInBackground(String... strings) {
-            String mGtid = strings[0];
+            String gtid = strings[0];
             String qrCode = strings[1];
             String studentCheckInOrOutResult = null;
 
@@ -224,8 +215,16 @@ public class RestUtils {
             }
             Log.d(TAG, "URL:"+ url.toString());
 
+            // Generate JSON body for the request
+            JSONObject postJson = new JSONObject();
             try {
-                studentCheckInOrOutResult = postResponseFromHttpUrl(url, mGtid);
+                postJson.put(GTID, gtid);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                studentCheckInOrOutResult = postResponseFromHttpUrl(url, postJson);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -284,6 +283,63 @@ public class RestUtils {
         }
     }
 
+    public static class AddInventoryItem extends AsyncTask<String, Void, String> {
+
+        private static final String TAG = "AddInventoryItem";
+        private final Activity mActivity;
+
+        public AddInventoryItem(Activity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String itemName = strings[0];
+            String baseUrl = REST_BASE_URL + INVENTORY;
+            String addInventoryItemResult = null;
+
+            URL url = null;
+            try {
+                Log.d(TAG, baseUrl);
+                url = new URL(baseUrl);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "URL:"+ url.toString());
+
+            // Generate JSON body for the request
+            JSONObject postJson = new JSONObject();
+            try {
+                postJson.put(ITEM_NAME, itemName);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                addInventoryItemResult = postResponseFromHttpUrl(url, postJson);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return addInventoryItemResult;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s != null && !s.equals("")) {
+                try {
+                    AddInventoryActivity activity = (AddInventoryActivity) mActivity;
+                    activity.finishing();
+                } catch (ClassCastException e) {
+                    Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+                }
+            } else {
+                Log.e(TAG, "Failed to add inventory, please check the database.");
+            }
+        }
+    }
 
     /**
      * This method lodas the items/tools that the student has borrowed.

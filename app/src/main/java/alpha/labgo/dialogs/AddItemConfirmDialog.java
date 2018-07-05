@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import alpha.labgo.R;
+import alpha.labgo.database.RestUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddItemConfirmDialog extends DialogFragment {
@@ -23,7 +24,6 @@ public class AddItemConfirmDialog extends DialogFragment {
         void updateUi();
     }
     public OnAddInventoryListener mOnAddInventoryListener;
-
     // Widgets
     private TextView mName, mDescription;
     private TextView mActionOk, mActionCancel;
@@ -75,6 +75,8 @@ public class AddItemConfirmDialog extends DialogFragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: add inventory");
                 // TODO: send http request to add item, dismiss dialog,
+                String[] paramStrings = {mNameString};
+                new RestUtils.AddInventoryItem(getActivity()).execute(paramStrings);
                 mOnAddInventoryListener.updateUi();
                 getDialog().dismiss();
             }

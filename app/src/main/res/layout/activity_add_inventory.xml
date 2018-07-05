@@ -51,7 +51,7 @@
                 android:scrollbars="vertical"/>
 
             <ProgressBar
-                android:id="@+id/pb_add_item_loading"
+                android:id="@+id/pb_add_inventory_loading"
                 android:layout_height="42dp"
                 android:layout_width="42dp"
                 android:layout_gravity="center"
