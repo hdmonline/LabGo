@@ -253,6 +253,10 @@ public class RestUtils {
         }
     }
 
+    /**
+     * This class is called when the TA needs to add an item to the database. A RFID tag would be
+     * scanned first, then this list of items will appear when the TA is searching items.
+     */
     public static class ListItems extends AsyncTask<Void, Void, ArrayList<ScannedItem>> {
 
         private AddInventoryActivity mActivity;
@@ -327,6 +331,11 @@ public class RestUtils {
         return borrowedItems;
     }
 
+    /**
+     * This method gets all the inventory items from database.
+     *
+     * @return list of inventory items
+     */
     public static ArrayList<InventoryItem> getInventoryItems() {
 
         String baseUrl = REST_BASE_URL + INVENTORY;
@@ -412,6 +421,11 @@ public class RestUtils {
         return scannedItems;
     }
 
+    /**
+     * This method gets all kinds of items in database
+     *
+     * @return
+     */
     public static ArrayList<Item> getItems() {
 
         String baseUrl = REST_BASE_URL + ITEMS;
@@ -480,7 +494,7 @@ public class RestUtils {
     /**
      * The method returns the {@Date} of yesterday. See {@link #timeHandler(String)} for detail.
      *
-     * @return
+     * @return the date of yesterday
      */
     private static Date yesterday() {
         final Calendar cal = Calendar.getInstance();
