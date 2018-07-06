@@ -90,6 +90,8 @@ public class AddInventoryActivity extends BaseActivity implements
         Bundle bundleAddItem = null;
 
         getSupportLoaderManager().initLoader(ADD_ITEM_LOADER_ID, bundleAddItem, callback);
+
+        new RestUtils.ListNewTags(AddInventoryActivity.this).execute();
     }
 
     @Override
@@ -253,7 +255,7 @@ public class AddInventoryActivity extends BaseActivity implements
 
     @Override
     public void onRefresh() {
-        new RestUtils.ListItems(AddInventoryActivity.this).execute();
+        new RestUtils.ListNewTags(AddInventoryActivity.this).execute();
     }
 
     /**

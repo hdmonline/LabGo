@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:paddingVertical="10dp"
-        android:paddingHorizontal="60dp">
+        android:paddingHorizontal="10dp">
 
         <TextView
             android:id="@+id/text_add_inventory_title"
@@ -18,7 +18,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
             android:text="Are you sure you want to add this item?"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:textColor="#000" />
 
         <View
@@ -28,8 +28,6 @@
             android:background="#dadada"
             android:layout_alignStart="@+id/text_item_description"
             android:layout_below="@+id/text_add_inventory_title"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="8dp" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -49,7 +47,7 @@
             android:layout_alignTop="@+id/image_add_inventory_image"
             android:layout_toEndOf="@+id/image_add_inventory_image"
             android:layout_marginStart="20dp"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:text="Item name"
             android:textColor="#000" />
 
@@ -60,7 +58,7 @@
             android:layout_alignStart="@+id/text_add_inventory_name"
             android:layout_below="@+id/text_add_inventory_name"
             android:layout_marginTop="10dp"
-            android:textSize="12sp"
+            android:textSize="10sp"
             android:text="Item description"
             android:textColor="#000" />
 
@@ -73,7 +71,7 @@
             android:layout_marginEnd="30dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColor="@color/buzzBlue" />
 
         <TextView
@@ -85,7 +83,7 @@
             android:layout_marginStart="20dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColor="@color/buzzBlue" />
     </RelativeLayout>
 

@@ -256,12 +256,12 @@ public class RestUtils {
      * This class is called when the TA needs to add an item to the database. A RFID tag would be
      * scanned first, then this list of items will appear when the TA is searching items.
      */
-    public static class ListItems extends AsyncTask<Void, Void, ArrayList<ScannedItem>> {
+    public static class ListNewTags extends AsyncTask<Void, Void, ArrayList<ScannedItem>> {
 
         private AddInventoryActivity mActivity;
 
 
-        public ListItems(AddInventoryActivity activity) {
+        public ListNewTags(AddInventoryActivity activity) {
             this.mActivity = activity;
         }
 
@@ -283,6 +283,9 @@ public class RestUtils {
         }
     }
 
+    /**
+     * This class is called when the TA connects an item to a tag to add an inventory item.
+     */
     public static class AddInventoryItem extends AsyncTask<String, Void, String> {
 
         private static final String TAG = "AddInventoryItem";
