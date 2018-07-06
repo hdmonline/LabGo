@@ -126,7 +126,7 @@ public class AddInventoryActivity extends BaseActivity implements
         mSearch = menu.findItem(R.id.action_search_item);
         mRefresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         mQrCode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        mSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        mSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 
         // Make the SearchView fill the width of the toolbar
         mSearchView = (SearchView) mSearch.getActionView();
@@ -237,7 +237,6 @@ public class AddInventoryActivity extends BaseActivity implements
             mRfidTag.setText(R.string.clean_scanned_item_hint);
             mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
             mRfidTag.setTextColor(Color.parseColor("#80000000"));
-            // TODO: button
         } else if (scannedItems.size() == 0) {
             mScannedSingleItem = false;
             mRfidTag.setText(R.string.refresh_scanned_item_hint);

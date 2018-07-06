@@ -23,6 +23,7 @@ public class AddItemConfirmDialog extends DialogFragment {
     public interface OnAddInventoryListener {
         void updateUi();
     }
+
     public OnAddInventoryListener mOnAddInventoryListener;
     // Widgets
     private TextView mName, mDescription;
@@ -74,7 +75,7 @@ public class AddItemConfirmDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: add inventory");
-                // TODO: send http request to add item, dismiss dialog,
+                // Send HTTP request to gateway
                 String[] paramStrings = {mNameString};
                 new RestUtils.AddInventoryItem(getActivity()).execute(paramStrings);
                 mOnAddInventoryListener.updateUi();
