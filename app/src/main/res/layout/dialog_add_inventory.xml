@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:text="Are you sure you want to add this item?"
             android:textSize="15sp"
             android:textColor="#000" />
@@ -28,7 +28,7 @@
             android:background="#dadada"
             android:layout_alignStart="@+id/text_item_description"
             android:layout_below="@+id/text_add_inventory_title"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="15dp" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image_add_inventory_image"

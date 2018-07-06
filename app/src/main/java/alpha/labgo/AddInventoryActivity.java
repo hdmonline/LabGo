@@ -151,9 +151,10 @@ public class AddInventoryActivity extends BaseActivity implements
         }
 
         if (item == mSearch) {
-            // TODO: check if this is working
-            mRecyclerView.setVisibility(View.VISIBLE);
-            mRfidTag.setVisibility(View.INVISIBLE);
+            if (mScannedSingleItem) {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mRfidTag.setVisibility(View.INVISIBLE);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
