@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import alpha.labgo.adapters.ItemAdapter;
 import alpha.labgo.database.RestUtils;
+import alpha.labgo.dialogs.AddItemClearDialog;
 import alpha.labgo.dialogs.AddItemConfirmDialog;
 import alpha.labgo.models.Item;
 import alpha.labgo.models.ScannedItem;
@@ -227,19 +228,19 @@ public class AddInventoryActivity extends BaseActivity implements
     /**
      * refresh data
      */
-    public void refreshData() {
-        invalidateData();
-        getSupportLoaderManager().restartLoader(ADD_ITEM_LOADER_ID,
-                null, AddInventoryActivity.this);
+    public void refreshTags() {
+        new RestUtils.ListNewTags(AddInventoryActivity.this).execute();
     }
 
     public void refreshUi(ArrayList<ScannedItem> scannedItems) {
         mSwipeRefreshLayout.setRefreshing(false);
         if (scannedItems.size() > 1) {
             mScannedSingleItem = false;
-            mRfidTag.setText(R.string.clean_scanned_item_hint);
-            mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
-            mRfidTag.setTextColor(Color.parseColor("#80000000"));
+//            mRfidTag.setText(R.string.clean_scanned_item_hint);
+//            mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
+//            mRfidTag.setTextColor(Color.parseColor("#80000000"));
+            AddItemClearDialog dialog = new AddItemClearDialog();
+            dialog.show(getFragmentManager(), "AddItemClearDialog");
         } else if (scannedItems.size() == 0) {
             mScannedSingleItem = false;
             mRfidTag.setText(R.string.refresh_scanned_item_hint);
@@ -256,7 +257,7 @@ public class AddInventoryActivity extends BaseActivity implements
 
     @Override
     public void onRefresh() {
-        new RestUtils.ListNewTags(AddInventoryActivity.this).execute();
+        refreshTags();
     }
 
     /**

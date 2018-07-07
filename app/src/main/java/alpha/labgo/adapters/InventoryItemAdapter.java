@@ -65,12 +65,12 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
 
         Glide.with(mContext)
                 .asBitmap()
-                .load(inventoryItem.itemImage)
+                .load(inventoryItem.getItemImage())
                 .into(holder.mToolImage);
 
-        holder.mToolName.setText(inventoryItem.itemName);
-        holder.mDescription.setText(inventoryItem.itemDescription);
-        holder.mToolQuantity.setText(Integer.toString(inventoryItem.itemQuantity));
+        holder.mToolName.setText(inventoryItem.getItemName());
+        holder.mDescription.setText(inventoryItem.getItemDescription());
+        holder.mToolQuantity.setText(Integer.toString(inventoryItem.getItemQuantity()));
     }
 
     @Override

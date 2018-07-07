@@ -129,6 +129,7 @@ public class RestUtils {
         StringBuffer response = new StringBuffer();
         HttpURLConnection urlConnection = null;
         String responseJSON;
+        int status = 200;
 
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -145,18 +146,9 @@ public class RestUtils {
             os.flush();
             os.close();
 
-            int status = urlConnection.getResponseCode();
-            if (status != 200) {
-                throw new IOException("Post failed with error code " + status);
-            } else {
-                BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-            }
-        } catch (Exception e){
+            status = urlConnection.getResponseCode();
+
+        } catch (IOException e){
             e.printStackTrace();
         } finally {
             if (urlConnection != null) {
@@ -164,6 +156,62 @@ public class RestUtils {
             }
             // json response string
             responseJSON = response.toString();
+        }
+
+        if (status != 200) {
+            throw new IOException("Post failed with error code " + status);
+        } else {
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+        }
+        return responseJSON;
+    }
+
+    /**
+     * This method returns the entire result from the DELETE HTTP response.
+     *
+     * @param url The URL to fetch the HTTP response from.
+     * @return The contents of the HTTP response.
+     * @throws IOException Related to network and stream reading
+     */
+    public static String deleteResponseFromHttpUrl(URL url) throws IOException {
+
+        Log.d(TAG, "sending DELETE http request");
+
+        StringBuffer response = new StringBuffer();
+        HttpURLConnection urlConnection = null;
+        String responseJSON;
+        int status = 200;
+
+        try {
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("DELETE");
+            urlConnection.setReadTimeout(10000);
+            urlConnection.setConnectTimeout(15000);
+            status = urlConnection.getResponseCode();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            // json response string
+            responseJSON = response.toString();
+        }
+
+        if (status != 200) {
+            throw new IOException("Delete failed with error code " + status);
+        } else {
+            BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
         }
         return responseJSON;
     }
@@ -344,6 +392,50 @@ public class RestUtils {
         }
     }
 
+    public static class DeleteIncomingTags extends AsyncTask<Void, Void, String> {
+
+        private static final String TAG = "DeleteIncomingTags";
+        private final Activity mActivity;
+
+        public DeleteIncomingTags(Activity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            String baseUrl = REST_BASE_URL + INCOMING_TAGS;
+            String deleteTagsResult = null;
+
+            URL url = null;
+            try {
+                Log.d(TAG, baseUrl);
+                url = new URL(baseUrl);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "URL:"+ url.toString());
+
+            try {
+                deleteTagsResult = deleteResponseFromHttpUrl(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return deleteTagsResult;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s != null && !s.equals("")) {
+                Log.d(TAG, "cleared tags");
+                AddInventoryActivity activity = (AddInventoryActivity) mActivity;
+                activity.refreshTags();
+            }
+        }
+    }
+
     /**
      * This method lodas the items/tools that the student has borrowed.
      * Then convert the received data objects to {@link BorrowedItem} objects.
@@ -425,7 +517,7 @@ public class RestUtils {
                 int index = itemNames.indexOf(jo.getString(ITEM_NAME));
                 if (index > -1) {
                     InventoryItem currItem = inventoryItems.get(index);
-                    currItem.itemQuantity++;
+                    currItem.setItemQuantity(currItem.getItemQuantity()+1);
                     inventoryItems.set(index, currItem);
                 } else {
                     InventoryItem newItem = new InventoryItem(

@@ -6,10 +6,10 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class User {
 
-    public String gtid;
-    public String name;
-    public String email;
-    public boolean isTa;
+    private String gtid;
+    private String name;
+    private String email;
+    private boolean isTa;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -20,5 +20,37 @@ public class User {
         this.email = email;
         this.gtid = gtid;
         this.isTa = isTa;
+    }
+
+    public String getGtid() {
+        return gtid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean getIsTa() {
+        return isTa;
+    }
+
+    public void setGtid(String gtid) {
+        this.gtid = gtid;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setTa(boolean ta) {
+        isTa = ta;
     }
 }

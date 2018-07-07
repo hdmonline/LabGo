@@ -2,10 +2,10 @@ package alpha.labgo.models;
 
 public class BorrowedItem {
 
-    public String itemImage;
-    public String itemName;
-    public String itemDescription;
-    public String checkOutTime;
+    private String itemImage;
+    private String itemName;
+    private String itemDescription;
+    private String checkOutTime;
 
     /**
      * Default constructor
@@ -27,5 +27,37 @@ public class BorrowedItem {
         this.itemName = name;
         this.itemDescription = description;
         this.checkOutTime = time;
+    }
+
+    public String getItemImage() {
+        return itemImage;
+    }
+
+    public String getCheckOutTime() {
+        return checkOutTime;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public String getItemDescription() {
+        return itemDescription;
+    }
+
+    public void setItemImage(String itemImage) {
+        this.itemImage = itemImage;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public void setCheckOutTime(String checkOutTime) {
+        this.checkOutTime = checkOutTime;
+    }
+
+    public void setItemDescription(String itemDescription) {
+        this.itemDescription = itemDescription;
     }
 }

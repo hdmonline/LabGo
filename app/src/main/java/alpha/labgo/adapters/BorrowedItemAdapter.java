@@ -70,12 +70,12 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
 
         Glide.with(mContext)
                 .asBitmap()
-                .load(borrowedItem.itemImage)
+                .load(borrowedItem.getItemImage())
                 .into(holder.mToolImage);
 
-        holder.mToolName.setText(borrowedItem.itemName);
-        holder.mDescription.setText(borrowedItem.itemDescription);
-        holder.mCheckOutTime.setText(borrowedItem.checkOutTime);
+        holder.mToolName.setText(borrowedItem.getItemName());
+        holder.mDescription.setText(borrowedItem.getItemDescription());
+        holder.mCheckOutTime.setText(borrowedItem.getCheckOutTime());
     }
 
     @Override

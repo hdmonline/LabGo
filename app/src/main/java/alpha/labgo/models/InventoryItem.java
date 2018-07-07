@@ -2,10 +2,10 @@ package alpha.labgo.models;
 
 public class InventoryItem {
 
-    public String itemImage;
-    public String itemName;
-    public String itemDescription;
-    public int itemQuantity;
+    private String itemImage;
+    private String itemName;
+    private String itemDescription;
+    private int itemQuantity;
 
     /**
      * Default constructor
@@ -27,5 +27,37 @@ public class InventoryItem {
         this.itemName = name;
         this.itemDescription = description;
         this.itemQuantity = quantity;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public String getItemImage() {
+        return itemImage;
+    }
+
+    public int getItemQuantity() {
+        return itemQuantity;
+    }
+
+    public String getItemDescription() {
+        return itemDescription;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public void setItemImage(String itemImage) {
+        this.itemImage = itemImage;
+    }
+
+    public void setItemQuantity(int itemQuantity) {
+        this.itemQuantity = itemQuantity;
+    }
+
+    public void setItemDescription(String itemDescription) {
+        this.itemDescription = itemDescription;
     }
 }
