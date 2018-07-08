@@ -84,6 +84,9 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
 //        mFam.setVisibility(View.VISIBLE);
 //        mFam.setClickable(true);
 
+        // Handling FAM close by clicking the background
+        mFam.setOnMenuToggleListener(onMenuToggleListener());
+
         // Set the layoutManager on mRecyclerView
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this.getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -221,6 +224,28 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
 
                 }
                 mFam.close(true);
+            }
+        };
+    }
+
+    /**
+     * This method is to handle when FAM is open,
+     * it can be closed by clicking the background.
+     *
+     * @return
+     */
+    private FloatingActionMenu.OnMenuToggleListener onMenuToggleListener() {
+        return new FloatingActionMenu.OnMenuToggleListener() {
+            @Override
+            public void onMenuToggle(boolean opened) {
+                if (opened) {
+                    mFam.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mFam.close(true);
+                        }
+                    });
+                }
             }
         };
     }
