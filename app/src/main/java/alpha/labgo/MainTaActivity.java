@@ -3,7 +3,6 @@ package alpha.labgo;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -18,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -28,8 +29,7 @@ import alpha.labgo.fragments.InventoryTaFragment;
 import alpha.labgo.fragments.NotificationTaFragment;
 
 public class MainTaActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        FloatingActionButton.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainTaActivity";
 
@@ -43,7 +43,8 @@ public class MainTaActivity extends BaseActivity
     private BottomNavigationView mBottomNavigationView;
     private MenuItem mPrevMenuItem;
     private DrawerLayout mDrawer;
-    private FloatingActionButton mFabAddInventoryItem;
+    private FloatingActionMenu mFam;
+    private FloatingActionButton mFabAddInventory, mFabAddItem;
     private TextView mIdentity;
 
     // ViewPager and PagerAdapter
@@ -76,11 +77,16 @@ public class MainTaActivity extends BaseActivity
         mBottomNavigationView = findViewById(R.id.bottom_navigation_ta);
         mViewPager = findViewById(R.id.container);
         mDrawer = findViewById(R.id.layout_drawer_ta);
-        mFabAddInventoryItem = findViewById(R.id.fab);
+        mFam = findViewById(R.id.fam_main);
+        mFabAddInventory = findViewById(R.id.fab_main_add_inventory);
+        mFabAddItem = findViewById(R.id.fab_main_add_item);
 
-        mFabAddInventoryItem.setVisibility(View.INVISIBLE);
-        mFabAddInventoryItem.setClickable(false);
-        mFabAddInventoryItem.setOnClickListener(this);
+        // Handling FABs clicked
+        mFabAddItem.setOnClickListener(onFabClick());
+        mFabAddInventory.setOnClickListener(onFabClick());
+
+        mFam.setVisibility(View.INVISIBLE);
+        mFam.setClickable(false);
 
         mIdentity.setText("TA");
 
@@ -257,20 +263,20 @@ public class MainTaActivity extends BaseActivity
                 mPrevMenuItem = mBottomNavigationView.getMenu().getItem(position);
                 switch (position) {
                     case 0:
-                        mFabAddInventoryItem.setVisibility(View.INVISIBLE);
-                        mFabAddInventoryItem.setClickable(false);
+                        mFam.setVisibility(View.INVISIBLE);
+                        mFam.setClickable(false);
                         break;
                     case 1:
-                        mFabAddInventoryItem.setVisibility(View.VISIBLE);
-                        mFabAddInventoryItem.setClickable(true);
+                        mFam.setVisibility(View.VISIBLE);
+                        mFam.setClickable(true);
                         break;
                     case 2:
-                        mFabAddInventoryItem.setVisibility(View.INVISIBLE);
-                        mFabAddInventoryItem.setClickable(false);
+                        mFam.setVisibility(View.INVISIBLE);
+                        mFam.setClickable(false);
                         break;
                     default:
-                        mFabAddInventoryItem.setVisibility(View.INVISIBLE);
-                        mFabAddInventoryItem.setClickable(false);
+                        mFam.setVisibility(View.INVISIBLE);
+                        mFam.setClickable(false);
                         break;
                 }
             }
@@ -302,13 +308,19 @@ public class MainTaActivity extends BaseActivity
         }
     };
 
+    private View.OnClickListener onFabClick() {
+        return new View.OnClickListener() {
 
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.fab) {
-            Intent toAddInventoryItem = new Intent(MainTaActivity.this, AddInventoryActivity.class);
-            startActivityForResult(toAddInventoryItem, ADD_INVENTORY_REQUEST);
-        }
+            @Override
+            public void onClick(View v) {
+                if (v == mFabAddInventory) {
+                    Intent toAddInventoryItem = new Intent(MainTaActivity.this, AddInventoryActivity.class);
+                    startActivityForResult(toAddInventoryItem, ADD_INVENTORY_REQUEST);
+                } else if (v == mFabAddItem) {
+
+                }
+                mFam.close(true);
+            }
+        };
     }
 }

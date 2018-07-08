@@ -5,7 +5,9 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="buzzGold">#EAAA00</color>
+    <color name="buzzGoldFaded">#DBC68E</color>
     <color name="buzzBlue">#003057</color>
+    <color name="buzzBlueFaded">#355A77</color>
     <color name="brightGray">#EEEEEE</color>
     <color name="gray">#BFBFBF</color>
     <color name="dark_gray">#707070</color>
