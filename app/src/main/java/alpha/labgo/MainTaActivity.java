@@ -17,8 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -135,6 +133,18 @@ public class MainTaActivity extends BaseActivity
             return true;
         }
 
+        // refresh button
+        if (id == R.id.action_refresh) {
+            int currentPage = mViewPager.getCurrentItem();
+            switch (currentPage) {
+                case 0:
+                    mDashboardFragment.refreshData();
+                    break;
+                case 1:
+                    mInventoryFragment.refreshData();
+                    break;
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 

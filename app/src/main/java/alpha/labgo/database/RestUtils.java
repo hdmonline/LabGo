@@ -154,8 +154,6 @@ public class RestUtils {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            // json response string
-            responseJSON = response.toString();
         }
 
         if (status != 200) {
@@ -168,6 +166,10 @@ public class RestUtils {
             }
             in.close();
         }
+
+        // json response string
+        responseJSON = response.toString();
+
         return responseJSON;
     }
 
@@ -387,6 +389,12 @@ public class RestUtils {
                     Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
                 }
             } else {
+                try {
+                    AddInventoryActivity activity = (AddInventoryActivity) mActivity;
+                    activity.finishing();
+                } catch (ClassCastException e) {
+                    Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+                }
                 Log.e(TAG, "Failed to add inventory, please check the database.");
             }
         }

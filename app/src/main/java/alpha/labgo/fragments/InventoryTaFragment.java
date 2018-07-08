@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,15 +29,18 @@ import alpha.labgo.database.RestUtils;
 import alpha.labgo.models.InventoryItem;
 
 // TODO
-public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks<ArrayList<InventoryItem>> {
+public class InventoryTaFragment extends BaseFragment implements
+        SwipeRefreshLayout.OnRefreshListener,
+        LoaderCallbacks<ArrayList<InventoryItem>> {
 
     private static final String TAG = "InventoryFragment";
 
-    private static final int INVENTORY_LOADER_ID = 23;
+    private static final int INVENTORY_TA_LOADER_ID = 24;
     private static final int ADD_INVENTORY_REQUEST = 5;
 
     private String mGtid;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
     private TextView mNoItemText;
@@ -77,6 +81,14 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
         mFabAddInventory = rootView.findViewById(R.id.fab_main_add_inventory);
         mFabAddItem = rootView.findViewById(R.id.fab_main_add_item);
 
+        // SwipeRefreshLayout
+        mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_container_inventory);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+
         // Handling FABs clicked
         mFabAddItem.setOnClickListener(onFabClick());
         mFabAddInventory.setOnClickListener(onFabClick());
@@ -94,13 +106,13 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
         mRecyclerView.setHasFixedSize(true);
 
         // will pass the parameters later
-        // TODO: chech if this constructor usable
+        // TODO: check if this constructor usable
         mInventoryItemAdapter = new InventoryItemAdapter(getContext());
 
         // set adapter
         mRecyclerView.setAdapter(mInventoryItemAdapter);
 
-        int loaderId = INVENTORY_LOADER_ID;
+        int loaderId = INVENTORY_TA_LOADER_ID;
         LoaderCallbacks<ArrayList<InventoryItem>> callback = InventoryTaFragment.this;
         Bundle bundleInventory = null;
 
@@ -182,6 +194,7 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
      * need to check whether each view is currently visible or invisible.
      */
     private void showInventoryItemView() {
+        mSwipeRefreshLayout.setRefreshing(false);
         mNoItemText.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -209,7 +222,7 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
      */
     public void refreshData() {
         invalidateData();
-        getLoaderManager().restartLoader(INVENTORY_LOADER_ID, null, InventoryTaFragment.this);
+        getLoaderManager().restartLoader(INVENTORY_TA_LOADER_ID, null, InventoryTaFragment.this);
     }
 
     private View.OnClickListener onFabClick() {
@@ -248,5 +261,10 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
                 }
             }
         };
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshData();
     }
 }

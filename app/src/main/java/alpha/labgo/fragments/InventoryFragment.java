@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.github.clans.fab.FloatingActionMenu;
 
 import org.w3c.dom.Text;
 
@@ -27,7 +30,9 @@ import alpha.labgo.models.BorrowedItem;
 import alpha.labgo.models.InventoryItem;
 
 // TODO
-public class InventoryFragment extends BaseFragment implements LoaderCallbacks<ArrayList<InventoryItem>> {
+public class InventoryFragment extends BaseFragment implements
+        SwipeRefreshLayout.OnRefreshListener,
+        LoaderCallbacks<ArrayList<InventoryItem>> {
 
     private static final String TAG = "InventoryFragment";
 
@@ -35,9 +40,11 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
 
     private String mGtid;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
     private TextView mNoItemText;
+    private FloatingActionMenu mFam;
 
     private InventoryItemAdapter mInventoryItemAdapter;
     private ProgressBar mLoadingIndicator;
@@ -69,6 +76,17 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
         mErrorMessageDisplay = rootView.findViewById(R.id.text_inventory_error_message_display);
         mNoItemText = rootView.findViewById(R.id.text_inventory_no_item);
         mLoadingIndicator = rootView.findViewById(R.id.pb_inventory_loading_indicator);
+        mFam = rootView.findViewById(R.id.fam_main);
+        mFam.setVisibility(View.INVISIBLE);
+        mFam.setClickable(false);
+
+        // SwipeRefreshLayout
+        mSwipeRefreshLayout = rootView.findViewById(R.id.swipe_container_inventory);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
 
         // Set the layoutManager on mRecyclerView
         LinearLayoutManager layoutManager
@@ -165,6 +183,7 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
      * need to check whether each view is currently visible or invisible.
      */
     private void showInventoryItemView() {
+        mSwipeRefreshLayout.setRefreshing(false);
         mNoItemText.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -193,5 +212,10 @@ public class InventoryFragment extends BaseFragment implements LoaderCallbacks<A
     public void refreshData() {
         invalidateData();
         getLoaderManager().restartLoader(INVENTORY_LOADER_ID, null, InventoryFragment.this);
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshData();
     }
 }

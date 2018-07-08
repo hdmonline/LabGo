@@ -143,19 +143,15 @@ public class AddInventoryActivity extends BaseActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id) {
-            case android.R.id.home:
-                this.finish();
-                break;
-            default:
-                break;
-        }
-
-        if (item == mSearch) {
+        if (id == android.R.id.home) {
+            this.finish();
+        } else if (item == mSearch) {
             if (mScannedSingleItem) {
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mRfidTag.setVisibility(View.INVISIBLE);
             }
+        } else if (item == mRefresh) {
+            refreshTags();
         }
         return super.onOptionsItemSelected(item);
     }
