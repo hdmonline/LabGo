@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -41,5 +42,52 @@
         android:layout_width="42dp"
         android:layout_gravity="center"
         android:visibility="invisible" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fam_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|end"
+        android:paddingRight="@dimen/fab_right_margin"
+        android:paddingBottom="@dimen/fab_bottom_margin"
+        app:menu_icon="@drawable/ic_add_main"
+        app:menu_backgroundColor="#ccffffff"
+        app:menu_fab_label="Choose an action"
+        app:menu_colorNormal="@color/buzzBlue"
+        app:menu_colorPressed="@color/buzzBlueFaded"
+        app:menu_colorRipple="#99FFFFFF"
+        app:fab_showShadow="true"
+        app:menu_labels_colorNormal="#333333"
+        app:menu_labels_colorPressed="#444444"
+        app:menu_labels_colorRipple="#66FFFFFF"
+        app:menu_labels_showShadow="true"
+        app:menu_labels_maxLines="-1"
+        app:menu_labels_position="left"
+        app:menu_openDirection="up"
+        app:fab_shadowColor="#66000000"
+        app:menu_labels_ellipsize="end"
+        app:menu_labels_singleLine="true">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_main_add_inventory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_inventory"
+            app:fab_label="Add Inventory"
+            app:fab_colorNormal="@color/buzzBlue"
+            app:fab_colorPressed="@color/buzzBlueFaded"
+            app:fab_size="mini"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_main_add_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_item"
+            app:fab_label="Add Item"
+            app:fab_colorNormal="@color/buzzBlue"
+            app:fab_colorPressed="@color/buzzBlueFaded"
+            app:fab_size="mini"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 </FrameLayout>

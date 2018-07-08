@@ -41,7 +41,6 @@ public class MainActivity extends BaseActivity
     private BottomNavigationView mBottomNavigationView;
     private MenuItem mPrevMenuItem;
     private DrawerLayout mDrawer;
-    private FloatingActionMenu mFam;
 
     // Firebase
     private FirebaseFirestore mFirestore;
@@ -72,10 +71,6 @@ public class MainActivity extends BaseActivity
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
         mViewPager = findViewById(R.id.container);
         mDrawer = findViewById(R.id.layout_drawer);
-        mFam = findViewById(R.id.fam_main);
-
-        mFam.setVisibility(View.INVISIBLE);
-        mFam.setClickable(false);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();

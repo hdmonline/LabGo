@@ -33,8 +33,6 @@ public class MainTaActivity extends BaseActivity
 
     private static final String TAG = "MainTaActivity";
 
-    private static final int ADD_INVENTORY_REQUEST = 5;
-
     // Views
     private NavigationView mNavigationView;
     private View mHeaderView;
@@ -43,8 +41,6 @@ public class MainTaActivity extends BaseActivity
     private BottomNavigationView mBottomNavigationView;
     private MenuItem mPrevMenuItem;
     private DrawerLayout mDrawer;
-    private FloatingActionMenu mFam;
-    private FloatingActionButton mFabAddInventory, mFabAddItem;
     private TextView mIdentity;
 
     // ViewPager and PagerAdapter
@@ -77,16 +73,6 @@ public class MainTaActivity extends BaseActivity
         mBottomNavigationView = findViewById(R.id.bottom_navigation_ta);
         mViewPager = findViewById(R.id.container);
         mDrawer = findViewById(R.id.layout_drawer_ta);
-        mFam = findViewById(R.id.fam_main);
-        mFabAddInventory = findViewById(R.id.fab_main_add_inventory);
-        mFabAddItem = findViewById(R.id.fab_main_add_item);
-
-        // Handling FABs clicked
-        mFabAddItem.setOnClickListener(onFabClick());
-        mFabAddInventory.setOnClickListener(onFabClick());
-
-        mFam.setVisibility(View.INVISIBLE);
-        mFam.setClickable(false);
 
         mIdentity.setText("TA");
 
@@ -261,24 +247,6 @@ public class MainTaActivity extends BaseActivity
 
                 mBottomNavigationView.getMenu().getItem(position).setChecked(true);
                 mPrevMenuItem = mBottomNavigationView.getMenu().getItem(position);
-                switch (position) {
-                    case 0:
-                        mFam.setVisibility(View.INVISIBLE);
-                        mFam.setClickable(false);
-                        break;
-                    case 1:
-                        mFam.setVisibility(View.VISIBLE);
-                        mFam.setClickable(true);
-                        break;
-                    case 2:
-                        mFam.setVisibility(View.INVISIBLE);
-                        mFam.setClickable(false);
-                        break;
-                    default:
-                        mFam.setVisibility(View.INVISIBLE);
-                        mFam.setClickable(false);
-                        break;
-                }
             }
 
             @Override
@@ -307,20 +275,4 @@ public class MainTaActivity extends BaseActivity
             return false;
         }
     };
-
-    private View.OnClickListener onFabClick() {
-        return new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (v == mFabAddInventory) {
-                    Intent toAddInventoryItem = new Intent(MainTaActivity.this, AddInventoryActivity.class);
-                    startActivityForResult(toAddInventoryItem, ADD_INVENTORY_REQUEST);
-                } else if (v == mFabAddItem) {
-
-                }
-                mFam.close(true);
-            }
-        };
-    }
 }

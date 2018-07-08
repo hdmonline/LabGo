@@ -1,5 +1,6 @@
 package alpha.labgo.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,8 +15,13 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+
 import java.util.ArrayList;
 
+import alpha.labgo.AddInventoryActivity;
+import alpha.labgo.MainTaActivity;
 import alpha.labgo.R;
 import alpha.labgo.adapters.InventoryItemAdapter;
 import alpha.labgo.database.RestUtils;
@@ -27,12 +33,15 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
     private static final String TAG = "InventoryFragment";
 
     private static final int INVENTORY_LOADER_ID = 23;
+    private static final int ADD_INVENTORY_REQUEST = 5;
 
     private String mGtid;
 
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
     private TextView mNoItemText;
+    private FloatingActionMenu mFam;
+    private FloatingActionButton mFabAddInventory, mFabAddItem;
 
     private InventoryItemAdapter mInventoryItemAdapter;
     private ProgressBar mLoadingIndicator;
@@ -64,6 +73,16 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
         mErrorMessageDisplay = rootView.findViewById(R.id.text_inventory_error_message_display);
         mNoItemText = rootView.findViewById(R.id.text_inventory_no_item);
         mLoadingIndicator = rootView.findViewById(R.id.pb_inventory_loading_indicator);
+        mFam = rootView.findViewById(R.id.fam_main);
+        mFabAddInventory = rootView.findViewById(R.id.fab_main_add_inventory);
+        mFabAddItem = rootView.findViewById(R.id.fab_main_add_item);
+
+        // Handling FABs clicked
+        mFabAddItem.setOnClickListener(onFabClick());
+        mFabAddInventory.setOnClickListener(onFabClick());
+
+//        mFam.setVisibility(View.VISIBLE);
+//        mFam.setClickable(true);
 
         // Set the layoutManager on mRecyclerView
         LinearLayoutManager layoutManager
@@ -188,5 +207,21 @@ public class InventoryTaFragment extends BaseFragment implements LoaderCallbacks
     public void refreshData() {
         invalidateData();
         getLoaderManager().restartLoader(INVENTORY_LOADER_ID, null, InventoryTaFragment.this);
+    }
+
+    private View.OnClickListener onFabClick() {
+        return new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (v == mFabAddInventory) {
+                    Intent toAddInventoryItem = new Intent(getActivity(), AddInventoryActivity.class);
+                    startActivityForResult(toAddInventoryItem, ADD_INVENTORY_REQUEST);
+                } else if (v == mFabAddItem) {
+
+                }
+                mFam.close(true);
+            }
+        };
     }
 }
