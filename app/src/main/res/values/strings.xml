@@ -45,4 +45,7 @@
 
     <string name="refresh_scanned_item_hint">Please scan one item and refresh this page.</string>
     <string name="clean_scanned_item_hint">Only one item should be scanned. Please clean the scanned items and rescan.</string>
+
+    <string name="add_inventory_title">Are you sure you want to ADD this item?</string>
+    <string name="delete_inventory_title">Are you sure you want to DELETE this item?</string>
 </resources>

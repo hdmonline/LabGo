@@ -1,15 +1,10 @@
 package alpha.labgo.database;
 
 import android.app.Activity;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -31,9 +26,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import alpha.labgo.AddInventoryActivity;
+import alpha.labgo.UpdateInventoryActivity;
 import alpha.labgo.MainActivity;
-import alpha.labgo.R;
 import alpha.labgo.models.Item;
 import alpha.labgo.models.BorrowedItem;
 import alpha.labgo.models.InventoryItem;
@@ -77,6 +71,8 @@ public class RestUtils {
     private static final String INVENTORY = "/inventories";
 
     // Parameters for RFID tags
+    private static final String TAGS = "/tags";
+    private static final String WITH_DEPENDENCY = "/withdependencies";
     private static final String INCOMING_TAGS = "/incomingrfidtags";
     private static final String OUTGOING_TAGS = "/outgoingrfidtags";
 
@@ -201,8 +197,6 @@ public class RestUtils {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            // json response string
-            responseJSON = response.toString();
         }
 
         if (status != 200) {
@@ -215,6 +209,8 @@ public class RestUtils {
             }
             in.close();
         }
+        // json response string
+        responseJSON = response.toString();
         return responseJSON;
     }
 
@@ -308,16 +304,11 @@ public class RestUtils {
      */
     public static class ListNewTags extends AsyncTask<Void, Void, ArrayList<ScannedItem>> {
 
-        private AddInventoryActivity mActivity;
+        private UpdateInventoryActivity mActivity;
 
 
-        public ListNewTags(AddInventoryActivity activity) {
+        public ListNewTags(UpdateInventoryActivity activity) {
             this.mActivity = activity;
-        }
-
-        @Override
-        protected void onPreExecute() {
-
         }
 
         @Override
@@ -383,19 +374,105 @@ public class RestUtils {
             super.onPostExecute(s);
             if (s != null && !s.equals("")) {
                 try {
-                    AddInventoryActivity activity = (AddInventoryActivity) mActivity;
+                    UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
                     activity.finishing();
                 } catch (ClassCastException e) {
                     Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
                 }
             } else {
                 try {
-                    AddInventoryActivity activity = (AddInventoryActivity) mActivity;
+                    UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
                     activity.finishing();
                 } catch (ClassCastException e) {
                     Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
                 }
                 Log.e(TAG, "Failed to add inventory, please check the database.");
+            }
+        }
+    }
+
+    public static class GetItemByTag extends AsyncTask<String, Void, Item> {
+
+        private UpdateInventoryActivity mActivity;
+
+        public GetItemByTag(UpdateInventoryActivity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        protected Item doInBackground(String... strings) {
+            String tag = strings[0];
+            return getItemByTag(tag);
+        }
+
+        @Override
+        protected void onPostExecute(Item item) {
+            if (item != null) {
+                mActivity.showDialogAfterGettingItem(item);
+            } else {
+                mActivity.onDeleteFail();
+            }
+            super.onPostExecute(item);
+        }
+    }
+
+    /**
+     * This class is called when the TA needs to delete an item from inventory with all its dependencies.
+     */
+    public static class DeleteInventoryItem extends AsyncTask<String, Void, String> {
+
+        private static final String TAG = "DeleteInventoryItem";
+        private final Activity mActivity;
+
+        public DeleteInventoryItem(Activity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            String tag = strings[0];
+
+            String userInventoryUrl = REST_BASE_URL +
+                    TAGS + "/" + tag + WITH_DEPENDENCY;
+            String deleteTagResult = null;
+
+            URL url = null;
+            try {
+                Log.d(TAG, userInventoryUrl);
+                url = new URL(userInventoryUrl);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "URL:"+ url.toString());
+
+            try {
+                deleteTagResult = deleteResponseFromHttpUrl(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return deleteTagResult;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s != null && !s.equals("")) {
+                try {
+                    UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
+                    activity.finishing();
+                } catch (ClassCastException e) {
+                    Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+                }
+            } else {
+                try {
+                    UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
+                    activity.finishing();
+                } catch (ClassCastException e) {
+                    Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+                }
+                Log.e(TAG, "Failed to delete inventory, please check the database.");
             }
         }
     }
@@ -438,7 +515,7 @@ public class RestUtils {
             super.onPostExecute(s);
             if (s != null && !s.equals("")) {
                 Log.d(TAG, "cleared tags");
-                AddInventoryActivity activity = (AddInventoryActivity) mActivity;
+                UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
                 activity.refreshTags();
             }
         }
@@ -620,6 +697,45 @@ public class RestUtils {
         }
 
         return items;
+    }
+
+    /**
+     * This method gets the item by tag.
+     *
+     * @param tag The RFID tag of the item
+     * @return
+     */
+    public static Item getItemByTag(String tag) {
+
+        String baseUrl = REST_BASE_URL + INVENTORY + TAGS + "/" + tag;
+        Item item = null;
+
+        URL url = null;
+        try {
+            url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray jaResult = null;
+        try {
+            jaResult = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (jaResult != null && jaResult.length() != 0) {
+            try {
+                JSONObject jo = (JSONObject) jaResult.get(0);
+                item = new Item(
+                        jo.getString(ITEM_IMAGE_URL),
+                        jo.getString(ITEM_NAME),
+                        jo.getString(ITEM_DESCRIPTION));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return item;
     }
 
     /**

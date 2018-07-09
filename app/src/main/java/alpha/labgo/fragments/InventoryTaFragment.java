@@ -21,14 +21,12 @@ import com.github.clans.fab.FloatingActionMenu;
 
 import java.util.ArrayList;
 
-import alpha.labgo.AddInventoryActivity;
-import alpha.labgo.MainTaActivity;
+import alpha.labgo.UpdateInventoryActivity;
 import alpha.labgo.R;
 import alpha.labgo.adapters.InventoryItemAdapter;
 import alpha.labgo.database.RestUtils;
 import alpha.labgo.models.InventoryItem;
 
-// TODO
 public class InventoryTaFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener,
         LoaderCallbacks<ArrayList<InventoryItem>> {
@@ -36,7 +34,9 @@ public class InventoryTaFragment extends BaseFragment implements
     private static final String TAG = "InventoryFragment";
 
     private static final int INVENTORY_TA_LOADER_ID = 24;
-    private static final int ADD_INVENTORY_REQUEST = 5;
+    private static final int UPDATE_INVENTORY_REQUEST = 5;
+    private static final int ADD_INVENTORY = 10;
+    private static final int DELETE_INVENTORY = 11;
 
     private String mGtid;
 
@@ -45,7 +45,7 @@ public class InventoryTaFragment extends BaseFragment implements
     private TextView mErrorMessageDisplay;
     private TextView mNoItemText;
     private FloatingActionMenu mFam;
-    private FloatingActionButton mFabAddInventory, mFabAddItem;
+    private FloatingActionButton mFabAddInventory, mFabAddItem, mFabDeleteInventory;
 
     private InventoryItemAdapter mInventoryItemAdapter;
     private ProgressBar mLoadingIndicator;
@@ -79,6 +79,7 @@ public class InventoryTaFragment extends BaseFragment implements
         mLoadingIndicator = rootView.findViewById(R.id.pb_inventory_loading_indicator);
         mFam = rootView.findViewById(R.id.fam_main);
         mFabAddInventory = rootView.findViewById(R.id.fab_main_add_inventory);
+        mFabDeleteInventory = rootView.findViewById(R.id.fab_main_delete_inventory);
         mFabAddItem = rootView.findViewById(R.id.fab_main_add_item);
 
         // SwipeRefreshLayout
@@ -92,6 +93,7 @@ public class InventoryTaFragment extends BaseFragment implements
         // Handling FABs clicked
         mFabAddItem.setOnClickListener(onFabClick());
         mFabAddInventory.setOnClickListener(onFabClick());
+        mFabDeleteInventory.setOnClickListener(onFabClick());
 
 //        mFam.setVisibility(View.VISIBLE);
 //        mFam.setClickable(true);
@@ -225,14 +227,26 @@ public class InventoryTaFragment extends BaseFragment implements
         getLoaderManager().restartLoader(INVENTORY_TA_LOADER_ID, null, InventoryTaFragment.this);
     }
 
+    /**
+     * This method handles all the click events on FABs.
+     *
+     * @return
+     */
     private View.OnClickListener onFabClick() {
         return new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 if (v == mFabAddInventory) {
-                    Intent toAddInventoryItem = new Intent(getActivity(), AddInventoryActivity.class);
-                    startActivityForResult(toAddInventoryItem, ADD_INVENTORY_REQUEST);
+                    Intent toAddInventoryItem = new Intent(getActivity(), UpdateInventoryActivity.class);
+                    int addOrDelete = ADD_INVENTORY;
+                    toAddInventoryItem.putExtra("addOrDelete", addOrDelete);
+                    startActivityForResult(toAddInventoryItem, UPDATE_INVENTORY_REQUEST);
+                } else if (v == mFabDeleteInventory) {
+                    Intent toAddInventoryItem = new Intent(getActivity(), UpdateInventoryActivity.class);
+                    int addOrDelete = DELETE_INVENTORY;
+                    toAddInventoryItem.putExtra("addOrDelete", addOrDelete);
+                    startActivityForResult(toAddInventoryItem, UPDATE_INVENTORY_REQUEST);
                 } else if (v == mFabAddItem) {
 
                 }

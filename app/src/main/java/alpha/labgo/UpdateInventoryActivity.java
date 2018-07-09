@@ -17,24 +17,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import alpha.labgo.adapters.ItemAdapter;
 import alpha.labgo.database.RestUtils;
-import alpha.labgo.dialogs.AddItemClearDialog;
-import alpha.labgo.dialogs.AddItemConfirmDialog;
+import alpha.labgo.dialogs.ClearTagsDialog;
+import alpha.labgo.dialogs.UpdateInventoryConfirmDialog;
 import alpha.labgo.models.Item;
 import alpha.labgo.models.ScannedItem;
 
 
-public class AddInventoryActivity extends BaseActivity implements
+public class UpdateInventoryActivity extends BaseActivity implements
         SwipeRefreshLayout.OnRefreshListener,
-        AddItemConfirmDialog.OnAddInventoryListener,
+        UpdateInventoryConfirmDialog.OnAddInventoryListener,
         LoaderCallbacks<ArrayList<Item>> {
 
-    private static final String TAG = "AddInventoryActivity";
+    private static final String TAG = "UpdateInventoryActivity";
     private static final int ADD_ITEM_LOADER_ID = 28;
+    private static final int ADD_INVENTORY = 10;
+    private static final int DELETE_INVENTORY = 11;
 
     // View
     private Toolbar mToolbar;
@@ -51,10 +54,15 @@ public class AddInventoryActivity extends BaseActivity implements
 
     private boolean mScannedSingleItem;
 
+    private int mAddOrDelete;
+    private String mTag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_inventory);
+        setContentView(R.layout.activity_update_inventory);
+
+        mAddOrDelete = getIntent().getIntExtra("addOrDelete", -1);
 
         mScannedSingleItem = false;
 
@@ -79,20 +87,20 @@ public class AddInventoryActivity extends BaseActivity implements
 
         // Set the layoutManager on mRecyclerView
         LinearLayoutManager layoutManager
-                = new LinearLayoutManager(AddInventoryActivity.this, LinearLayoutManager.VERTICAL, false);
+                = new LinearLayoutManager(UpdateInventoryActivity.this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setVisibility(View.INVISIBLE);
 
         // Set adapter
-        mItemAdapter = new ItemAdapter(AddInventoryActivity.this);
+        mItemAdapter = new ItemAdapter(UpdateInventoryActivity.this, mAddOrDelete);
         mRecyclerView.setAdapter(mItemAdapter);
-        LoaderCallbacks<ArrayList<Item>> callback = AddInventoryActivity.this;
+        LoaderCallbacks<ArrayList<Item>> callback = UpdateInventoryActivity.this;
         Bundle bundleAddItem = null;
 
         getSupportLoaderManager().initLoader(ADD_ITEM_LOADER_ID, bundleAddItem, callback);
 
-        new RestUtils.ListNewTags(AddInventoryActivity.this).execute();
+        new RestUtils.ListNewTags(UpdateInventoryActivity.this).execute();
     }
 
     @Override
@@ -161,7 +169,7 @@ public class AddInventoryActivity extends BaseActivity implements
     @NonNull
     @Override
     public Loader<ArrayList<Item>> onCreateLoader(int id, @Nullable Bundle args) {
-        return new AsyncTaskLoader<ArrayList<Item>>(AddInventoryActivity.this) {
+        return new AsyncTaskLoader<ArrayList<Item>>(UpdateInventoryActivity.this) {
 
             ArrayList<Item> mItems = null;
 
@@ -213,51 +221,13 @@ public class AddInventoryActivity extends BaseActivity implements
 
     }
 
-    /**
-     * This method is used when we are resetting data, so that at one point in time during a
-     * refresh of our data, you can see that there is no data showing.
-     */
-    public void invalidateData() {
-        mItemAdapter.setList(new ArrayList<Item>());
-    }
-
-    /**
-     * refresh data
-     */
-    public void refreshTags() {
-        new RestUtils.ListNewTags(AddInventoryActivity.this).execute();
-    }
-
-    public void refreshUi(ArrayList<ScannedItem> scannedItems) {
-        mSwipeRefreshLayout.setRefreshing(false);
-        if (scannedItems.size() > 1) {
-            mScannedSingleItem = false;
-//            mRfidTag.setText(R.string.clean_scanned_item_hint);
-//            mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
-//            mRfidTag.setTextColor(Color.parseColor("#80000000"));
-            AddItemClearDialog dialog = new AddItemClearDialog();
-            dialog.show(getFragmentManager(), "AddItemClearDialog");
-        } else if (scannedItems.size() == 0) {
-            mScannedSingleItem = false;
-            mRfidTag.setText(R.string.refresh_scanned_item_hint);
-            mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
-            mRfidTag.setTextColor(Color.parseColor("#80000000"));
-        } else {
-            mScannedSingleItem = true;
-            String result = "Scanned RFID tag: " + scannedItems.get(0).getRfidTag();
-            mRfidTag.setText(result);
-            mRfidTag.setBackgroundColor(Color.parseColor("#FF00DD00"));
-            mRfidTag.setTextColor(Color.parseColor("#FFFFFFFF"));
-        }
-    }
-
     @Override
     public void onRefresh() {
         refreshTags();
     }
 
     /**
-     * This method updates UI after hitting the OK button on the dialog.
+     * This method updates UI after hitting the OK button on the dialog. (When updating inventory item)
      */
     @Override
     public void updateUi() {
@@ -272,5 +242,65 @@ public class AddInventoryActivity extends BaseActivity implements
     public void finishing() {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         finish();
+    }
+
+    public void refreshUi(ArrayList<ScannedItem> scannedItems) {
+        mSwipeRefreshLayout.setRefreshing(false);
+        if (scannedItems.size() > 1) {
+            mScannedSingleItem = false;
+//            mRfidTag.setText(R.string.clean_scanned_item_hint);
+//            mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
+//            mRfidTag.setTextColor(Color.parseColor("#80000000"));
+            ClearTagsDialog dialog = new ClearTagsDialog().newInstance("Only 1 tag should be scanned. Press CLEAR to clear the tags.");
+            dialog.show(getFragmentManager(), "ClearTagsDialog");
+        } else if (scannedItems.size() == 0) {
+            mScannedSingleItem = false;
+            mRfidTag.setText(R.string.refresh_scanned_item_hint);
+            mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
+            mRfidTag.setTextColor(Color.parseColor("#80000000"));
+        } else {
+            mTag = scannedItems.get(0).getRfidTag();
+            mItemAdapter.setTag(mTag);
+            if (mAddOrDelete == DELETE_INVENTORY) {
+                mRfidTag.setVisibility(View.INVISIBLE);
+                mLoadingIndicator.setVisibility(View.VISIBLE);
+                new RestUtils.GetItemByTag(this).execute(mTag);
+            } else {
+                mScannedSingleItem = true;
+                String result = "Scanned RFID tag: " + mTag;
+                mRfidTag.setText(result);
+                mRfidTag.setBackgroundColor(Color.parseColor("#FF00DD00"));
+                mRfidTag.setTextColor(Color.parseColor("#FFFFFFFF"));
+            }
+        }
+    }
+
+    /**
+     * refresh data
+     */
+    public void refreshTags() {
+        new RestUtils.ListNewTags(UpdateInventoryActivity.this).execute();
+    }
+
+    public void showDialogAfterGettingItem(Item item) {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        UpdateInventoryConfirmDialog dialog = new UpdateInventoryConfirmDialog()
+                .newInstance(mTag, item.getItemName(), item.getItemImage(), item.getItemDescription(), mAddOrDelete);
+        dialog.show(getFragmentManager(), "UpdateInventoryConfirmDialog");
+    }
+
+    public void onDeleteFail() {
+        String result = "Scanned RFID tag: " + mTag;
+        mRfidTag.setText(result);
+        mRfidTag.setBackgroundColor(Color.parseColor("#00000000"));
+        mRfidTag.setTextColor(Color.parseColor("#80000000"));
+        ClearTagsDialog dialog = new ClearTagsDialog().newInstance("No item found for this tag. Press CLEAR to clear the tags.");
+        dialog.show(getFragmentManager(), "ClearTagsDialog");
+    }
+
+    public void showToast(String message) {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        Toast.makeText(this, message,
+                Toast.LENGTH_LONG).show();
     }
 }

@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import alpha.labgo.R;
-import alpha.labgo.dialogs.AddItemConfirmDialog;
+import alpha.labgo.dialogs.UpdateInventoryConfirmDialog;
 import alpha.labgo.models.Item;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -26,7 +26,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
 
     private static final String TAG = "ItemAdapter";
 
+    private static final int ADD_INVENTORY = 10;
+    private static final int DELETE_INVENTORY = 11;
+
     private Context mContext;
+    private int mAddOrDelete;
+    private String mTag;
     private ArrayList<Item> mItems = new ArrayList<>();
     private ArrayList<Item> mFileredItems = new ArrayList<>();
 
@@ -54,8 +59,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
      *
      * @param context
      */
-    public ItemAdapter(Context context) {
+    public ItemAdapter(Context context, int addOrDelete) {
         this.mContext = context;
+        this.mAddOrDelete = addOrDelete;
     }
 
     /**
@@ -64,8 +70,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
      * @param context
      * @param items
      */
-    public ItemAdapter(Context context, ArrayList<Item> items) {
+    public ItemAdapter(Context context, int addOrDelete, ArrayList<Item> items) {
         this.mContext = context;
+        this.mAddOrDelete = addOrDelete;
         this.mItems = items;
     }
 
@@ -97,9 +104,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: clicked on: " + mFileredItems.get(position).getItemName());
-                AddItemConfirmDialog dialog = new AddItemConfirmDialog()
-                                .newInstance(item.getItemName(), item.getItemImage(), item.getItemDescription());
-                dialog.show(((Activity)mContext).getFragmentManager(), "AddItemConfirmDialog");
+                UpdateInventoryConfirmDialog dialog = new UpdateInventoryConfirmDialog()
+                        .newInstance(mTag, item.getItemName(), item.getItemImage(), item.getItemDescription(), mAddOrDelete);
+                dialog.show(((Activity)mContext).getFragmentManager(), "UpdateInventoryConfirmDialog");
             }
         });
     }
@@ -155,5 +162,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
         mItems = items;
         mFileredItems = items;
         notifyDataSetChanged();
+    }
+
+    public void setTag(String tag) {
+        this.mTag = tag;
     }
 }

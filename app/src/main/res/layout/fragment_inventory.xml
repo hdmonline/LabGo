@@ -80,7 +80,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add_inventory"
-                app:fab_label="Add Inventory"
+                app:fab_label="Add An Inventory Item"
+                app:fab_colorNormal="@color/buzzBlue"
+                app:fab_colorPressed="@color/buzzBlueFaded"
+                app:fab_size="mini"/>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab_main_delete_inventory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_delete_inventory"
+                app:fab_label="Delete An Inventory Item"
                 app:fab_colorNormal="@color/buzzBlue"
                 app:fab_colorPressed="@color/buzzBlueFaded"
                 app:fab_size="mini"/>

@@ -12,20 +12,34 @@ import android.widget.TextView;
 import alpha.labgo.R;
 import alpha.labgo.database.RestUtils;
 
-public class AddItemClearDialog extends DialogFragment {
+public class ClearTagsDialog extends DialogFragment {
 
-    private static final String TAG = "AddItemClearDialog";
+    private static final String TAG = "ClearTagsDialog";
 
     // Widgets
-    private TextView mActionCancel, mActionClear;
+    private TextView mActionCancel, mActionClear, mTvTitle;
+    private String mTitle;
+
+    public static ClearTagsDialog newInstance(String title) {
+        ClearTagsDialog clearTagsDialog = new ClearTagsDialog();
+        Bundle args = new Bundle();
+        args.putString("title", title);
+        clearTagsDialog.setArguments(args);
+        return clearTagsDialog;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_add_inventory_warning, container, false);
+        View view = inflater.inflate(R.layout.dialog_clear_tags, container, false);
 
-        mActionCancel = view.findViewById(R.id.action_add_inventory_warning_cancel);
-        mActionClear = view.findViewById(R.id.action_add_inventory_warning_clear);
+        mTitle = getArguments().getString("title");
+
+        mActionCancel = view.findViewById(R.id.action_clear_tags_cancel);
+        mActionClear = view.findViewById(R.id.action_clear_tags_clear);
+        mTvTitle = view.findViewById(R.id.text_clear_tags_title);
+
+        mTvTitle.setText(mTitle);
 
         mActionCancel.setOnClickListener(new View.OnClickListener() {
             @Override

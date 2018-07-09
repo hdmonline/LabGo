@@ -65,7 +65,7 @@
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
 
-        <activity android:name=".AddInventoryActivity"></activity>
+        <activity android:name=".UpdateInventoryActivity"></activity>
     </application>
 
 </manifest>
