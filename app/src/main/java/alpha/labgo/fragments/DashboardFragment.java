@@ -42,10 +42,11 @@ public class DashboardFragment extends BaseFragment implements
     private BorrowedItemAdapter mBorrowedItemAdapter;
 
     /**
-     * This method is to pass GTID from toolbar activity to this fragment.
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
      *
      * @param gtid Student GTID
-     * @return
+     * @return A new instance of fragment DashboardFragment.
      */
     public static DashboardFragment newInstance(String gtid) {
         DashboardFragment dashboardFragment = new DashboardFragment();
@@ -55,7 +56,14 @@ public class DashboardFragment extends BaseFragment implements
         return dashboardFragment;
     }
 
-    @Nullable
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mGtid = getArguments().getString("gtid");
+        }
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -75,19 +83,6 @@ public class DashboardFragment extends BaseFragment implements
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
-
-//        /**
-//         * Showing Swipe Refresh animation on activity create
-//         * As animation won't start on onCreate, post runnable is used
-//         */
-//        mSwipeRefreshLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                mSwipeRefreshLayout.setRefreshing(true);
-//            }
-//        });
-
-        mGtid = getArguments().getString("gtid");
 
         // Set the layoutManager on mRecyclerView
         LinearLayoutManager layoutManager

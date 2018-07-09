@@ -7,7 +7,7 @@
     android:id="@+id/swipe_container_inventory"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".fragments.InventoryFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,7 +17,6 @@
             android:id="@+id/recyclerview_inventory"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
             android:clipToPadding="false"
             android:padding="5dp"
             android:scrollbars="vertical"/>
