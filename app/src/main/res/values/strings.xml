@@ -49,6 +49,4 @@
     <string name="add_inventory_title">Are you sure you want to ADD this item?</string>
     <string name="delete_inventory_title">Are you sure you want to DELETE this item?</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

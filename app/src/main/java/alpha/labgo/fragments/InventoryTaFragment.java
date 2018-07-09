@@ -109,7 +109,7 @@ public class InventoryTaFragment extends BaseFragment implements
 
         // will pass the parameters later
         // TODO: check if this constructor usable
-        mInventoryItemAdapter = new InventoryItemAdapter(getContext());
+        mInventoryItemAdapter = new InventoryItemAdapter(getActivity());
 
         // set adapter
         mRecyclerView.setAdapter(mInventoryItemAdapter);

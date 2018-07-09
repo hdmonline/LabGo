@@ -31,7 +31,7 @@ public class UpdateInventoryConfirmDialog extends DialogFragment {
 
     // Widgets
     private TextView mName, mDescription;
-    private TextView mActionOk, mActionCancel, mTitle;
+    private TextView mActionOk, mActionCancel, mMessage;
     private String mTag, mNameString, mImageUrl, mDescriptionString;
     private CircleImageView mImage;
 
@@ -66,12 +66,12 @@ public class UpdateInventoryConfirmDialog extends DialogFragment {
         mName = view.findViewById(R.id.text_update_inventory_name);
         mDescription = view.findViewById(R.id.text_update_inventory_description);
         mImage = view.findViewById(R.id.image_update_inventory_image);
-        mTitle = view.findViewById(R.id.text_update_inventory_title);
+        mMessage = view.findViewById(R.id.text_update_inventory_message);
 
         if (mAddOrDelete == ADD_INVENTORY) {
-            mTitle.setText(R.string.add_inventory_title);
+            mMessage.setText(R.string.add_inventory_title);
         } else if (mAddOrDelete == DELETE_INVENTORY) {
-            mTitle.setText(R.string.delete_inventory_title);
+            mMessage.setText(R.string.delete_inventory_title);
         }
 
         Glide.with(this)

@@ -1,9 +1,7 @@
 package alpha.labgo.fragments;
 
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Loader;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,12 +14,8 @@ import alpha.labgo.models.Item;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ItemTaFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ItemTaFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * This fragment show the items from the database.
+ * The TAs can search, edit, add or delete an item from this fragment.
  */
 public class ItemTaFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener,
@@ -31,8 +25,6 @@ public class ItemTaFragment extends Fragment implements
 
     // TODO: check if it is useful
     private String mGtid;
-
-    private OnFragmentInteractionListener mListener;
 
     public ItemTaFragment() {
         // Required empty public constructor
@@ -66,32 +58,8 @@ public class ItemTaFragment extends Fragment implements
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_item, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_item_ta, container, false);
         return rootView;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -112,20 +80,5 @@ public class ItemTaFragment extends Fragment implements
     @Override
     public void onRefresh() {
 
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }

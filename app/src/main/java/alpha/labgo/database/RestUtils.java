@@ -65,14 +65,14 @@ public class RestUtils {
     private static final String CHECK_OUT = "/checkout";
 
     // Parameters for borrowed items
-    private static final String STUDENT_INVENTORY = "/studentinventories";
+    private static final String STUDENT_INVENTORIES = "/studentinventories";
 
     // Parameters for inventory items
-    private static final String INVENTORY = "/inventories";
+    private static final String INVENTORIES = "/inventories";
 
     // Parameters for RFID tags
     private static final String TAGS = "/tags";
-    private static final String WITH_DEPENDENCY = "/withdependencies";
+    private static final String WITH_DEPENDENCIES = "/withdependencies";
     private static final String INCOMING_TAGS = "/incomingrfidtags";
     private static final String OUTGOING_TAGS = "/outgoingrfidtags";
 
@@ -236,7 +236,7 @@ public class RestUtils {
             String qrCode = strings[1];
             String studentCheckInOrOutResult = null;
 
-            String baseUrl = REST_BASE_URL + STUDENT_INVENTORY;
+            String baseUrl = REST_BASE_URL + STUDENT_INVENTORIES;
             //String checkTime;
             if (qrCode.equals("checkIn")) {
                 baseUrl += CHECK_IN;
@@ -340,7 +340,7 @@ public class RestUtils {
         protected String doInBackground(String... strings) {
 
             String itemName = strings[0];
-            String baseUrl = REST_BASE_URL + INVENTORY;
+            String baseUrl = REST_BASE_URL + INVENTORIES;
             String addInventoryItemResult = null;
 
             URL url = null;
@@ -434,7 +434,7 @@ public class RestUtils {
             String tag = strings[0];
 
             String userInventoryUrl = REST_BASE_URL +
-                    TAGS + "/" + tag + WITH_DEPENDENCY;
+                    TAGS + "/" + tag + WITH_DEPENDENCIES;
             String deleteTagResult = null;
 
             URL url = null;
@@ -530,7 +530,7 @@ public class RestUtils {
      */
     public static ArrayList<BorrowedItem> getStudentBorrowedItems(String gtid) {
 
-        String baseUrl = REST_BASE_URL + STUDENT_INVENTORY;
+        String baseUrl = REST_BASE_URL + STUDENT_INVENTORIES;
         baseUrl += "/" + gtid;
         URL url = null;
 
@@ -569,22 +569,54 @@ public class RestUtils {
     }
 
     /**
-     * This method gets all the inventory items from database.
+     * This method gets all items first. Then gets all the inventory items and put then into a list.
      *
      * @return list of inventory items
      */
     public static ArrayList<InventoryItem> getInventoryItems() {
 
-        String baseUrl = REST_BASE_URL + INVENTORY;
+        String itemUrl = REST_BASE_URL + ITEMS;
+        String inventoryUrl = REST_BASE_URL + INVENTORIES;
 
-        ArrayList<InventoryItem> inventoryItems = new ArrayList<>();
-        ArrayList<Integer> itemQuantities = new ArrayList<>();
+        // List of items
+        ArrayList<InventoryItem> items = new ArrayList<>();
         ArrayList<String> itemNames = new ArrayList<>();
 
         URL url = null;
 
+        /* Fetch items from "items" table. */
         try {
-            url = new URL(baseUrl);
+            url = new URL(itemUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray itemJsonArray = null;
+        try {
+            itemJsonArray = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            // Store each item into <items>. Store each item name into <itemNames>.
+            for (int i = 0; i < itemJsonArray.length(); i++) {
+                JSONObject jo = (JSONObject) itemJsonArray.get(i);
+                InventoryItem newItem = new InventoryItem(
+                        jo.getString(ITEM_IMAGE_URL),
+                        jo.getString(ITEM_NAME),
+                        jo.getString(ITEM_DESCRIPTION),
+                        0);
+                items.add(newItem);
+                itemNames.add(jo.getString(ITEM_NAME));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        /* Fetch inventory items from "inventories" */
+        try {
+            url = new URL(inventoryUrl);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -601,23 +633,19 @@ public class RestUtils {
                 JSONObject jo = (JSONObject) jaResult.get(i);
                 int index = itemNames.indexOf(jo.getString(ITEM_NAME));
                 if (index > -1) {
-                    InventoryItem currItem = inventoryItems.get(index);
+                    InventoryItem currItem = items.get(index);
                     currItem.setItemQuantity(currItem.getItemQuantity()+1);
-                    inventoryItems.set(index, currItem);
+                    items.set(index, currItem);
                 } else {
-                    InventoryItem newItem = new InventoryItem(
-                            jo.getString(ITEM_IMAGE_URL),
-                            jo.getString(ITEM_NAME),
-                            jo.getString(ITEM_DESCRIPTION),
-                            1);
-                    inventoryItems.add(newItem);
+                    // TODO: throw an exception here?
+                    Log.e(TAG, "getInventoryItems: There is an item in the inventory but not in the item table!");
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return inventoryItems;
+        return items;
     }
 
     /**
@@ -707,7 +735,7 @@ public class RestUtils {
      */
     public static Item getItemByTag(String tag) {
 
-        String baseUrl = REST_BASE_URL + INVENTORY + TAGS + "/" + tag;
+        String baseUrl = REST_BASE_URL + INVENTORIES + TAGS + "/" + tag;
         Item item = null;
 
         URL url = null;

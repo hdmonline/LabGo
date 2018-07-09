@@ -16,18 +16,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import alpha.labgo.adapters.InventoryItemAdapter;
 import alpha.labgo.fragments.DashboardTaFragment;
 import alpha.labgo.fragments.InventoryTaFragment;
 import alpha.labgo.fragments.NotificationTaFragment;
 
-public class MainTaActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainTaActivity extends BaseActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        InventoryItemAdapter.ShowItemEditDialog {
 
     private static final String TAG = "MainTaActivity";
 
@@ -285,4 +288,11 @@ public class MainTaActivity extends BaseActivity
             return false;
         }
     };
+
+    @Override
+    public void showItemEditDialog() {
+        //TODO: Show the item editing dialog here.
+        Toast.makeText(this, "This function will be added later",
+                Toast.LENGTH_LONG).show();
+    }
 }
