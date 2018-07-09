@@ -105,7 +105,7 @@ public class BuzzCardBarcodeActivity extends BaseActivity {
                 if (barcodes.size() > 0) {
                     Intent intent;
 
-                    // if the caller is camera button, just finish current activity and the request
+                    // if the caller is alpha.labgo.camera button, just finish current activity and the request
                     // will handle it back to signin activity.
                     // if the caller is signup button, go back to signup activity.
                     switch (caller) {

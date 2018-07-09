@@ -7,13 +7,13 @@
     tools:context=".UpdateInventoryActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/layout_app_bar_add_inventory"
+        android:id="@+id/layout_app_bar_update_inventory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_add_inventory"
+            android:id="@+id/toolbar_update_inventory"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -21,10 +21,10 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_container_add_item"
+        android:id="@+id/swipe_container_update_inventory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_app_bar_add_inventory">
+        android:layout_below="@+id/layout_app_bar_update_inventory">
 
         <FrameLayout
             android:layout_width="match_parent"

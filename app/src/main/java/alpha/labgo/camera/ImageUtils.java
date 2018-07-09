@@ -1,4 +1,4 @@
-package alpha.labgo;
+package alpha.labgo.camera;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;

@@ -34,6 +34,9 @@ import java.io.IOException;
 import java.util.List;
 
 import alpha.labgo.overlays.BuzzCardOverlay;
+import alpha.labgo.camera.CameraPreview;
+import alpha.labgo.camera.CameraUtils;
+import alpha.labgo.camera.ImageUtils;
 
 public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchListener {
 
@@ -41,7 +44,7 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
 
     private int caller;
 
-    private CameraPreview  mCameraPreview;
+    private CameraPreview mCameraPreview;
     private FrameLayout mPreview;
     private ImageView mImageCaptured;
     private ImageButton mShutterButton;
@@ -118,7 +121,7 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         }
     }
 
-    /** Stops the camera. */
+    /** Stops the alpha.labgo.camera. */
     @Override
     protected void onPause() {
         super.onPause();
@@ -189,7 +192,7 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
         catch (Exception e){
             // Camera is not available (in use or does not exist)
         }
-        return c; // returns null if camera is unavailable
+        return c; // returns null if alpha.labgo.camera is unavailable
     }
 
     /** Create a File for saving an image or video */
@@ -284,7 +287,7 @@ public class BuzzCardTextActivity extends BaseActivity implements View.OnTouchLi
 
                 Intent intent;
                 switch (caller) {
-                    case 2:
+                    case 2: // from SignInActivity
                         intent = new Intent(BuzzCardTextActivity.this, SignInActivity.class);
                         setResult(CommonStatusCodes.SUCCESS, intent);
                         intent.putExtra("gtid", gtid);

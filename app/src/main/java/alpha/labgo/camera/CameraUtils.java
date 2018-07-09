@@ -1,4 +1,4 @@
-package alpha.labgo;
+package alpha.labgo.camera;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public class CameraUtils {
 
-    // default camera width and height. they are opposite from screen coordinate
+    // default alpha.labgo.camera width and height. they are opposite from screen coordinate
     public static int previewDefaultWidth = 1280;
     public static int previewDefaultHeight = 720;
     public static final int PICTURE_DEFAULT_WIDTH = 3200;
@@ -27,12 +27,12 @@ public class CameraUtils {
     private static int mOrientation = Surface.ROTATION_90;
 
     /**
-     * open rear camera
+     * open rear alpha.labgo.camera
      * @param expectFps
      */
     public static void openRearCamera(int expectFps) {
         if (mCamera != null) {
-            throw new RuntimeException("camera already initialized!");
+            throw new RuntimeException("alpha.labgo.camera already initialized!");
         }
         Camera.CameraInfo info = new Camera.CameraInfo();
         int numCameras = Camera.getNumberOfCameras();
@@ -44,9 +44,9 @@ public class CameraUtils {
                 break;
             }
         }
-        // throw error when the camera can't be detected
+        // throw error when the alpha.labgo.camera can't be detected
         if (mCamera == null) {
-            throw new RuntimeException("Unable to open camera");
+            throw new RuntimeException("Unable to open alpha.labgo.camera");
         }
 
         Camera.Parameters parameters = mCamera.getParameters();
@@ -60,17 +60,17 @@ public class CameraUtils {
     }
 
     /**
-     * open camera by id
+     * open alpha.labgo.camera by id
      * @param cameraID
      * @param expectFps
      */
     public static void openCamera(int cameraID, int expectFps) {
         if (mCamera != null) {
-            throw new RuntimeException("camera already initialized!");
+            throw new RuntimeException("alpha.labgo.camera already initialized!");
         }
         mCamera = Camera.open(cameraID);
         if (mCamera == null) {
-            throw new RuntimeException("Unable to open camera");
+            throw new RuntimeException("Unable to open alpha.labgo.camera");
         }
         mCameraID = cameraID;
         Camera.Parameters parameters = mCamera.getParameters();
@@ -100,7 +100,7 @@ public class CameraUtils {
     }
 
     /**
-     * switch camera
+     * switch alpha.labgo.camera
      * @param cameraID
      */
     public static void switchCamera(int cameraID, SurfaceHolder holder) {
@@ -108,7 +108,7 @@ public class CameraUtils {
             return;
         }
         mCameraID = cameraID;
-        // release prev camera
+        // release prev alpha.labgo.camera
         releaseCamera();
         // open new one
         openCamera(cameraID, CameraUtils.DESIRED_PREVIEW_FPS);
@@ -117,7 +117,7 @@ public class CameraUtils {
     }
 
     /**
-     * release camera
+     * release alpha.labgo.camera
      */
     public static void releaseCamera() {
         if (mCamera != null) {
@@ -354,7 +354,7 @@ public class CameraUtils {
 
 
     /**
-     * get camera ID
+     * get alpha.labgo.camera ID
      * @return
      */
     public static int getCameraID() {

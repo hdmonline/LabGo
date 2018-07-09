@@ -1,5 +1,6 @@
 package alpha.labgo;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
 
 import java.util.ArrayList;
 
@@ -67,7 +70,7 @@ public class UpdateInventoryActivity extends BaseActivity implements
         mScannedSingleItem = false;
 
         // Views
-        mToolbar = findViewById(R.id.toolbar_add_inventory);
+        mToolbar = findViewById(R.id.toolbar_update_inventory);
         mRecyclerView = findViewById(R.id.recyclerview_search_item);
         mLoadingIndicator = findViewById(R.id.pb_add_inventory_loading);
         mRfidTag = findViewById(R.id.text_item_tag);
@@ -78,7 +81,7 @@ public class UpdateInventoryActivity extends BaseActivity implements
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // SwipeRefreshLayout
-        mSwipeRefreshLayout = findViewById(R.id.swipe_container_add_item);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_container_update_inventory);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
@@ -239,8 +242,17 @@ public class UpdateInventoryActivity extends BaseActivity implements
         mLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
-    public void finishing() {
+    public void onSuccessFinishing() {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
+        Intent returnIntent = new Intent();
+        setResult(CommonStatusCodes.SUCCESS, returnIntent);
+        finish();
+    }
+
+    public void onFailureFinishing() {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        Intent returnIntent = new Intent();
+        setResult(CommonStatusCodes.ERROR, returnIntent);
         finish();
     }
 

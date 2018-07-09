@@ -103,7 +103,7 @@ public class QrCodeActivity extends BaseActivity {
                     } else {
                         String[] paramStrings = {mGtid, code};
                         new RestUtils.StudentCheckInOrOut(mContext).execute(paramStrings);
-                        // stop detector and camera then move to dashboard.
+                        // stop detector and alpha.labgo.camera then move to dashboard.
                         mBarcodeDetector.release();
                         finish();
                     }

@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.common.api.CommonStatusCodes;
 
 import java.util.ArrayList;
 
@@ -34,7 +36,6 @@ public class InventoryTaFragment extends BaseFragment implements
     private static final String TAG = "InventoryFragment";
 
     private static final int INVENTORY_TA_LOADER_ID = 24;
-    private static final int UPDATE_INVENTORY_REQUEST = 5;
     private static final int ADD_INVENTORY = 10;
     private static final int DELETE_INVENTORY = 11;
 
@@ -173,6 +174,24 @@ public class InventoryTaFragment extends BaseFragment implements
 
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ADD_INVENTORY) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                Toast.makeText(getActivity(), "The item has been added!", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getActivity(), "Add item FAILED!", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == DELETE_INVENTORY) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                Toast.makeText(getActivity(), "The item has been deleted!", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getActivity(), "Delete item FAILED!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
     /**
      * This method will make the error message visible and hide the weather
      * View.
@@ -241,12 +260,12 @@ public class InventoryTaFragment extends BaseFragment implements
                     Intent toAddInventoryItem = new Intent(getActivity(), UpdateInventoryActivity.class);
                     int addOrDelete = ADD_INVENTORY;
                     toAddInventoryItem.putExtra("addOrDelete", addOrDelete);
-                    startActivityForResult(toAddInventoryItem, UPDATE_INVENTORY_REQUEST);
+                    startActivityForResult(toAddInventoryItem, ADD_INVENTORY);
                 } else if (v == mFabDeleteInventory) {
                     Intent toAddInventoryItem = new Intent(getActivity(), UpdateInventoryActivity.class);
                     int addOrDelete = DELETE_INVENTORY;
                     toAddInventoryItem.putExtra("addOrDelete", addOrDelete);
-                    startActivityForResult(toAddInventoryItem, UPDATE_INVENTORY_REQUEST);
+                    startActivityForResult(toAddInventoryItem, DELETE_INVENTORY);
                 } else if (v == mFabAddItem) {
 
                 }

@@ -375,14 +375,14 @@ public class RestUtils {
             if (s != null && !s.equals("")) {
                 try {
                     UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
-                    activity.finishing();
+                    activity.onSuccessFinishing();
                 } catch (ClassCastException e) {
                     Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
                 }
             } else {
                 try {
                     UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
-                    activity.finishing();
+                    activity.onFailureFinishing();
                 } catch (ClassCastException e) {
                     Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
                 }
@@ -461,14 +461,14 @@ public class RestUtils {
             if (s != null && !s.equals("")) {
                 try {
                     UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
-                    activity.finishing();
+                    activity.onSuccessFinishing();
                 } catch (ClassCastException e) {
                     Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
                 }
             } else {
                 try {
                     UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
-                    activity.finishing();
+                    activity.onFailureFinishing();
                 } catch (ClassCastException e) {
                     Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
                 }

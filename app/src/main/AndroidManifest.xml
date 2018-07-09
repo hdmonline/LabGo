@@ -11,7 +11,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.alpha.labgo.camera.autofocus" />
 
     <application
         android:allowBackup="true"
@@ -65,7 +65,11 @@
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
 
-        <activity android:name=".UpdateInventoryActivity"></activity>
+        <activity android:name=".UpdateInventoryActivity" />
+        <activity
+            android:name=".UpdateItemActivity"
+            android:label="@string/title_activity_update_item"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
