@@ -12,6 +12,9 @@ public class UpdateItemActivity extends BaseActivity {
 
     private static final String TAG = "UpdateItemActivity";
 
+    private static final int ADD_ITEM = 12;
+    private static final int EDIT_ITEM = 13;
+
     // Widgets
     private FloatingActionButton mFabSearch, mFabCamera;
     private Toolbar mToolbar;
@@ -26,14 +29,14 @@ public class UpdateItemActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_item);
 
-        // Gets item information if it has
-        Intent intent = getIntent();
-        getToolInfo(intent);
-
         // Widgets
         mToolbar = findViewById(R.id.toolbar);
         mFabSearch = findViewById(R.id.fab_add_item_image_search);
         mFabCamera = findViewById(R.id.fab_add_item_image_camera);
+
+        // Gets item information if it has
+        Intent intent = getIntent();
+        getToolInfo(intent);
 
         setSupportActionBar(mToolbar);
         mFabSearch.setOnClickListener(new View.OnClickListener() {
@@ -53,9 +56,10 @@ public class UpdateItemActivity extends BaseActivity {
     }
 
     private void getToolInfo(Intent intent) {
-        if (intent.hasExtra("toolName")) {
+        if (intent.getIntExtra("addOrEdit", -1) == EDIT_ITEM) {
             mToolName = intent.getStringExtra("toolName");
-
+            mToolDescription = intent.getStringExtra("toolDescription");
+            mToolImageUrl = intent.getStringExtra("toolImage");
         }
     }
 }

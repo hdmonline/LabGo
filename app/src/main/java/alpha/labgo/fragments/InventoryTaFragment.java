@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import alpha.labgo.UpdateInventoryActivity;
 import alpha.labgo.R;
+import alpha.labgo.UpdateItemActivity;
 import alpha.labgo.adapters.InventoryItemAdapter;
 import alpha.labgo.database.RestUtils;
 import alpha.labgo.models.InventoryItem;
@@ -38,6 +39,9 @@ public class InventoryTaFragment extends BaseFragment implements
     private static final int INVENTORY_TA_LOADER_ID = 24;
     private static final int ADD_INVENTORY = 10;
     private static final int DELETE_INVENTORY = 11;
+    private static final int ADD_ITEM = 12;
+    private static final int EDIT_ITEM = 13;
+
 
     private String mGtid;
 
@@ -257,17 +261,19 @@ public class InventoryTaFragment extends BaseFragment implements
             @Override
             public void onClick(View v) {
                 if (v == mFabAddInventory) {
-                    Intent toAddInventoryItem = new Intent(getActivity(), UpdateInventoryActivity.class);
+                    Intent toUpdateInventoryItem = new Intent(getActivity(), UpdateInventoryActivity.class);
                     int addOrDelete = ADD_INVENTORY;
-                    toAddInventoryItem.putExtra("addOrDelete", addOrDelete);
-                    startActivityForResult(toAddInventoryItem, ADD_INVENTORY);
+                    toUpdateInventoryItem.putExtra("addOrDelete", addOrDelete);
+                    startActivityForResult(toUpdateInventoryItem, ADD_INVENTORY);
                 } else if (v == mFabDeleteInventory) {
-                    Intent toAddInventoryItem = new Intent(getActivity(), UpdateInventoryActivity.class);
+                    Intent toUpdateInventoryItem = new Intent(getActivity(), UpdateInventoryActivity.class);
                     int addOrDelete = DELETE_INVENTORY;
-                    toAddInventoryItem.putExtra("addOrDelete", addOrDelete);
-                    startActivityForResult(toAddInventoryItem, DELETE_INVENTORY);
+                    toUpdateInventoryItem.putExtra("addOrDelete", addOrDelete);
+                    startActivityForResult(toUpdateInventoryItem, DELETE_INVENTORY);
                 } else if (v == mFabAddItem) {
-
+                    Intent toUpdateItem = new Intent(getActivity(), UpdateItemActivity.class);
+                    toUpdateItem.putExtra("addOrEdit", ADD_ITEM);
+                    startActivityForResult(toUpdateItem, ADD_ITEM);
                 }
                 mFam.close(true);
             }

@@ -2,6 +2,9 @@
     <string name="app_name">LabGo</string>
     <string name="login_password_hint">Enter Password</string>
     <string name="login_gtid_hint">Enter GTID</string>
+    <string name="add_item_tool_name_hint">Tool Name</string>
+    <string name="add_item_tool_description_hint">Tool Description</string>
+    <string name="add_item_tool_image_hint">Tool Image URL</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="sign_up_gtid_hint">GTID</string>

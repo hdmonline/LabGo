@@ -6,7 +6,87 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".UpdateItemActivity"
-    tools:showIn="@layout/activity_update_item">
+    tools:showIn="@layout/activity_update_item"
+    tools:context=".UpdateItemActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="50dp"
+        android:padding="40dp">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/add_item_tool_name_hint">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/text_tool_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="@string/add_item_tool_description_hint">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/text_tool_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:maxLines="10"
+                android:scrollbars="vertical"/>
+        </android.support.design.widget.TextInputLayout>
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/button_show_image"
+                android:hint="@string/add_item_tool_image_hint">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/text_tool_image_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textUri"
+                    android:maxLines="1"
+                    android:scrollbars="vertical" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <ImageButton
+                android:id="@+id/button_show_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_check"
+                android:scaleType="fitXY" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button_submit_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="end"
+            android:background="@color/buzzBlue"
+            android:textColor="@color/white"
+            android:text="@string/submit" />
+
+    </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>
