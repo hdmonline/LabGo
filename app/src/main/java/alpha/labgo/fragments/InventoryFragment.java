@@ -6,7 +6,6 @@ import android.support.v4.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,15 +17,11 @@ import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import alpha.labgo.R;
-import alpha.labgo.adapters.BorrowedItemAdapter;
 import alpha.labgo.adapters.InventoryItemAdapter;
-import alpha.labgo.database.RestUtils;
-import alpha.labgo.models.BorrowedItem;
+import alpha.labgo.backend.RestUtils;
 import alpha.labgo.models.InventoryItem;
 
 // TODO

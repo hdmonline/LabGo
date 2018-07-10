@@ -91,6 +91,13 @@ public class BuzzCardOverlay extends android.support.v7.widget.AppCompatImageVie
             mLinesPath.lineTo(canvasWidth*7/8, canvasHeight-margin);
             mLinesPath.lineTo(canvasWidth/8, canvasHeight-margin);
             mLinesPath.close();
+
+/*            // draw card frame and area guide
+            mLinesPath.moveTo(canvasWidth/8, margin);
+            mLinesPath.lineTo(canvasWidth*7/8, margin);
+            mLinesPath.lineTo(canvasWidth*7/8, canvasHeight-margin);
+            mLinesPath.lineTo(canvasWidth/8, canvasHeight-margin);
+            mLinesPath.close();
             mLinesPath.moveTo(canvasWidth/8f+cardWith/20f, margin+cardHeight/10f);
             mLinesPath.lineTo(canvasWidth/8f+cardWith/8.5f, margin+cardHeight/10f);
             mLinesPath.lineTo(canvasWidth/8f+cardWith/8.5f, margin+cardHeight/2.45f);
@@ -100,7 +107,8 @@ public class BuzzCardOverlay extends android.support.v7.widget.AppCompatImageVie
             mLinesPath.moveTo(canvasWidth/8f+cardWith/3.7f, margin+cardHeight/1.62f);
             mLinesPath.lineTo(canvasWidth/8f+cardWith/1.05f, margin+cardHeight/1.62f);
             mLinesPath.lineTo(canvasWidth/8f+cardWith/1.05f, margin+cardHeight/1.02f);
-            mLinesPath.lineTo(canvasWidth/8f+cardWith/3.7f, margin+cardHeight/1.02f);
+            mLinesPath.lineTo(canvasWidth/8f+cardWith/3.7f, margin+cardHeight/1.02f);*/
+
 
 
             mLinesPath.close();

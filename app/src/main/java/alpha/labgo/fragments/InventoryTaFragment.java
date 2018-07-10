@@ -27,7 +27,7 @@ import alpha.labgo.UpdateInventoryActivity;
 import alpha.labgo.R;
 import alpha.labgo.UpdateItemActivity;
 import alpha.labgo.adapters.InventoryItemAdapter;
-import alpha.labgo.database.RestUtils;
+import alpha.labgo.backend.RestUtils;
 import alpha.labgo.models.InventoryItem;
 
 public class InventoryTaFragment extends BaseFragment implements
@@ -41,6 +41,11 @@ public class InventoryTaFragment extends BaseFragment implements
     private static final int DELETE_INVENTORY = 11;
     private static final int ADD_ITEM = 12;
     private static final int EDIT_ITEM = 13;
+
+    /* Use this code for returning instead of use CommonStatusCodes.SUCCESS.
+     * Because when returning back by finish(), it sends that code.
+     */
+    private static final int SUCCESS = 123;
 
 
     private String mGtid;
@@ -76,7 +81,7 @@ public class InventoryTaFragment extends BaseFragment implements
 
         mGtid = getArguments().getString("gtid");
 
-        // Views
+        // Widgets
         View rootView = inflater.inflate(R.layout.fragment_inventory, container, false);
         mRecyclerView = rootView.findViewById(R.id.recyclerview_inventory);
         mErrorMessageDisplay = rootView.findViewById(R.id.text_inventory_error_message_display);
@@ -182,16 +187,22 @@ public class InventoryTaFragment extends BaseFragment implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_INVENTORY) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                Toast.makeText(getActivity(), "The item has been added!", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(getActivity(), "Add item FAILED!", Toast.LENGTH_LONG).show();
+            if (resultCode == SUCCESS) {
+                Toast.makeText(getActivity(), "The inventory item has been added!", Toast.LENGTH_LONG).show();
+            } else if (resultCode == CommonStatusCodes.ERROR) {
+                Toast.makeText(getActivity(), "Add inventory item FAILED!", Toast.LENGTH_LONG).show();
             }
         } else if (requestCode == DELETE_INVENTORY) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                Toast.makeText(getActivity(), "The item has been deleted!", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(getActivity(), "Delete item FAILED!", Toast.LENGTH_LONG).show();
+            if (resultCode == SUCCESS) {
+                Toast.makeText(getActivity(), "The inventory item has been deleted!", Toast.LENGTH_LONG).show();
+            } else if (resultCode == CommonStatusCodes.ERROR) {
+                Toast.makeText(getActivity(), "Delete inventory item FAILED!", Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == ADD_ITEM) {
+            if (resultCode == SUCCESS) {
+                Toast.makeText(getActivity(), "The item has been added!", Toast.LENGTH_LONG).show();
+            } else if (resultCode == CommonStatusCodes.ERROR) {
+                Toast.makeText(getActivity(), "Add item FAILED!", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -229,6 +240,7 @@ public class InventoryTaFragment extends BaseFragment implements
      * This method will show a text on the view when there is no items checked out.
      */
     private void showNoItemText() {
+        mSwipeRefreshLayout.setRefreshing(false);
         mNoItemText.setVisibility(View.VISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);

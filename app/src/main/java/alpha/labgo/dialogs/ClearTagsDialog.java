@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import alpha.labgo.R;
-import alpha.labgo.database.RestUtils;
+import alpha.labgo.backend.RestUtils;
 
 public class ClearTagsDialog extends DialogFragment {
 

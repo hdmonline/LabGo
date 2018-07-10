@@ -93,6 +93,9 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
         if (quantity == 0) {
             holder.mToolQuantity.setTextColor(mContext.getResources().getColor(R.color.red));
             holder.mToolName.setTextColor(mContext.getResources().getColor(R.color.red));
+        } else {
+            holder.mToolQuantity.setTextColor(mContext.getResources().getColor(R.color.dark_gray));
+            holder.mToolName.setTextColor(mContext.getResources().getColor(R.color.black));
         }
 
         holder.mParentLayout.setOnLongClickListener(new View.OnLongClickListener() {

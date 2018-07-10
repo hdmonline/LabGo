@@ -1,4 +1,4 @@
-package alpha.labgo.database;
+package alpha.labgo.backend;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +29,7 @@ import java.util.TimeZone;
 
 import alpha.labgo.UpdateInventoryActivity;
 import alpha.labgo.MainActivity;
+import alpha.labgo.UpdateItemActivity;
 import alpha.labgo.models.Item;
 import alpha.labgo.models.BorrowedItem;
 import alpha.labgo.models.InventoryItem;
@@ -92,6 +94,8 @@ public class RestUtils {
         Log.d(TAG, "sending GET http request");
 
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        urlConnection.setReadTimeout(3000);
+        urlConnection.setConnectTimeout(5000);
         String result = "";
         JSONArray ja = null;
         try {
@@ -102,6 +106,7 @@ public class RestUtils {
                 line = buffer.readLine();
                 result += line;
             }
+
             ja = new JSONArray(result);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -324,6 +329,74 @@ public class RestUtils {
         }
     }
 
+    public static class AddItem extends AsyncTask<String, Void, String> {
+
+        private static final String TAG = "AddItem";
+        private final Activity mActivity;
+
+        public AddItem(Activity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String itemName = strings[0];
+            String itemImage = strings[1];
+            String itemDeccription = strings[2];
+
+            String baseUrl = REST_BASE_URL + ITEMS;
+            String addItemResult = null;
+
+            URL url = null;
+            try {
+                Log.d(TAG, baseUrl);
+                url = new URL(baseUrl);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "URL:"+ url.toString());
+
+            // Generate JSON body for the request
+            JSONObject postJson = new JSONObject();
+            try {
+                postJson.put(ITEM_NAME, itemName);
+                postJson.put(ITEM_DESCRIPTION, itemDeccription);
+                postJson.put(ITEM_IMAGE_URL, itemImage);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                addItemResult = postResponseFromHttpUrl(url, postJson);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return addItemResult;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s != null && !s.equals("")) {
+                try {
+                    UpdateItemActivity activity = (UpdateItemActivity) mActivity;
+                    activity.onSuccessFinishing();
+                } catch (ClassCastException e) {
+                    Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+                }
+            } else {
+                try {
+                    UpdateItemActivity activity = (UpdateItemActivity) mActivity;
+                    activity.onFailureFinishing();
+                } catch (ClassCastException e) {
+                    Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+                }
+                Log.e(TAG, "Failed to add inventory, please check the database.");
+            }
+        }
+    }
+
     /**
      * This class is called when the TA connects an item to a tag to add an inventory item.
      */
@@ -391,6 +464,11 @@ public class RestUtils {
         }
     }
 
+    /**
+     * This method is used when the TA needs to delete an inventory item.
+     * The tag is scanned first, then the item the TA is deleting will be shown in a dialog.
+     * This method is to get the item from the tag.
+     */
     public static class GetItemByTag extends AsyncTask<String, Void, Item> {
 
         private UpdateInventoryActivity mActivity;

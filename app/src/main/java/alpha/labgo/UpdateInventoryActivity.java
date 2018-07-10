@@ -25,7 +25,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import java.util.ArrayList;
 
 import alpha.labgo.adapters.ItemAdapter;
-import alpha.labgo.database.RestUtils;
+import alpha.labgo.backend.RestUtils;
 import alpha.labgo.dialogs.ClearTagsDialog;
 import alpha.labgo.dialogs.UpdateInventoryConfirmDialog;
 import alpha.labgo.models.Item;
@@ -41,6 +41,11 @@ public class UpdateInventoryActivity extends BaseActivity implements
     private static final int ADD_ITEM_LOADER_ID = 28;
     private static final int ADD_INVENTORY = 10;
     private static final int DELETE_INVENTORY = 11;
+
+    /* Use this code for returning instead of use CommonStatusCodes.SUCCESS.
+     * Because when returning back by finish(), it sends that code.
+     */
+    private static final int SUCCESS = 123;
 
     // View
     private Toolbar mToolbar;
@@ -245,7 +250,7 @@ public class UpdateInventoryActivity extends BaseActivity implements
     public void onSuccessFinishing() {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         Intent returnIntent = new Intent();
-        setResult(CommonStatusCodes.SUCCESS, returnIntent);
+        setResult(SUCCESS, returnIntent);
         finish();
     }
 

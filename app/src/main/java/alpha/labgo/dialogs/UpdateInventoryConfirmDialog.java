@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import alpha.labgo.R;
-import alpha.labgo.database.RestUtils;
+import alpha.labgo.backend.RestUtils;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UpdateInventoryConfirmDialog extends DialogFragment {

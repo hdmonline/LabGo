@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import alpha.labgo.R;
 import alpha.labgo.adapters.BorrowedItemAdapter;
-import alpha.labgo.database.RestUtils;
+import alpha.labgo.backend.RestUtils;
 import alpha.labgo.models.BorrowedItem;
 
 public class DashboardTaFragment extends Fragment implements

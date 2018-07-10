@@ -4,7 +4,6 @@ package alpha.labgo.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 
 import alpha.labgo.R;
 import alpha.labgo.adapters.BorrowedItemAdapter;
-import alpha.labgo.database.RestUtils;
+import alpha.labgo.backend.RestUtils;
 import alpha.labgo.models.BorrowedItem;
 
 public class DashboardFragment extends BaseFragment implements
