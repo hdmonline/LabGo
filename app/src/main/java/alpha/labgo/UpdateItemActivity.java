@@ -59,7 +59,7 @@ public class UpdateItemActivity extends BaseActivity implements View.OnClickList
         // Widgets
         mToolbar = findViewById(R.id.toolbar);
         mImage = findViewById(R.id.toolbar_image);
-        mFabSearch = findViewById(R.id.fab_add_item_image_search);
+        //mFabSearch = findViewById(R.id.fab_add_item_image_search);
         mFabCamera = findViewById(R.id.fab_add_item_image_camera);
         mToolName = findViewById(R.id.text_tool_name);
         mToolDescription = findViewById(R.id.text_tool_description);
@@ -73,7 +73,7 @@ public class UpdateItemActivity extends BaseActivity implements View.OnClickList
         getToolInfo(intent);
 
         setSupportActionBar(mToolbar);
-        mFabSearch.setOnClickListener(this);
+        //mFabSearch.setOnClickListener(this);
         mFabCamera.setOnClickListener(this);
         mShowImage.setOnClickListener(this);
         mSubmit.setOnClickListener(this);
@@ -128,9 +128,9 @@ public class UpdateItemActivity extends BaseActivity implements View.OnClickList
         if (v == mShowImage) {
             mToolImageUrl = mToolImage.getText().toString();
             loadImage(mToolImageUrl);
-        } else if (v == mFabSearch) {
-            Snackbar.make(v, "Search Image", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+//        } else if (v == mFabSearch) {
+//            Snackbar.make(v, "Search Image", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
         } else if (v == mFabCamera) {
             Snackbar.make(v, "Take Image", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
