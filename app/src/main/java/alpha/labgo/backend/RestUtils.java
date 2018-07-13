@@ -684,9 +684,9 @@ public class RestUtils {
     public static class DeleteAccount extends AsyncTask<String, Void, String> {
 
         private static final String TAG = "DeleteAccount";
-        private final Activity mActivity;
+        private final AccountSettingsActivity mActivity;
 
-        public DeleteAccount(Activity activity) {
+        public DeleteAccount(AccountSettingsActivity activity) {
             this.mActivity = activity;
         }
 
@@ -719,19 +719,17 @@ public class RestUtils {
             super.onPostExecute(s);
             if (s != null && !s.equals("")) {
                 try {
-                    AccountSettingsActivity activity = (AccountSettingsActivity) mActivity;
-                    activity.onPostDeleteAccount();
+                    mActivity.onPostDeleteAccount(1);
                 } catch (ClassCastException e) {
                     Log.e(TAG, "onPostExecute: ClassCastException: " + e.getMessage());
                 }
             } else {
                 try {
-                    AccountSettingsActivity activity = (AccountSettingsActivity) mActivity;
-                    activity.onFailDeleteAccount();
+                    mActivity.onFailDeleteAccount("The user information cannot be deleted on Firestore, please contact the TA.");
                 } catch (ClassCastException e) {
                     Log.e(TAG, "onPostExecute: ClassCastException: " + e.getMessage());
                 }
-                Log.e(TAG, "Failed to delete account information, please check the database.");
+                Log.e(TAG, "Failed to delete account on Firestore, please check the database.");
             }
         }
     }

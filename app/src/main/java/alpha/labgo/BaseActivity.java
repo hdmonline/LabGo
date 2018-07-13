@@ -21,6 +21,11 @@ import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
+
+    // AWS S3 credential
+    protected static final String S3_KEY = "AKIAIVMUFQ7N7SN6UX2Q";
+    protected static final String S3_SECRET = "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";
+
     private static final int PERMISSION_REQUESTS = 2;
     private static ProgressDialog mProgressDialog;
     protected static String sGtid;

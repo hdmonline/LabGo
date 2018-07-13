@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,7 +8,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="200dp"
         android:paddingHorizontal="30dp"
         android:paddingVertical="10dp">
 
@@ -19,7 +20,7 @@
             android:text="Notice"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="#000" />
+            android:textColor="#000"/>
 
         <TextView
             android:id="@+id/text_delete_account_message"
@@ -30,6 +31,23 @@
             android:text="Are you sure you want to delete your account? This is not undoable."
             android:textSize="13sp"
             android:textColor="#000" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/layout_delete_account_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/text_delete_account_message"
+            android:hint="@string/login_password_hint"
+            app:passwordToggleEnabled="true">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/text_delete_account_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLines="1"/>
+        </android.support.design.widget.TextInputLayout>
 
         <TextView
             android:id="@+id/action_delete_account_confirm"

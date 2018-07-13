@@ -37,10 +37,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     private static final String TAG = "SignUpActivity";
 
-    // AWS S3 credential
-    private static final String KEY = "AKIAIVMUFQ7N7SN6UX2Q";
-    private static final String SECRET = "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";
-
     private TextInputEditText mGtidField;
     private TextInputEditText mNameField;
     private TextInputEditText mEmailField;
@@ -60,9 +56,9 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private String mPath;
     private Context mContext;
 
-    private BasicAWSCredentials credentials;
-    private AmazonS3Client s3Client;
-    private TransferUtility transferUtility;
+    private BasicAWSCredentials mCredentials;
+    private AmazonS3Client mS3Client;
+    private TransferUtility mTransferUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,18 +190,18 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
         // Upload image to S3
         String fileName = sGtid + ".jpg";
-        credentials = new BasicAWSCredentials(KEY, SECRET);
-        s3Client = new AmazonS3Client(credentials);
+        mCredentials = new BasicAWSCredentials(S3_KEY, S3_SECRET);
+        mS3Client = new AmazonS3Client(mCredentials);
 
-        transferUtility =
+        mTransferUtility =
                 TransferUtility.builder()
                         .context(mContext)
                         .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-                        .s3Client(s3Client)
+                        .s3Client(mS3Client)
                         .build();
 
         TransferObserver uploadObserver =
-                transferUtility.upload(fileName, new File(mPath));
+                mTransferUtility.upload(fileName, new File(mPath));
 
         // Attach a listener to the observer to get state update and progress notifications
         uploadObserver.setTransferListener(new TransferListener() {
