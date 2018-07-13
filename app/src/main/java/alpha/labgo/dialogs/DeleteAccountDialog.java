@@ -149,20 +149,6 @@ public class DeleteAccountDialog extends DialogFragment {
         new RestUtils.DeleteAccount(mActivity).execute(mGtid);
 
         // TODO: Delete S3 image and the row in student_id_image_id table.
-        // Step 3: Delete image from S3
-//                String fileName = mGtid + ".jpg";
-//                mCredentials = new BasicAWSCredentials(mKey, mSecret);
-//                mS3Client = new AmazonS3Client(mCredentials);
-//
-//                mTransferUtility =
-//                        TransferUtility.builder()
-//                                .context(mActivity)
-//                                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-//                                .s3Client(mS3Client)
-//                                .build();
-//
-//                TransferObserver uploadObserver =
-//                        mTransferUtility.(fileName, new File(mPath));
     }
 
 }
