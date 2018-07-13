@@ -38,6 +38,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View view) {
         if (view == mAccountSettings) {
             // TODO: goto account settings
+
         }
     }
 }

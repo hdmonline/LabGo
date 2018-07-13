@@ -71,8 +71,9 @@
             android:label="@string/title_activity_update_item"
             android:theme="@style/AppTheme" />
         <activity
-            android:label="@string/title_activity_settings"
-            android:name=".settings.SettingsActivity"/>
+            android:name=".settings.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".settings.AccountSettingsActivity"></activity>
     </application>
 
 </manifest>
