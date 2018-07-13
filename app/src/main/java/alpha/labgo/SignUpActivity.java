@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
 
+import alpha.labgo.backend.RestUtils;
 import alpha.labgo.models.UserByGtid;
 import alpha.labgo.models.UserByUid;
 
@@ -134,12 +135,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             Log.d(TAG, "createUser:onComplete" + task.isSuccessful());
-
+                            hideProgressDialog();
                             if (task.isSuccessful()) {
                                 mUid = task.getResult().getUser().getUid();
                                 onAuthSuccess();
                             } else {
-                                hideProgressDialog();
                                 Toast.makeText(SignUpActivity.this, "Sign Up Failed",
                                         Toast.LENGTH_SHORT).show();
                                 Exception exception = task.getException();
@@ -177,6 +177,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             boolean validGtid = !task.getResult().exists();
                             validateGtidCallback(validGtid);
                         } else {
+                            hideProgressDialog();
                             Log.d(TAG, "failed to retrieve gtid data");
                         }
                     }
@@ -212,13 +213,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onStateChanged(int id, TransferState state) {
                 if (TransferState.COMPLETED == state) {
-                    hideProgressDialog();
                     Log.d(TAG, "upload completed");
-                    // Go to MainActivity
-                    Intent intent = new Intent(mContext, MainActivity.class);
-                    intent.putExtra("gtid", mGtid);
-                    startActivity(intent);
-                    finish();
+
+                    // send request to connect GTID with picture file in database.
+                    new RestUtils.RegisterImage(SignUpActivity.this).execute(mGtid);
                 }
             }
 
@@ -266,5 +264,25 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         setMaxDialog(100);
         setProgressDialog(0);
         showProgressDialog("Uploading picture...");
+    }
+
+    public void onSuccessFinishing() {
+        hideProgressDialog();
+        // Go to MainActivity
+        Intent intent = new Intent(mContext, MainActivity.class);
+        intent.putExtra("gtid", mGtid);
+        startActivity(intent);
+        finish();
+    }
+
+    public void onFailureFinishing() {
+        hideProgressDialog();
+        // Go to MainActivity
+        Toast.makeText(getApplicationContext(), R.string.toast_image_register_fail,
+                Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(mContext, MainActivity.class);
+        intent.putExtra("gtid", mGtid);
+        startActivity(intent);
+        finish();
     }
 }

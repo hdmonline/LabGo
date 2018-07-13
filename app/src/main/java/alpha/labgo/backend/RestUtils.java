@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import alpha.labgo.SignUpActivity;
 import alpha.labgo.UpdateInventoryActivity;
 import alpha.labgo.MainActivity;
 import alpha.labgo.UpdateItemActivity;
@@ -81,6 +82,9 @@ public class RestUtils {
     // Parameters for items
     private static final String ITEMS = "/items";
 
+    // Parameters for images
+    private static final String IMAGES = "/images";
+
 
     /**
      * This method returns the entire result from the HTTP response.
@@ -89,7 +93,7 @@ public class RestUtils {
      * @return The contents of the HTTP response.
      * @throws IOException Related to network and stream reading
      */
-    public static JSONArray getResponseFromHttpUrl(URL url) throws IOException {
+    private static JSONArray getResponseFromHttpUrl(URL url) throws IOException {
 
         Log.d(TAG, "sending GET http request");
 
@@ -98,6 +102,7 @@ public class RestUtils {
         urlConnection.setConnectTimeout(5000);
         String result = "";
         JSONArray ja = null;
+        JSONObject jo = null;
         try {
             InputStream in = urlConnection.getInputStream();
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
@@ -109,9 +114,19 @@ public class RestUtils {
 
             ja = new JSONArray(result);
         } catch (JSONException e) {
+            try {
+                jo = new JSONObject(result);
+            } catch (JSONException eo) {
+                eo.printStackTrace();
+            }
             e.printStackTrace();
         } finally {
             urlConnection.disconnect();
+        }
+
+        if (jo != null) {
+            ja = new JSONArray();
+            ja.put(jo);
         }
         return ja;
     }
@@ -123,7 +138,7 @@ public class RestUtils {
      * @return The contents of the HTTP response.
      * @throws IOException Related to network and stream reading
      */
-    public static String postResponseFromHttpUrl(URL url, JSONObject postJson) throws IOException {
+    private static String postResponseFromHttpUrl(URL url, JSONObject postJson) throws IOException {
 
         Log.d(TAG, "sending POST http request");
 
@@ -181,7 +196,7 @@ public class RestUtils {
      * @return The contents of the HTTP response.
      * @throws IOException Related to network and stream reading
      */
-    public static String deleteResponseFromHttpUrl(URL url) throws IOException {
+    private static String deleteResponseFromHttpUrl(URL url) throws IOException {
 
         Log.d(TAG, "sending DELETE http request");
 
@@ -555,6 +570,10 @@ public class RestUtils {
         }
     }
 
+    /**
+     * This class is called when more than one tag is scanned and the TA needs to delete
+     * those tags and re-scan.
+     */
     public static class DeleteIncomingTags extends AsyncTask<Void, Void, String> {
 
         private static final String TAG = "DeleteIncomingTags";
@@ -595,6 +614,61 @@ public class RestUtils {
                 Log.d(TAG, "cleared tags");
                 UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
                 activity.refreshTags();
+            }
+        }
+    }
+
+    public static class RegisterImage extends AsyncTask<String, Void, JSONObject> {
+
+        private static final String TAG = "RegisterImage";
+        private final Activity mActivity;
+
+        public RegisterImage(Activity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... strings) {
+            String gtid = strings[0];
+            String baseUrl = REST_BASE_URL + IMAGES + "/" + gtid;
+            JSONArray registerImageResult = null;
+
+            URL url = null;
+            try {
+                Log.d(TAG, baseUrl);
+                url = new URL(baseUrl);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "URL:"+ url.toString());
+
+            try {
+                registerImageResult = getResponseFromHttpUrl(url);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            JSONObject result = null;
+            if (registerImageResult != null && registerImageResult.length() != 0) {
+                try {
+                    result = (JSONObject) registerImageResult.get(0);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            super.onPostExecute(jsonObject);
+
+            SignUpActivity activity = (SignUpActivity) mActivity;
+            if (jsonObject != null) {
+                Log.d(TAG, "registered image");
+                activity.onSuccessFinishing();
+            } else {
+                activity.onFailureFinishing();
             }
         }
     }
@@ -766,6 +840,7 @@ public class RestUtils {
 
     /**
      * This method gets all kinds of items in database
+     * See {@link UpdateInventoryActivity}
      *
      * @return
      */
@@ -807,6 +882,7 @@ public class RestUtils {
 
     /**
      * This method gets the item by tag.
+     * See {@link GetItemByTag}
      *
      * @param tag The RFID tag of the item
      * @return
