@@ -50,7 +50,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrUser;
 
-    private String mGtid;
     private boolean mIsTa;
 
     @Override
@@ -107,9 +106,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             if (resultCode == CommonStatusCodes.SUCCESS) {
                 if (data != null) {
                     //Barcode qrCode =  data.getParcelableExtra("gtid");
-                    mGtid =  data.getStringExtra("gtid");
+                    sGtid =  data.getStringExtra("gtid");
                     //mGtidField.setText(qrCode.displayValue);
-                    mGtidField.setText(mGtid);
+                    mGtidField.setText(sGtid);
                 }
             }
         }
@@ -120,11 +119,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         // Go to DashboardActivity
         if (isTa) {
             Intent intent = new Intent(SignInActivity.this, MainTaActivity.class);
-            intent.putExtra("gtid", mGtid);
             startActivity(intent);
         } else {
             Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-            intent.putExtra("gtid", mGtid);
             startActivity(intent);
         }
         finish();
@@ -170,7 +167,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         if (documentSnapshot.exists()){
                             String email = documentSnapshot.getString("email");
                             mIsTa = documentSnapshot.getBoolean("ta");
-                            mGtid = gtidInput;
+                            sGtid = gtidInput;
                             signInWithEmail(email, password);
                         } else {
                             hideProgressDialog();
@@ -224,7 +221,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     mLoadingIndicator.setVisibility(View.INVISIBLE);
-                                    mGtid = documentSnapshot.getString("gtid");
+                                    sGtid = documentSnapshot.getString("gtid");
                                     mIsTa = documentSnapshot.getBoolean("ta");
                                     onAuthSuccess(mIsTa);
                                 }

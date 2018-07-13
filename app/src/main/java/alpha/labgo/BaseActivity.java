@@ -23,7 +23,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     private static final int PERMISSION_REQUESTS = 2;
     private static ProgressDialog mProgressDialog;
-    private static String gtid;
+    protected static String sGtid;
 
     /**
      * This method shows progress dialog with desired message.
@@ -69,13 +69,13 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()){
-                    gtid = documentSnapshot.get("gtid").toString();
+                    sGtid = documentSnapshot.get("gtid").toString();
                 } else {
                     Log.e(TAG, "can't find gtid for this user");
                 }
             }
         });
-        return gtid;
+        return sGtid;
     }
 
     public String[] getRequiredPermissions() {

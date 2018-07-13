@@ -46,7 +46,6 @@ public class MainActivity extends BaseActivity
     // Firebase
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
-    private String mGtid;
 
     // ViewPager and PagerAdapter
     private FragmentPagerAdapter mPagerAdapter;
@@ -63,7 +62,6 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_main);
 
-        mGtid = getIntent().getStringExtra("gtid");
         // Views
         mNavigationView = findViewById(R.id.nav_view);
         mHeaderView = mNavigationView.getHeaderView(0);
@@ -87,7 +85,7 @@ public class MainActivity extends BaseActivity
         }
 
         // Display user name in drawer header
-        displayUserName(mGtid);
+        displayUserName(sGtid);
 
         // Create the adapter that will return a fragment for each section
         createFragmentAdapter();
@@ -126,7 +124,7 @@ public class MainActivity extends BaseActivity
         if (id == R.id.action_qr_code) {
             Intent intent = new Intent(MainActivity.this, QrCodeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.putExtra("gtid", mGtid);
+            intent.putExtra("gtid", sGtid);
             startActivity(intent);
             return true;
         }
@@ -217,8 +215,8 @@ public class MainActivity extends BaseActivity
      * Create the adapter that will return a fragment for each section
      */
     private void createFragmentAdapter() {
-        mDashboardFragment = DashboardFragment.newInstance(mGtid);
-        mInventoryFragment = InventoryFragment.newInstance(mGtid);
+        mDashboardFragment = DashboardFragment.newInstance(sGtid);
+        mInventoryFragment = InventoryFragment.newInstance(sGtid);
         mNotificationFragment = new NotificationFragment();
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {

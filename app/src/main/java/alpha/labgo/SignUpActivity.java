@@ -53,7 +53,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
 
     // global variables
     private String mUid;
-    private String mGtid;
+    //private String mGtid;
     private String mName;
     private String mEmail;
     private String mPassword;
@@ -165,11 +165,11 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         mPassword = mPasswordField.getText().toString();
 
         showProgressDialog("Signing up...");
-        mGtid = mGtidField.getText().toString();
+        sGtid = mGtidField.getText().toString();
 
 
         // check if gtid is valid
-        mFirestore.collection("gtid").document(mGtid).get()
+        mFirestore.collection("gtid").document(sGtid).get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -187,13 +187,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private void onAuthSuccess() {
 
         // Write new user
-        writeNewUser(mUid, mGtid, mName, mEmail);
+        writeNewUser(mUid, sGtid, mName, mEmail);
 
         // Initialize progress dialog for uploading picture
         initProgressDialog();
 
         // Upload image to S3
-        String fileName = mGtid + ".jpg";
+        String fileName = sGtid + ".jpg";
         credentials = new BasicAWSCredentials(KEY, SECRET);
         s3Client = new AmazonS3Client(credentials);
 
@@ -216,7 +216,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                     Log.d(TAG, "upload completed");
 
                     // send request to connect GTID with picture file in database.
-                    new RestUtils.RegisterImage(SignUpActivity.this).execute(mGtid);
+                    new RestUtils.RegisterImage(SignUpActivity.this).execute(sGtid);
                 }
             }
 
@@ -270,7 +270,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         hideProgressDialog();
         // Go to MainActivity
         Intent intent = new Intent(mContext, MainActivity.class);
-        intent.putExtra("gtid", mGtid);
         startActivity(intent);
         finish();
     }
@@ -281,7 +280,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         Toast.makeText(getApplicationContext(), R.string.toast_image_register_fail,
                 Toast.LENGTH_LONG).show();
         Intent intent = new Intent(mContext, MainActivity.class);
-        intent.putExtra("gtid", mGtid);
         startActivity(intent);
         finish();
     }

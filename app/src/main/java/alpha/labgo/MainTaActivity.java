@@ -52,7 +52,6 @@ public class MainTaActivity extends BaseActivity implements
     // Firebase
     private FirebaseFirestore mFirestore;
     private FirebaseAuth mAuth;
-    private String mGtid;
 
     // Fragments
     private DashboardTaFragment mDashboardFragment;
@@ -63,8 +62,6 @@ public class MainTaActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_ta);
-
-        mGtid = getIntent().getStringExtra("gtid");
 
         // Views
         mNavigationView = findViewById(R.id.nav_view_ta);
@@ -93,7 +90,7 @@ public class MainTaActivity extends BaseActivity implements
         }
 
         // Display user name in drawer header
-        displayUserName(mGtid);
+        displayUserName(sGtid);
 
         // Create the adapter that will return a fragment for each section
         createFragmentAdapter();
@@ -132,7 +129,7 @@ public class MainTaActivity extends BaseActivity implements
         if (id == R.id.action_qr_code) {
             Intent intent = new Intent(MainTaActivity.this, QrCodeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.putExtra("gtid", mGtid);
+            intent.putExtra("gtid", sGtid);
             startActivity(intent);
             return true;
         }
@@ -210,8 +207,8 @@ public class MainTaActivity extends BaseActivity implements
      * Create the adapter that will return a fragment for each section
      */
     private void createFragmentAdapter() {
-        mDashboardFragment = DashboardTaFragment.newInstance(mGtid);
-        mInventoryFragment = InventoryTaFragment.newInstance(mGtid);
+        mDashboardFragment = DashboardTaFragment.newInstance(sGtid);
+        mInventoryFragment = InventoryTaFragment.newInstance(sGtid);
         mNotificationFragment = new NotificationTaFragment();
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
 
