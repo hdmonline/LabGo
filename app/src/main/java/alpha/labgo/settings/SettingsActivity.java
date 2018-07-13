@@ -1,5 +1,6 @@
 package alpha.labgo.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -38,7 +39,8 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View view) {
         if (view == mAccountSettings) {
             // TODO: goto account settings
-
+            Intent toAccountSettings = new Intent(this, AccountSettingsActivity.class);
+            startActivity(toAccountSettings);
         }
     }
 }

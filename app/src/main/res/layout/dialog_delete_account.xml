@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".settings.AccountSettingsActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="10dp">
+
+        <TextView
+            android:id="@+id/text_delete_account_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="Notice"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#000" />
+
+        <TextView
+            android:id="@+id/text_delete_account_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_delete_account_title"
+            android:layout_marginTop="10dp"
+            android:text="Are you sure you want to delete your account? This is not undoable."
+            android:textSize="13sp"
+            android:textColor="#000" />
+
+        <TextView
+            android:id="@+id/action_delete_account_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CONFIRM"
+            android:padding="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:textSize="18sp"
+            android:textColor="@color/buzzBlue" />
+
+        <TextView
+            android:id="@+id/action_delete_account_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CANCEL"
+            android:padding="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/action_delete_account_confirm"
+            android:layout_marginEnd="30dp"
+            android:textSize="18sp"
+            android:textColor="@color/buzzBlue" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -35,6 +35,7 @@ import alpha.labgo.models.Item;
 import alpha.labgo.models.BorrowedItem;
 import alpha.labgo.models.InventoryItem;
 import alpha.labgo.models.ScannedItem;
+import alpha.labgo.settings.AccountSettingsActivity;
 
 
 /**
@@ -84,6 +85,9 @@ public class RestUtils {
 
     // Parameters for images
     private static final String IMAGES = "/images";
+
+    // Parameters for accounts
+    public static final String ACCOUNTS = "/accounts";
 
 
     /**
@@ -556,14 +560,14 @@ public class RestUtils {
                     UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
                     activity.onSuccessFinishing();
                 } catch (ClassCastException e) {
-                    Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+                    Log.e(TAG, "onPostExecute: ClassCastException: " + e.getMessage());
                 }
             } else {
                 try {
                     UpdateInventoryActivity activity = (UpdateInventoryActivity) mActivity;
                     activity.onFailureFinishing();
                 } catch (ClassCastException e) {
-                    Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage());
+                    Log.e(TAG, "onPostExecute: ClassCastException: " + e.getMessage());
                 }
                 Log.e(TAG, "Failed to delete inventory, please check the database.");
             }
@@ -618,6 +622,10 @@ public class RestUtils {
         }
     }
 
+    /**
+     * This class is called when the user signs up the account. After the BuzzCard image is uploaded
+     * to S3 bucket, the image id needs to be connected with face id by this class.
+     */
     public static class RegisterImage extends AsyncTask<String, Void, JSONObject> {
 
         private static final String TAG = "RegisterImage";
@@ -635,7 +643,7 @@ public class RestUtils {
 
             URL url = null;
             try {
-                Log.d(TAG, baseUrl);
+                Log.d(TAG, "Base URL: " + baseUrl);
                 url = new URL(baseUrl);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -644,7 +652,7 @@ public class RestUtils {
 
             try {
                 registerImageResult = getResponseFromHttpUrl(url);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -669,6 +677,61 @@ public class RestUtils {
                 activity.onSuccessFinishing();
             } else {
                 activity.onFailureFinishing();
+            }
+        }
+    }
+
+    public static class DeleteAccount extends AsyncTask<String, Void, String> {
+
+        private static final String TAG = "DeleteAccount";
+        private final Activity mActivity;
+
+        public DeleteAccount(Activity activity) {
+            this.mActivity = activity;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String gtid = strings[0];
+
+            String baseUrl = REST_BASE_URL + ACCOUNTS + "/" + gtid;
+            String deleteAccountResult = null;
+
+            URL url = null;
+            try {
+                Log.d(TAG, "Base URL: " + baseUrl);
+                url = new URL(baseUrl);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            Log.d(TAG, "URL: " + url.toString());
+
+            try {
+                deleteAccountResult = deleteResponseFromHttpUrl(url);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return deleteAccountResult;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s != null && !s.equals("")) {
+                try {
+                    AccountSettingsActivity activity = (AccountSettingsActivity) mActivity;
+                    activity.onPostDeleteAccount();
+                } catch (ClassCastException e) {
+                    Log.e(TAG, "onPostExecute: ClassCastException: " + e.getMessage());
+                }
+            } else {
+                try {
+                    AccountSettingsActivity activity = (AccountSettingsActivity) mActivity;
+                    activity.onFailDeleteAccount();
+                } catch (ClassCastException e) {
+                    Log.e(TAG, "onPostExecute: ClassCastException: " + e.getMessage());
+                }
+                Log.e(TAG, "Failed to delete account information, please check the database.");
             }
         }
     }

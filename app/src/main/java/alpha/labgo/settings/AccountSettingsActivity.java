@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import alpha.labgo.BaseActivity;
 import alpha.labgo.R;
+import alpha.labgo.SignInActivity;
+import alpha.labgo.dialogs.DeleteAccountDialog;
 
 public class AccountSettingsActivity extends BaseActivity implements View.OnClickListener {
 
@@ -38,13 +41,25 @@ public class AccountSettingsActivity extends BaseActivity implements View.OnClic
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
     }
 
     @Override
     public void onClick(View v) {
         if (v == mDeleteAccount) {
             // TODO: show dialog for confirmation
+            DeleteAccountDialog dialog = new DeleteAccountDialog();
+            dialog.show(getFragmentManager(), "DeleteAccountDialog");
         }
+    }
+
+    public void onPostDeleteAccount() {
+        Intent intent = new Intent(this, SignInActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void onFailDeleteAccount() {
+        Toast.makeText(this, "The user information cannot be deleted, please contact the TA.",
+                Toast.LENGTH_LONG).show();
     }
 }
