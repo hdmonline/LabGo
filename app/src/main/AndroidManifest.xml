@@ -69,7 +69,10 @@
         <activity
             android:name=".UpdateItemActivity"
             android:label="@string/title_activity_update_item"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:label="@string/title_activity_settings"
+            android:name=".settings.SettingsActivity"/>
     </application>
 
 </manifest>

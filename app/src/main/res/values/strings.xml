@@ -52,6 +52,7 @@
     <string name="add_inventory_title">Are you sure you want to ADD this item?</string>
     <string name="delete_inventory_title">Are you sure you want to DELETE this item?</string>
     <string name="title_activity_update_item">Update Item</string>
+    <string name="title_activity_settings">Settings</string>
 
     <string name="toast_image_register_fail">Sorry, the image could not be registered. Please contact the TA.</string>
 

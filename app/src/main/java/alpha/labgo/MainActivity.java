@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import alpha.labgo.fragments.DashboardFragment;
 import alpha.labgo.fragments.InventoryFragment;
 import alpha.labgo.fragments.NotificationFragment;
+import alpha.labgo.settings.SettingsActivity;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -143,6 +144,11 @@ public class MainActivity extends BaseActivity
             }
         }
 
+        // settings
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 

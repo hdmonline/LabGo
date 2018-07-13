@@ -27,6 +27,7 @@ import alpha.labgo.adapters.InventoryItemAdapter;
 import alpha.labgo.fragments.DashboardTaFragment;
 import alpha.labgo.fragments.InventoryTaFragment;
 import alpha.labgo.fragments.NotificationTaFragment;
+import alpha.labgo.settings.SettingsActivity;
 
 public class MainTaActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -147,6 +148,12 @@ public class MainTaActivity extends BaseActivity implements
                     mInventoryFragment.refreshData();
                     break;
             }
+        }
+
+        // settings
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(MainTaActivity.this, SettingsActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
