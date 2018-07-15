@@ -2,7 +2,9 @@ package alpha.labgo.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -38,9 +40,16 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View view) {
         if (view == mAccountSettings) {
-            // TODO: goto account settings
             Intent toAccountSettings = new Intent(this, AccountSettingsActivity.class);
             startActivity(toAccountSettings);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+        }
+        return true;
     }
 }
