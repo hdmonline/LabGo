@@ -209,6 +209,16 @@ public class InventoryFragment extends BaseFragment implements
         getLoaderManager().restartLoader(INVENTORY_LOADER_ID, null, InventoryFragment.this);
     }
 
+    /**
+     * Filter list with constraint string
+     *
+     * @param constraint Constraint string
+     */
+    public void filterData(String constraint) {
+        mInventoryItemAdapter.getFilter().filter(constraint);
+    }
+
+
     @Override
     public void onRefresh() {
         refreshData();

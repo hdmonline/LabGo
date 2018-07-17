@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -42,6 +43,11 @@ public class MainActivity extends BaseActivity
     private BottomNavigationView mBottomNavigationView;
     private MenuItem mPrevMenuItem;
     private DrawerLayout mDrawer;
+    private Toolbar mToolbar;
+    private MenuItem mRefresh;
+    private MenuItem mSearch;
+    private MenuItem mQrCode;
+    private SearchView mSearchView;
 
     // Firebase
     private FirebaseFirestore mFirestore;
@@ -63,6 +69,7 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         // Views
+        mToolbar = findViewById(R.id.toolbar);
         mNavigationView = findViewById(R.id.nav_view);
         mHeaderView = mNavigationView.getHeaderView(0);
         mUserName = mHeaderView.findViewById(R.id.field_drawer_user_name);
@@ -70,6 +77,8 @@ public class MainActivity extends BaseActivity
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
         mViewPager = findViewById(R.id.container);
         mDrawer = findViewById(R.id.layout_drawer);
+
+        setSupportActionBar(mToolbar);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
@@ -107,6 +116,43 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mRefresh = menu.findItem(R.id.action_refresh);
+        mQrCode = menu.findItem(R.id.action_qr_code);
+        mSearch = menu.findItem(R.id.action_search_item);
+
+        // Make the SearchView fill the width of the toolbar
+        mSearchView = (SearchView) mSearch.getActionView();
+        mSearchView.setMaxWidth(Integer.MAX_VALUE);
+
+        // Set listeners
+        search(mSearchView);
+        return true;
+    }
+
+    private void search(SearchView searchView) {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                int currentPage = mViewPager.getCurrentItem();
+                switch (currentPage) {
+                    case 0:
+                        mDashboardFragment.filterData(newText);
+                        break;
+                    case 1:
+                        mInventoryFragment.filterData(newText);
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
     /**
      * Handle action bar item clicks here. The action bar will
      * automatically handle clicks on the Home/Up button, so long
@@ -140,6 +186,11 @@ public class MainActivity extends BaseActivity
                     mInventoryFragment.refreshData();
                     break;
             }
+        }
+
+        // search button
+        if (id == R.id.action_search_item) {
+
         }
 
         // settings
@@ -184,7 +235,8 @@ public class MainActivity extends BaseActivity
     }
 
     /**
-     * display user name in drawer header
+     * Display user name in drawer header
+     *
      * @param gtid  User's GTID
      */
     private void displayUserName(String gtid) {
@@ -268,7 +320,20 @@ public class MainActivity extends BaseActivity
                 mPrevMenuItem = mBottomNavigationView.getMenu().getItem(position);
                 switch (position) {
                     case 0:
-
+                        mRefresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mQrCode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                        break;
+                    case 1:
+                        mRefresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mQrCode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                        break;
+                    case 2:
+                        mRefresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                        mQrCode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        break;
                 }
             }
 

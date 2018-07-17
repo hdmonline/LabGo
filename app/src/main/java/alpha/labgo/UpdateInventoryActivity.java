@@ -111,12 +111,6 @@ public class UpdateInventoryActivity extends BaseActivity implements
         new RestUtils.ListNewTags(UpdateInventoryActivity.this).execute();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar, menu);
-        return true;
-    }
-
     private void search(SearchView searchView) {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -139,6 +133,12 @@ public class UpdateInventoryActivity extends BaseActivity implements
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        return true;
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         mRefresh = menu.findItem(R.id.action_refresh);
         mQrCode = menu.findItem(R.id.action_qr_code);
@@ -150,6 +150,8 @@ public class UpdateInventoryActivity extends BaseActivity implements
         // Make the SearchView fill the width of the toolbar
         mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setMaxWidth(Integer.MAX_VALUE);
+
+        // Set listeners
         search(mSearchView);
 
         return true;

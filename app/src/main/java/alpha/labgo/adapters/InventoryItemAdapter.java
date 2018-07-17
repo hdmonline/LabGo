@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,9 +24,11 @@ import alpha.labgo.R;
 import alpha.labgo.models.InventoryItem;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdapter.InventoryItemViewHolder> {
+public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdapter.InventoryItemViewHolder>
+        implements Filterable {
 
     private static final String TAG = "InventoryItemAdapter";
+
 
     public interface ShowItemEditDialog {
         void showItemEditDialog();
@@ -34,6 +38,7 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
 
     private Context mContext;
     private ArrayList<InventoryItem> mInventoryItems = new ArrayList<>();
+    private ArrayList<InventoryItem> mFilteredInventoryItems = new ArrayList<>();
 
     public class InventoryItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -79,7 +84,7 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
     public void onBindViewHolder(@NonNull InventoryItemViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
-        InventoryItem inventoryItem = mInventoryItems.get(position);
+        InventoryItem inventoryItem = mFilteredInventoryItems.get(position);
 
         Glide.with(mContext)
                 .asBitmap()
@@ -128,7 +133,7 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
 
     @Override
     public int getItemCount() {
-        return mInventoryItems.size();
+        return mFilteredInventoryItems.size();
     }
 
     /**
@@ -138,6 +143,43 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
      */
     public void setList(ArrayList<InventoryItem> inventoryItems) {
         mInventoryItems = inventoryItems;
+        mFilteredInventoryItems = inventoryItems;
         notifyDataSetChanged();
     }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+
+                String constraintString = constraint.toString().toLowerCase();
+
+                if (constraintString.isEmpty()) {
+                    mFilteredInventoryItems = mInventoryItems;
+                } else {
+                    ArrayList<InventoryItem> filteredList = new ArrayList<>();
+
+                    for (InventoryItem item : mInventoryItems) {
+                        if (item.getItemName().toLowerCase().contains(constraintString) ||
+                                item.getItemDescription().toLowerCase().contains(constraintString)) {
+                            filteredList.add(item);
+                        }
+                    }
+                    mFilteredInventoryItems = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mFilteredInventoryItems;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults results) {
+                mFilteredInventoryItems = (ArrayList<InventoryItem>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
 }

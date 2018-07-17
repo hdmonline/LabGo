@@ -33,7 +33,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
     private int mAddOrDelete;
     private String mTag;
     private ArrayList<Item> mItems = new ArrayList<>();
-    private ArrayList<Item> mFileredItems = new ArrayList<>();
+    private ArrayList<Item> mFilteredItems = new ArrayList<>();
 
     /**
      * This view holder holds each item in a RecyclerView
@@ -57,7 +57,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
     /**
      * Default constructor
      *
-     * @param context
+     * @param context Context
      */
     public ItemAdapter(Context context, int addOrDelete) {
         this.mContext = context;
@@ -89,7 +89,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
     public void onBindViewHolder(@NonNull AddItemViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
-        final Item item = mFileredItems.get(position);
+        final Item item = mFilteredItems.get(position);
 
         Glide.with(mContext)
                 .asBitmap()
@@ -103,7 +103,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
         holder.mParentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked on: " + mFileredItems.get(position).getItemName());
+                Log.d(TAG, "onClick: clicked on: " + mFilteredItems.get(position).getItemName());
                 UpdateInventoryConfirmDialog dialog = new UpdateInventoryConfirmDialog()
                         .newInstance(mTag, item.getItemName(), item.getItemImage(), item.getItemDescription(), mAddOrDelete);
                 dialog.show(((Activity)mContext).getFragmentManager(), "UpdateInventoryConfirmDialog");
@@ -113,7 +113,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
 
     @Override
     public int getItemCount() {
-        return mFileredItems.size();
+        return mFilteredItems.size();
     }
 
 
@@ -124,10 +124,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
 
-                String constraintString = constraint.toString();
+                String constraintString = constraint.toString().toLowerCase();
 
                 if (constraintString.isEmpty()) {
-                    mFileredItems = mItems;
+                    mFilteredItems = mItems;
                 } else {
                     ArrayList<Item> filteredList = new ArrayList<>();
 
@@ -137,17 +137,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
                             filteredList.add(item);
                         }
                     }
-                    mFileredItems = filteredList;
+                    mFilteredItems = filteredList;
                 }
 
                 FilterResults filterResults = new FilterResults();
-                filterResults.values = mFileredItems;
+                filterResults.values = mFilteredItems;
                 return filterResults;
             }
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                mFileredItems = (ArrayList<Item>) results.values;
+                mFilteredItems = (ArrayList<Item>) results.values;
                 notifyDataSetChanged();
             }
         };
@@ -160,7 +160,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.AddItemViewHol
      */
     public void setList(ArrayList<Item> items) {
         mItems = items;
-        mFileredItems = items;
+        mFilteredItems = items;
         notifyDataSetChanged();
     }
 

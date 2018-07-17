@@ -7,6 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextClock;
 import android.widget.TextView;
@@ -19,12 +22,14 @@ import alpha.labgo.R;
 import alpha.labgo.models.BorrowedItem;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapter.BorrowedItemViewHolder> {
+public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapter.BorrowedItemViewHolder>
+        implements Filterable{
 
     private static final String TAG = "BorrowedItemAdapter";
 
     private Context mContext;
     private ArrayList<BorrowedItem> mBorrowedItems = new ArrayList<>();
+    private ArrayList<BorrowedItem> mFilteredBorrowedItems = new ArrayList<>();
 
     public class BorrowedItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -44,12 +49,21 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
         }
     }
 
-    // default constructor
+    /**
+     * Default constructor
+     *
+     * @param context Context
+     */
     public BorrowedItemAdapter(Context context) {
         this.mContext = context;
     }
 
-    // constructor passing parameters
+    /**
+     * Constructor with initialization
+     *
+     * @param context
+     * @param borrowedItems
+     */
     public BorrowedItemAdapter(Context context, ArrayList<BorrowedItem> borrowedItems) {
         this.mContext = context;
         this.mBorrowedItems = borrowedItems;
@@ -58,7 +72,8 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
     @NonNull
     @Override
     public BorrowedItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_borrowed_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.layout_borrowed_item, parent, false);
         return new BorrowedItemViewHolder(view);
     }
 
@@ -66,7 +81,7 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
     public void onBindViewHolder(@NonNull BorrowedItemAdapter.BorrowedItemViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called");
 
-        BorrowedItem borrowedItem = mBorrowedItems.get(position);
+        BorrowedItem borrowedItem = mFilteredBorrowedItems.get(position);
 
         Glide.with(mContext)
                 .asBitmap()
@@ -80,7 +95,7 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
 
     @Override
     public int getItemCount() {
-        return mBorrowedItems.size();
+        return mFilteredBorrowedItems.size();
     }
 
     /**
@@ -90,6 +105,42 @@ public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapte
      */
     public void setList(ArrayList<BorrowedItem> borrowedItems) {
         mBorrowedItems = borrowedItems;
+        mFilteredBorrowedItems = borrowedItems;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+
+                String constrainString = constraint.toString().toLowerCase();
+
+                if (constrainString.isEmpty()) {
+                    mFilteredBorrowedItems = mBorrowedItems;
+                } else {
+                    ArrayList<BorrowedItem> filteredList = new ArrayList<>();
+
+                    for (BorrowedItem item : mBorrowedItems) {
+                        if (item.getItemName().toLowerCase().contains(constrainString) ||
+                                item.getItemDescription().toLowerCase().contains(constrainString)) {
+                            filteredList.add(item);
+                        }
+                    }
+                    mFilteredBorrowedItems = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mFilteredBorrowedItems;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mFilteredBorrowedItems = (ArrayList<BorrowedItem>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }

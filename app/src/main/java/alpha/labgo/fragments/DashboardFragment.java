@@ -220,6 +220,15 @@ public class DashboardFragment extends BaseFragment implements
         getLoaderManager().restartLoader(DASHBOARD_LOADER_ID, null, DashboardFragment.this);
     }
 
+    /**
+     * Filter list with constraint string
+     *
+     * @param constraint Constraint string
+     */
+    public void filterData(String constraint) {
+        mBorrowedItemAdapter.getFilter().filter(constraint);
+    }
+
     @Override
     public void onRefresh() {
         refreshData();
