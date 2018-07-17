@@ -135,6 +135,7 @@ public class MainActivity extends BaseActivity
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                return false;
             }
 
             @Override
@@ -186,11 +187,6 @@ public class MainActivity extends BaseActivity
                     mInventoryFragment.refreshData();
                     break;
             }
-        }
-
-        // search button
-        if (id == R.id.action_search_item) {
-
         }
 
         // settings

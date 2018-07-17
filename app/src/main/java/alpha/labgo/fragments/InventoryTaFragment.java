@@ -314,6 +314,15 @@ public class InventoryTaFragment extends BaseFragment implements
         };
     }
 
+    /**
+     * Filter list with constraint string
+     *
+     * @param constraint Constraint string
+     */
+    public void filterData(String constraint) {
+        mInventoryItemAdapter.getFilter().filter(constraint);
+    }
+
     @Override
     public void onRefresh() {
         refreshData();

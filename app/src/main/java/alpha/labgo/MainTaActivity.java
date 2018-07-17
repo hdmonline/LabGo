@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,6 +45,11 @@ public class MainTaActivity extends BaseActivity implements
     private MenuItem mPrevMenuItem;
     private DrawerLayout mDrawer;
     private TextView mIdentity;
+    private Toolbar mToolbar;
+    private MenuItem mRefresh;
+    private MenuItem mSearch;
+    private MenuItem mQrCode;
+    private SearchView mSearchView;
 
     // ViewPager and PagerAdapter
     private FragmentPagerAdapter mPagerAdapter;
@@ -74,6 +80,8 @@ public class MainTaActivity extends BaseActivity implements
         mDrawer = findViewById(R.id.layout_drawer_ta);
 
         mIdentity.setText("TA");
+
+        setSupportActionBar(mToolbar);
 
         // Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -110,6 +118,44 @@ public class MainTaActivity extends BaseActivity implements
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        mRefresh = menu.findItem(R.id.action_refresh);
+        mQrCode = menu.findItem(R.id.action_qr_code);
+        mSearch = menu.findItem(R.id.action_search_item);
+
+        // Make the SearchView fill the width of the toolbar
+        mSearchView = (SearchView) mSearch.getActionView();
+        mSearchView.setMaxWidth(Integer.MAX_VALUE);
+
+        // Set listeners
+        search(mSearchView);
+        return true;
+    }
+
+    private void search(SearchView searchView) {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                int currentPage = mViewPager.getCurrentItem();
+                switch (currentPage) {
+                    case 0:
+                        mDashboardFragment.filterData(newText);
+                        break;
+                    case 1:
+                        mInventoryFragment.filterData(newText);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     /**
@@ -264,6 +310,24 @@ public class MainTaActivity extends BaseActivity implements
 
                 mBottomNavigationView.getMenu().getItem(position).setChecked(true);
                 mPrevMenuItem = mBottomNavigationView.getMenu().getItem(position);
+
+                switch (position) {
+                    case 0:
+                        mRefresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mQrCode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                        break;
+                    case 1:
+                        mRefresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mQrCode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS|MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                        break;
+                    case 2:
+                        mRefresh.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                        mQrCode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        mSearch.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        break;
+                }
             }
 
             @Override

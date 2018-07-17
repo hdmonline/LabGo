@@ -223,6 +223,15 @@ public class DashboardTaFragment extends Fragment implements
         getLoaderManager().restartLoader(DASHBOARD_LOADER_ID, null, DashboardTaFragment.this);
     }
 
+    /**
+     * Filter list with constraint string
+     *
+     * @param constraint Constraint string
+     */
+    public void filterData(String constraint) {
+        mBorrowedItemAdapter.getFilter().filter(constraint);
+    }
+
     @Override
     public void onRefresh() {
         refreshData();
