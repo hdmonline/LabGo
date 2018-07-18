@@ -2,10 +2,10 @@ package alpha.labgo.models;
 
 public class BorrowedItem {
 
-    private String itemImage;
-    private String itemName;
-    private String itemDescription;
-    private String checkOutTime;
+    private String mItemImage;
+    private String mItemName;
+    private String mItemDescription;
+    private String mCheckOutTime;
 
     /**
      * Default constructor
@@ -23,41 +23,43 @@ public class BorrowedItem {
      * @param time
      */
     public BorrowedItem(String image, String name, String description, String time) {
-        this.itemImage = image;
-        this.itemName = name;
-        this.itemDescription = description;
-        this.checkOutTime = time;
+        this.mItemImage = image;
+        this.mItemName = name;
+        this.mItemDescription = description;
+        this.mCheckOutTime = time;
     }
 
     public String getItemImage() {
-        return itemImage;
+        return mItemImage;
     }
 
     public String getCheckOutTime() {
-        return checkOutTime;
+        return mCheckOutTime;
     }
 
     public String getItemName() {
-        return itemName;
+        return mItemName;
     }
 
     public String getItemDescription() {
-        return itemDescription;
+        return mItemDescription;
+    }
+
     }
 
     public void setItemImage(String itemImage) {
-        this.itemImage = itemImage;
+        this.mItemImage = itemImage;
     }
 
     public void setItemName(String itemName) {
-        this.itemName = itemName;
+        this.mItemName = itemName;
     }
 
     public void setCheckOutTime(String checkOutTime) {
-        this.checkOutTime = checkOutTime;
+        this.mCheckOutTime = checkOutTime;
     }
 
     public void setItemDescription(String itemDescription) {
-        this.itemDescription = itemDescription;
+        this.mItemDescription = itemDescription;
     }
 }
