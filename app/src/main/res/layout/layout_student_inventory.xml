@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_borrowed_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="15dp"
+    android:paddingHorizontal="15dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_student_profile"
+        android:layout_alignParentStart="true"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@mipmap/ic_launcher"/>
+
+    <TextView
+        android:id="@+id/text_student_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/image_student_profile"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/black"
+        android:textSize="23sp"
+        android:layout_marginLeft="30dp"
+        android:text="Student Name" />
+
+    <TextView
+        android:id="@+id/text_student_gtid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/line_student_inventory"
+        android:layout_alignStart="@+id/text_student_name"
+        android:textSize="12sp"
+        android:text="GTID: 123456789"/>
+
+    <ImageView
+        android:id="@+id/image_expand_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        tools:src="@drawable/ic_expand_arrow" />
+
+    <!--This View serves as a visual divider between list items-->
+    <View
+        android:id="@+id/line_student_inventory"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#dadada"
+        android:layout_below="@+id/image_student_profile"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="8dp" />
+</RelativeLayout>
+

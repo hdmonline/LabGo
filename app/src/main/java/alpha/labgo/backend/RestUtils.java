@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -681,6 +680,9 @@ public class RestUtils {
         }
     }
 
+    /**
+     * This class is called when the user deletes the account.
+     */
     public static class DeleteAccount extends AsyncTask<String, Void, String> {
 
         private static final String TAG = "DeleteAccount";
