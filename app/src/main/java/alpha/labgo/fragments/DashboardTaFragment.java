@@ -39,7 +39,7 @@ public class DashboardTaFragment extends Fragment implements
         LoaderCallbacks<PreStudentInventory> {
 
     private static final String TAG = "DashboardTaFragment";
-    private static final int DASHBOARD_LOADER_ID = 22;
+    private static final int STUDENT_INVENTORY_LOADER_ID = 25;
 
     private String mGtid;
 
@@ -105,13 +105,13 @@ public class DashboardTaFragment extends Fragment implements
 
         // will pass the parameters later
         // TODO: chech if this constructor usable
-        mBorrowedItemAdapter = new BorrowedItemAdapter(getContext());
+        mStudentInventoryAdapter = new StudentInventoryAdapter(getContext());
 
         // set adapter
-        mRecyclerView.setAdapter(mBorrowedItemAdapter);
+        mRecyclerView.setAdapter(mStudentInventoryAdapter);
 
-        int loaderId = DASHBOARD_LOADER_ID;
-        LoaderCallbacks<ArrayList<StudentInventory>> callback = DashboardTaFragment.this;
+        int loaderId = STUDENT_INVENTORY_LOADER_ID;
+        LoaderCallbacks<PreStudentInventory> callback = DashboardTaFragment.this;
         Bundle bundleDashboard = null;
 
         // TODO: check getActivity().getSupportLoaderManager()
@@ -176,7 +176,7 @@ public class DashboardTaFragment extends Fragment implements
 
     private void findStudentNames(PreStudentInventory preStudentInventory) {
 
-        Log.d(TAG, "findStudentNames")
+        Log.d(TAG, "findStudentNames");
         final ArrayList<String> gtids = preStudentInventory.getGtids();
         final ArrayList<ArrayList<BorrowedItem>> studentItems = preStudentInventory.getStudentItems();
         final HashMap<String, String> gtidNames = new HashMap<>();
@@ -195,7 +195,7 @@ public class DashboardTaFragment extends Fragment implements
                                 // all the names are received, put them together into StudentInventory objects
                                 if (gtidNames.size() == numStudents) {
                                     ArrayList<StudentInventory> studentInventories = buildStudentInventories(gtidNames, gtids, studentItems);
-
+                                    mStudentInventoryAdapter.setList(studentInventories);
                                 }
                             } else {
                                 Log.e(TAG, "getStudentInventories: can't get student name from gtid, please check internet or firestore");
@@ -271,7 +271,7 @@ public class DashboardTaFragment extends Fragment implements
      * refresh of our data, you can see that there is no data showing.
      */
     public void invalidateData() {
-        mBorrowedItemAdapter.setList(new ArrayList<BorrowedItem>());
+        mStudentInventoryAdapter.setList(new ArrayList<StudentInventory>());
     }
 
     /**
@@ -279,7 +279,7 @@ public class DashboardTaFragment extends Fragment implements
      */
     public void refreshData() {
         invalidateData();
-        getLoaderManager().restartLoader(DASHBOARD_LOADER_ID, null, DashboardTaFragment.this);
+        getLoaderManager().restartLoader(STUDENT_INVENTORY_LOADER_ID, null, DashboardTaFragment.this);
     }
 
     /**
@@ -288,7 +288,7 @@ public class DashboardTaFragment extends Fragment implements
      * @param constraint Constraint string
      */
     public void filterData(String constraint) {
-        mBorrowedItemAdapter.getFilter().filter(constraint);
+        mStudentInventoryAdapter.getFilter().filter(constraint);
     }
 
     public void setStudentInventories(ArrayList<StudentInventory> studentInventories) {

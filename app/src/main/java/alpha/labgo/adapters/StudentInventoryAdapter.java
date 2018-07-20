@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.RotateAnimation;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,7 +28,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.view.animation.Animation.RELATIVE_TO_SELF;
 
-public class StudentInventoryAdapter extends ExpandableRecyclerViewAdapter<StudentInventoryAdapter.StudentViewHolder, StudentInventoryAdapter.StudentBorrowedItemViewHolder> {
+public class StudentInventoryAdapter
+        extends ExpandableRecyclerViewAdapter<StudentInventoryAdapter.StudentViewHolder,
+        StudentInventoryAdapter.StudentBorrowedItemViewHolder>
+        implements Filterable {
 
     private static final String TAG = "StudentInventoryAdapter";
 
@@ -43,8 +48,13 @@ public class StudentInventoryAdapter extends ExpandableRecyclerViewAdapter<Stude
         super(groups);
     }
 
+    public StudentInventoryAdapter(Context context) {
+        super(new ArrayList<StudentInventory>());
+        mContext = context;
+    }
+
     @SuppressWarnings("unchecked")
-    public StudentInventoryAdapter(List<? extends ExpandableGroup> groups, Context context) {
+    public StudentInventoryAdapter(Context context, List<? extends ExpandableGroup> groups) {
         super(groups);
         try {
             mStudentInventories = (ArrayList<StudentInventory>) groups;
@@ -134,6 +144,12 @@ public class StudentInventoryAdapter extends ExpandableRecyclerViewAdapter<Stude
         }
     }
 
+    public void setList(ArrayList<StudentInventory> studentInventories) {
+        mStudentInventories = studentInventories;
+        mFilteredStudentInventories = studentInventories;
+        notifyDataSetChanged();
+    }
+
     @Override
     public StudentViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -157,5 +173,45 @@ public class StudentInventoryAdapter extends ExpandableRecyclerViewAdapter<Stude
     public void onBindChildViewHolder(StudentBorrowedItemViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
         final BorrowedItem borrowedItem = ((StudentInventory) group).getItems().get(childIndex);
         holder.setBorrowedItemView(borrowedItem);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mFilteredStudentInventories.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+
+                String constrainString = constraint.toString().toLowerCase();
+
+                if (constrainString.isEmpty()) {
+                    mFilteredStudentInventories = mStudentInventories;
+                } else {
+                    ArrayList<StudentInventory> filteredList = new ArrayList<>();
+
+                    for (StudentInventory item : mStudentInventories) {
+                        if (item.getName().toLowerCase().contains(constrainString) ||
+                                item.getGtid().toLowerCase().contains(constrainString)) {
+                            filteredList.add(item);
+                        }
+                    }
+                    mFilteredStudentInventories = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mFilteredStudentInventories;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults results) {
+                mFilteredStudentInventories = (ArrayList<StudentInventory>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }

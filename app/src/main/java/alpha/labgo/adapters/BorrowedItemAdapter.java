@@ -23,7 +23,7 @@ import alpha.labgo.models.BorrowedItem;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BorrowedItemAdapter extends RecyclerView.Adapter<BorrowedItemAdapter.BorrowedItemViewHolder>
-        implements Filterable{
+        implements Filterable {
 
     private static final String TAG = "BorrowedItemAdapter";
 
