@@ -7,6 +7,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +20,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,16 +29,21 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.TimeZone;
 
+import alpha.labgo.SignInActivity;
 import alpha.labgo.SignUpActivity;
 import alpha.labgo.UpdateInventoryActivity;
 import alpha.labgo.MainActivity;
 import alpha.labgo.UpdateItemActivity;
+import alpha.labgo.fragments.DashboardTaFragment;
 import alpha.labgo.models.Item;
 import alpha.labgo.models.BorrowedItem;
 import alpha.labgo.models.InventoryItem;
+import alpha.labgo.models.PreStudentInventory;
 import alpha.labgo.models.ScannedItem;
+import alpha.labgo.models.StudentInventory;
 import alpha.labgo.settings.AccountSettingsActivity;
 
 
@@ -781,6 +791,85 @@ public class RestUtils {
         }
 
         return borrowedItems;
+    }
+
+    public static PreStudentInventory getStudentInventories(final DashboardTaFragment fragment) {
+
+        String baseUrl = REST_BASE_URL + STUDENT_INVENTORIES;
+
+        URL url = null;
+        final ArrayList<ArrayList<BorrowedItem>> studentItems = new ArrayList<>();
+        final ArrayList<String> gtids = new ArrayList<>();
+
+
+        try {
+            url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        JSONArray jaResult = null;
+        try {
+            jaResult = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            int numItem = jaResult.length();
+            for (int i = 0; i < numItem; i++) {
+                JSONObject jo = (JSONObject) jaResult.get(i);
+                if (jo.getString(CHECK_IN_TIME) == null || jo.getString(CHECK_IN_TIME).equals("null")) {
+                    int index = gtids.indexOf(jo.getString(GTID));
+                    if (index > -1) {
+                        ArrayList<BorrowedItem> currStudent = studentItems.get(index);
+                        currStudent.add(new BorrowedItem(
+                                jo.getString(ITEM_IMAGE_URL),
+                                jo.getString(ITEM_NAME),
+                                jo.getString(ITEM_DESCRIPTION),
+                                timeHandler(jo.getString(CHECK_OUT_TIME))
+                        ));
+                        studentItems.set(index, currStudent);
+                    } else {
+                        gtids.add(jo.getString(GTID));
+                        ArrayList<BorrowedItem> newItemList = new ArrayList<>();
+                        newItemList.add(new BorrowedItem(
+                                jo.getString(ITEM_IMAGE_URL),
+                                jo.getString(ITEM_NAME),
+                                jo.getString(ITEM_DESCRIPTION),
+                                timeHandler(jo.getString(CHECK_OUT_TIME))
+                        ));
+                        studentItems.add(newItemList);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return new PreStudentInventory(studentItems, gtids);
+        /*final int numStudents = gtids.size();
+        for (int i = 0; i < numStudents; i++) {
+            final String currGtid = gtids.get(i);
+            mFirestore.collection("gtid").document(currGtid).get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot.exists()){
+                                String currName = documentSnapshot.getString("name");
+                                gtidNames.put(currGtid, currName);
+
+                                // all the names are received, put them together into StudentInventory objects
+                                if (gtidNames.size() == numStudents) {
+                                    ArrayList<StudentInventory> studentInventories = buildStudentInventories(gtidNames, gtids, studentItems);
+                                    fragment.setStudentInventories(studentInventories);
+                                }
+                            } else {
+                                Log.e(TAG, "getStudentInventories: can't get student name from gtid, please check internet or firestore");
+                            }
+                        }
+                    });
+        }*/
     }
 
     /**

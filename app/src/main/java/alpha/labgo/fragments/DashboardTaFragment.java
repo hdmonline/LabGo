@@ -11,24 +11,34 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toolbar;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import alpha.labgo.R;
 import alpha.labgo.adapters.BorrowedItemAdapter;
+import alpha.labgo.adapters.StudentInventoryAdapter;
 import alpha.labgo.backend.RestUtils;
 import alpha.labgo.models.BorrowedItem;
+import alpha.labgo.models.PreStudentInventory;
+import alpha.labgo.models.StudentInventory;
 
 public class DashboardTaFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener,
-        LoaderCallbacks<ArrayList<BorrowedItem>> {
+        LoaderCallbacks<PreStudentInventory> {
 
-    private static final String TAG = "DashboardFragment";
+    private static final String TAG = "DashboardTaFragment";
     private static final int DASHBOARD_LOADER_ID = 22;
 
     private String mGtid;
@@ -39,7 +49,9 @@ public class DashboardTaFragment extends Fragment implements
     private TextView mNoItemText;
     private ProgressBar mLoadingIndicator;
 
-    private BorrowedItemAdapter mBorrowedItemAdapter;
+    private StudentInventoryAdapter mStudentInventoryAdapter;
+
+    FirebaseFirestore mFirestore;
 
     /**
      * Use this factory method to create a new instance of
@@ -59,6 +71,7 @@ public class DashboardTaFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFirestore = FirebaseFirestore.getInstance();
         if (getArguments() != null) {
             mGtid = getArguments().getString("gtid");
         }
@@ -98,7 +111,7 @@ public class DashboardTaFragment extends Fragment implements
         mRecyclerView.setAdapter(mBorrowedItemAdapter);
 
         int loaderId = DASHBOARD_LOADER_ID;
-        LoaderCallbacks<ArrayList<BorrowedItem>> callback = DashboardTaFragment.this;
+        LoaderCallbacks<ArrayList<StudentInventory>> callback = DashboardTaFragment.this;
         Bundle bundleDashboard = null;
 
         // TODO: check getActivity().getSupportLoaderManager()
@@ -110,17 +123,17 @@ public class DashboardTaFragment extends Fragment implements
     }
 
     @Override
-    public Loader<ArrayList<BorrowedItem>> onCreateLoader(int id, @Nullable Bundle args) {
+    public Loader<PreStudentInventory> onCreateLoader(int id, @Nullable Bundle args) {
         // TODO: check the context here
-        return new AsyncTaskLoader<ArrayList<BorrowedItem>>(getContext()) {
+        return new AsyncTaskLoader<PreStudentInventory>(getContext()) {
 
-            ArrayList<BorrowedItem> mBorrowedItems = null;
+            PreStudentInventory mPreStudentInventory = null;
 
             @Override
             protected void onStartLoading() {
                 super.onStartLoading();
-                if (mBorrowedItems != null) {
-                    deliverResult(mBorrowedItems);
+                if (mPreStudentInventory != null) {
+                    deliverResult(mPreStudentInventory);
                 } else {
                     mLoadingIndicator.setVisibility(View.VISIBLE);
                     forceLoad();
@@ -134,8 +147,8 @@ public class DashboardTaFragment extends Fragment implements
              * @return Borrowed item data
              */
             @Override
-            public ArrayList<BorrowedItem> loadInBackground() {
-                ArrayList<BorrowedItem> data = RestUtils.getStudentBorrowedItems(mGtid);
+            public PreStudentInventory loadInBackground() {
+                PreStudentInventory data = RestUtils.getStudentInventories(DashboardTaFragment.this);
                 return data;
             }
 
@@ -143,29 +156,75 @@ public class DashboardTaFragment extends Fragment implements
              * Send the result of the load to the registered listener.
              * @param data The result of the load
              */
-            public void deliverResult(ArrayList<BorrowedItem> data) {
-                mBorrowedItems = data;
+            public void deliverResult(PreStudentInventory data) {
+                mPreStudentInventory = data;
                 super.deliverResult(data);
             }
         };
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<ArrayList<BorrowedItem>> loader, ArrayList<BorrowedItem> data) {
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
-        mBorrowedItemAdapter.setList(data);
-        if (data == null) {
-            showErrorMessage();
-        } else if (data.size() == 0) {
-            showNoItemText();
-        } else {
-            showBorrowedItemView();
-        }
+    public void onLoadFinished(@NonNull Loader<PreStudentInventory> loader, PreStudentInventory data) {
+        Log.d(TAG, "onLoadFinished");
+        findStudentNames(data);
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<ArrayList<BorrowedItem>> loader) {
+    public void onLoaderReset(@NonNull Loader<PreStudentInventory> loader) {
 
+    }
+
+    private void findStudentNames(PreStudentInventory preStudentInventory) {
+
+        Log.d(TAG, "findStudentNames")
+        final ArrayList<String> gtids = preStudentInventory.getGtids();
+        final ArrayList<ArrayList<BorrowedItem>> studentItems = preStudentInventory.getStudentItems();
+        final HashMap<String, String> gtidNames = new HashMap<>();
+
+        final int numStudents = gtids.size();
+        for (int i = 0; i < numStudents; i++) {
+            final String currGtid = gtids.get(i);
+            mFirestore.collection("gtid").document(currGtid).get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (documentSnapshot.exists()){
+                                String currName = documentSnapshot.getString("name");
+                                gtidNames.put(currGtid, currName);
+
+                                // all the names are received, put them together into StudentInventory objects
+                                if (gtidNames.size() == numStudents) {
+                                    ArrayList<StudentInventory> studentInventories = buildStudentInventories(gtidNames, gtids, studentItems);
+
+                                }
+                            } else {
+                                Log.e(TAG, "getStudentInventories: can't get student name from gtid, please check internet or firestore");
+                            }
+                        }
+                    });
+        }
+    }
+
+    private static ArrayList<StudentInventory> buildStudentInventories(
+            HashMap<String, String> gtidNames,
+            ArrayList<String> gtids,
+            ArrayList<ArrayList<BorrowedItem>> items) {
+
+        ArrayList<StudentInventory> studentInventories = new ArrayList<>();
+        int numStudent = gtidNames.size();
+        if (numStudent != gtids.size() || numStudent != items.size()) {
+            Log.e(TAG, "buildStudentInventories: sizes of inputs are different.");
+            return null;
+        }
+
+        for (int i = 0; i < numStudent; i++)  {
+            studentInventories.add(new StudentInventory(
+                    gtidNames.get(gtids.get(i)),
+                    gtids.get(i),
+                    items.get(i)
+            ));
+        }
+        return studentInventories;
     }
 
     /**
@@ -230,6 +289,10 @@ public class DashboardTaFragment extends Fragment implements
      */
     public void filterData(String constraint) {
         mBorrowedItemAdapter.getFilter().filter(constraint);
+    }
+
+    public void setStudentInventories(ArrayList<StudentInventory> studentInventories) {
+
     }
 
     @Override
