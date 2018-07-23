@@ -7,10 +7,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,6 +62,7 @@ public class RestUtils {
     private static final String ITEM_DESCRIPTION = "item_description";
     private static final String CHECK_OUT_TIME = "checkout_timestamp";
     private static final String CHECK_IN_TIME = "checkin_timestamp";
+    private static final String ITEM_COUNT = "item_count";
 
     // Keys for RFID
     private static final String RFID_TAG = "rfid_tag";
@@ -82,6 +79,8 @@ public class RestUtils {
 
     // Parameters for inventory items
     private static final String INVENTORIES = "/inventories";
+    private static final String AVAILABLE = "/available";
+    private static final String CATEGORIZED = "/categorized";
 
     // Parameters for RFID tags
     private static final String TAGS = "/tags";
@@ -881,6 +880,7 @@ public class RestUtils {
 
         String itemUrl = REST_BASE_URL + ITEMS;
         String inventoryUrl = REST_BASE_URL + INVENTORIES;
+        String availableUrl = REST_BASE_URL + INVENTORIES + AVAILABLE + CATEGORIZED;
 
         // List of items
         ArrayList<InventoryItem> items = new ArrayList<>();
@@ -910,6 +910,7 @@ public class RestUtils {
                         jo.getString(ITEM_IMAGE_URL),
                         jo.getString(ITEM_NAME),
                         jo.getString(ITEM_DESCRIPTION),
+                        0,
                         0);
                 items.add(newItem);
                 itemNames.add(jo.getString(ITEM_NAME));
@@ -943,6 +944,37 @@ public class RestUtils {
                 } else {
                     // TODO: throw an exception here?
                     Log.e(TAG, "getInventoryItems: There is an item in the inventory but not in the item table!");
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        /* get inventory stocks from "/available/categorized" */
+        try {
+            url = new URL(availableUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            jaResult = getResponseFromHttpUrl(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for (int i = 0; i < jaResult.length(); i++) {
+                JSONObject jo = (JSONObject) jaResult.get(i);
+                int index = itemNames.indexOf(jo.getString(ITEM_NAME));
+                if (index > -1) {
+                    InventoryItem currItem = items.get(index);
+                    currItem.setItemStock(jo.getInt(ITEM_COUNT));
+                    items.set(index, currItem);
+                } else {
+                    // TODO: throw an exception here?
+                    Log.e(TAG, "getInventoryItems: There is an item in the stock but not in the item table!");
                 }
             }
         } catch (JSONException e) {

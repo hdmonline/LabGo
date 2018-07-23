@@ -94,10 +94,15 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
         holder.mToolName.setText(inventoryItem.getItemName());
         holder.mDescription.setText(inventoryItem.getItemDescription());
         int quantity = inventoryItem.getItemQuantity();
-        holder.mToolQuantity.setText(Integer.toString(quantity));
-        if (quantity == 0) {
+        int stock = inventoryItem.getItemStock();
+        String text = Integer.toString(stock) + "/" + Integer.toString(quantity);
+        holder.mToolQuantity.setText(text);
+        if (stock == 0) {
             holder.mToolQuantity.setTextColor(mContext.getResources().getColor(R.color.red));
             holder.mToolName.setTextColor(mContext.getResources().getColor(R.color.red));
+        } else if (stock < 2) {
+            holder.mToolQuantity.setTextColor(mContext.getResources().getColor(R.color.orange));
+            holder.mToolName.setTextColor(mContext.getResources().getColor(R.color.orange));
         } else {
             holder.mToolQuantity.setTextColor(mContext.getResources().getColor(R.color.dark_gray));
             holder.mToolName.setTextColor(mContext.getResources().getColor(R.color.black));

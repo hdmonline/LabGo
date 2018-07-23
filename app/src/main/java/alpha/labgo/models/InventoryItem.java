@@ -6,6 +6,7 @@ public class InventoryItem {
     private String itemName;
     private String itemDescription;
     private int itemQuantity;
+    private int itemStock;
 
     /**
      * Default constructor
@@ -22,11 +23,12 @@ public class InventoryItem {
      * @param description   Item description
      * @param quantity      Item quantity
      */
-    public InventoryItem(String image, String name, String description, int quantity) {
+    public InventoryItem(String image, String name, String description, int quantity, int stock) {
         this.itemImage = image;
         this.itemName = name;
         this.itemDescription = description;
         this.itemQuantity = quantity;
+        this.itemStock = stock;
     }
 
     public String getItemName() {
@@ -45,6 +47,10 @@ public class InventoryItem {
         return itemDescription;
     }
 
+    public int getItemStock() {
+        return itemStock;
+    }
+
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
@@ -59,5 +65,9 @@ public class InventoryItem {
 
     public void setItemDescription(String itemDescription) {
         this.itemDescription = itemDescription;
+    }
+
+    public void setItemStock(int itemStock) {
+        this.itemStock = itemStock;
     }
 }
