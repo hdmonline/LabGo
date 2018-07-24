@@ -809,6 +809,7 @@ public class RestUtils {
 
         JSONArray jaResult = null;
         try {
+            Log.d(TAG, "getStudentInventories: getting student inventories");
             jaResult = getResponseFromHttpUrl(url);
         } catch (IOException e) {
             e.printStackTrace();
@@ -840,6 +841,8 @@ public class RestUtils {
                         ));
                         studentItems.add(newItemList);
                     }
+                } else {
+                    Log.e(TAG, "getStudentInventories: unhandled HTTP response.");
                 }
             }
         } catch (JSONException e) {

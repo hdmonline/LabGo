@@ -3,6 +3,7 @@ package alpha.labgo.models;
 import com.bignerdranch.expandablerecyclerview.model.Parent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -19,6 +20,9 @@ public class StudentInventory implements Parent<BorrowedItem> {
         this.mGtid = gtid;
         this.mQuantity = borrowedItems.size();
         this.mBorrowedItems = borrowedItems;
+    }
+
+    public StudentInventory() {
     }
 
     public String getGtid() {

@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import alpha.labgo.R;
-import alpha.labgo.adapters.BorrowedItemAdapter;
 import alpha.labgo.adapters.StudentInventoryAdapter;
 import alpha.labgo.backend.RestUtils;
 import alpha.labgo.models.BorrowedItem;
@@ -49,7 +47,7 @@ public class DashboardTaFragment extends Fragment implements
     private TextView mNoItemText;
     private ProgressBar mLoadingIndicator;
 
-    private StudentInventoryAdapter mStudentInventoryAdapter;
+    private StudentInventoryAdapter mAdapter;
 
     FirebaseFirestore mFirestore;
 
@@ -98,10 +96,10 @@ public class DashboardTaFragment extends Fragment implements
                 android.R.color.holo_blue_dark);
 
         // will pass the list later
-        mStudentInventoryAdapter = new StudentInventoryAdapter(getContext());
+        mAdapter = new StudentInventoryAdapter(getContext());
 
         // set adapter
-        mRecyclerView.setAdapter(mStudentInventoryAdapter);
+        mRecyclerView.setAdapter(mAdapter);
 
         // Set the layoutManager on mRecyclerView
         LinearLayoutManager layoutManager
@@ -178,7 +176,8 @@ public class DashboardTaFragment extends Fragment implements
         Log.d(TAG, "findStudentNames");
 
         if (preStudentInventory == null || preStudentInventory.size() == 0) {
-            mStudentInventoryAdapter.setList(new ArrayList<StudentInventory>());
+            mAdapter.setList(new ArrayList<StudentInventory>());
+            showNoItemText();
             return;
         }
 
@@ -201,9 +200,8 @@ public class DashboardTaFragment extends Fragment implements
                                 // all the names are received, put them together into StudentInventory objects
                                 if (gtidNames.size() == numStudents) {
                                     ArrayList<StudentInventory> studentInventories = buildStudentInventories(gtidNames, gtids, studentItems);
-                                    mStudentInventoryAdapter.setList(studentInventories);
-                                    mLoadingIndicator.setVisibility(View.INVISIBLE);
-                                    mSwipeRefreshLayout.setRefreshing(false);
+                                    mAdapter.setList(studentInventories);
+                                    showBorrowedItemView();
                                 }
                             } else {
                                 Log.e(TAG, "getStudentInventories: can't get student name from gtid, please check internet or firestore");
@@ -259,6 +257,7 @@ public class DashboardTaFragment extends Fragment implements
      */
     private void showBorrowedItemView() {
         mSwipeRefreshLayout.setRefreshing(false);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
         mNoItemText.setVisibility(View.INVISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -279,7 +278,7 @@ public class DashboardTaFragment extends Fragment implements
      * refresh of our data, you can see that there is no data showing.
      */
     public void invalidateData() {
-        mStudentInventoryAdapter.setList(new ArrayList<StudentInventory>());
+        mAdapter.setList(new ArrayList<StudentInventory>());
     }
 
     /**
@@ -296,7 +295,7 @@ public class DashboardTaFragment extends Fragment implements
      * @param constraint Constraint string
      */
     public void filterData(String constraint) {
-        mStudentInventoryAdapter.getFilter().filter(constraint);
+        mAdapter.getFilter().filter(constraint);
     }
 
     @Override
@@ -307,12 +306,12 @@ public class DashboardTaFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        mStudentInventoryAdapter.onSaveInstanceState(outState);
+        mAdapter.onSaveInstanceState(outState);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        mStudentInventoryAdapter.onRestoreInstanceState(savedInstanceState);
+        mAdapter.onRestoreInstanceState(savedInstanceState);
     }
 }

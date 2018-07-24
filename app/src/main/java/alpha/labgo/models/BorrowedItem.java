@@ -18,7 +18,6 @@ public class BorrowedItem implements Parcelable {
      * Default constructor
      */
     public BorrowedItem() {
-
     }
 
     /**
