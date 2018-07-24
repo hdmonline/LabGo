@@ -3,7 +3,6 @@ package alpha.labgo.adapters;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,25 +71,6 @@ public class StudentInventoryAdapter
         mStudentInventories = new ArrayList<StudentInventory>();
         mFilteredStudentInventories = mStudentInventories;
         mInflater = LayoutInflater.from(context);
-    }
-
-    private static List<StudentInventory> makeDummyItem() {
-        ArrayList<StudentInventory> list = new ArrayList<>();
-        ArrayList<BorrowedItem> item = new ArrayList<>();
-
-        item.add(
-                new BorrowedItem("https://www.madabouthorror.co.uk/wp-content/uploads/goosebumps-slappy-the-dummy-mask.jpg",
-                        "dummy",
-                        "dummy",
-                        "dummy time"));
-
-        list.add(new StudentInventory(
-                "Dummy",
-                "123456789",
-                item)
-        );
-
-        return list;
     }
 
     public class StudentViewHolder extends ParentViewHolder {

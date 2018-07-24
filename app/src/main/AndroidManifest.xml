@@ -73,7 +73,9 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".settings.AccountSettingsActivity"></activity>
+        <activity
+            android:name=".settings.AccountSettingsActivity"
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>
