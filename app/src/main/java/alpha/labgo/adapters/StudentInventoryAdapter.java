@@ -43,8 +43,8 @@ public class StudentInventoryAdapter
     private static final int CHILD_NORMAL = 2;
 
     private Context mContext;
-    private ArrayList<StudentInventory> mStudentInventories;
-    private ArrayList<StudentInventory> mFilteredStudentInventories;
+    private List<StudentInventory> mStudentInventories;
+    private List<StudentInventory> mFilteredStudentInventories;
     LayoutInflater mInflater;
 
     /**
@@ -53,7 +53,7 @@ public class StudentInventoryAdapter
      * @param context Context
      * @param studentInventoryList The group
      */
-    public StudentInventoryAdapter(Context context, ArrayList<StudentInventory> studentInventoryList) {
+    public StudentInventoryAdapter(Context context, List<StudentInventory> studentInventoryList) {
         super(studentInventoryList);
         mContext = context;
         mStudentInventories = studentInventoryList;
@@ -67,22 +67,22 @@ public class StudentInventoryAdapter
      * @param context Context
      */
     public StudentInventoryAdapter(Context context) {
-        super(makeDummyItem());
+        super(new ArrayList<StudentInventory>());
         mContext = context;
-        mStudentInventories = makeDummyItem();
+        mStudentInventories = new ArrayList<StudentInventory>();
         mFilteredStudentInventories = mStudentInventories;
         mInflater = LayoutInflater.from(context);
     }
 
-    private static ArrayList<StudentInventory> makeDummyItem() {
+    private static List<StudentInventory> makeDummyItem() {
         ArrayList<StudentInventory> list = new ArrayList<>();
         ArrayList<BorrowedItem> item = new ArrayList<>();
 
         item.add(
                 new BorrowedItem("https://www.madabouthorror.co.uk/wp-content/uploads/goosebumps-slappy-the-dummy-mask.jpg",
-                "dummy",
-                "dummy",
-                "dummy time"));
+                        "dummy",
+                        "dummy",
+                        "dummy time"));
 
         list.add(new StudentInventory(
                 "Dummy",
@@ -171,7 +171,6 @@ public class StudentInventoryAdapter
             mToolImage = itemView.findViewById(R.id.image_item);
             mToolName = itemView.findViewById(R.id.text_item_name);
             mCheckOutTime = itemView.findViewById(R.id.text_checkout_time);
-            mDescription = itemView.findViewById(R.id.text_item_description);
             mParentLayout = itemView.findViewById(R.id.layout_borrowed_parent);
         }
 
@@ -181,7 +180,6 @@ public class StudentInventoryAdapter
                     .load(borrowedItem.getItemImage())
                     .into(mToolImage);
             mToolName.setText(borrowedItem.getItemName());
-            mDescription.setText(borrowedItem.getItemDescription());
             mCheckOutTime.setText(borrowedItem.getCheckOutTime());
         }
     }
@@ -205,7 +203,7 @@ public class StudentInventoryAdapter
     @Override
     public StudentBorrowedItemViewHolder onCreateChildViewHolder(@NonNull ViewGroup child, int viewType) {
         View view = mInflater
-                .inflate(R.layout.layout_borrowed_item, child, false);
+                .inflate(R.layout.layout_borrowed_item_ta, child, false);
         return new StudentBorrowedItemViewHolder(view);
     }
 
@@ -223,8 +221,18 @@ public class StudentInventoryAdapter
 
 
     @Override
-    public int getItemCount() {
-        return mFilteredStudentInventories.size();
+    public int getParentViewType(int parentPosition) {
+        return PARENT_NORMAL;
+    }
+
+    @Override
+    public int getChildViewType(int parentPosition, int childPosition) {
+        return CHILD_NORMAL;
+    }
+
+    @Override
+    public boolean isParentViewType(int viewType) {
+        return viewType == PARENT_NORMAL;
     }
 
     @Override

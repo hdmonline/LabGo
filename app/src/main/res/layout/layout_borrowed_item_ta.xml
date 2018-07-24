@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_borrowed_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="15dp"
+    android:paddingEnd="15dp"
+    android:paddingStart="30dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_item"
+        android:layout_alignParentStart="true"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@mipmap/ic_launcher"/>
+
+    <TextView
+        android:id="@+id/text_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/image_item"
+        android:layout_centerVertical="true"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:layout_marginLeft="30dp"
+        android:text="test" />
+
+    <!--<TextView-->
+        <!--android:id="@+id/text_checkout_time_title"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_toEndOf="@+id/image_item"-->
+        <!--android:layout_below="@+id/text_item_description"-->
+        <!--android:layout_alignStart="@+id/text_item_name"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:textSize="12sp"-->
+        <!--android:textColor="@color/dark_gray"-->
+        <!--android:text="Check Out Time:"/>-->
+
+    <TextView
+        android:id="@+id/text_checkout_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"
+        android:textSize="12sp"
+        android:textColor="@color/dark_gray"
+        android:text="06-21 22:34"/>
+
+    <!--This View serves as a visual divider between list items-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#dadada"
+        android:layout_alignStart="@+id/text_item_name"
+        android:layout_below="@+id/image_item"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="8dp" />
+</RelativeLayout>
+
