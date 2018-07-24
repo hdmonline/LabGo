@@ -15,14 +15,11 @@ public class StudentInventory implements Parent<BorrowedItem> {
     private int mQuantity;
     private List<BorrowedItem> mBorrowedItems;
 
-    public StudentInventory(String studentName, String gtid, ArrayList<BorrowedItem> borrowedItems) {
+    public StudentInventory(String studentName, String gtid, List<BorrowedItem> borrowedItems) {
         this.mName = studentName;
         this.mGtid = gtid;
         this.mQuantity = borrowedItems.size();
         this.mBorrowedItems = borrowedItems;
-    }
-
-    public StudentInventory() {
     }
 
     public String getGtid() {

@@ -39,6 +39,9 @@ public class StudentInventoryAdapter
 
     private static final String TAG = "StudentInventoryAdapter";
 
+    private static final int PARENT_NORMAL = 1;
+    private static final int CHILD_NORMAL = 2;
+
     private Context mContext;
     private ArrayList<StudentInventory> mStudentInventories;
     private ArrayList<StudentInventory> mFilteredStudentInventories;
