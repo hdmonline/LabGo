@@ -97,18 +97,17 @@ public class DashboardTaFragment extends Fragment implements
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
 
-        // Set the layoutManager on mRecyclerView
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this.getActivity(), LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-
-        // will pass the parameters later
-        // TODO: chech if this constructor usable
+        // will pass the list later
         mStudentInventoryAdapter = new StudentInventoryAdapter(getContext());
 
         // set adapter
         mRecyclerView.setAdapter(mStudentInventoryAdapter);
+
+        // Set the layoutManager on mRecyclerView
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        //mRecyclerView.setHasFixedSize(true);
 
         int loaderId = STUDENT_INVENTORY_LOADER_ID;
         LoaderCallbacks<PreStudentInventory> callback = DashboardTaFragment.this;
@@ -177,11 +176,18 @@ public class DashboardTaFragment extends Fragment implements
     private void findStudentNames(PreStudentInventory preStudentInventory) {
 
         Log.d(TAG, "findStudentNames");
+
+        if (preStudentInventory == null || preStudentInventory.size() == 0) {
+            mStudentInventoryAdapter.setList(new ArrayList<StudentInventory>());
+            return;
+        }
+
         final ArrayList<String> gtids = preStudentInventory.getGtids();
         final ArrayList<ArrayList<BorrowedItem>> studentItems = preStudentInventory.getStudentItems();
         final HashMap<String, String> gtidNames = new HashMap<>();
 
         final int numStudents = gtids.size();
+
         for (int i = 0; i < numStudents; i++) {
             final String currGtid = gtids.get(i);
             mFirestore.collection("gtid").document(currGtid).get()
@@ -196,6 +202,8 @@ public class DashboardTaFragment extends Fragment implements
                                 if (gtidNames.size() == numStudents) {
                                     ArrayList<StudentInventory> studentInventories = buildStudentInventories(gtidNames, gtids, studentItems);
                                     mStudentInventoryAdapter.setList(studentInventories);
+                                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                                    mSwipeRefreshLayout.setRefreshing(false);
                                 }
                             } else {
                                 Log.e(TAG, "getStudentInventories: can't get student name from gtid, please check internet or firestore");
@@ -291,12 +299,20 @@ public class DashboardTaFragment extends Fragment implements
         mStudentInventoryAdapter.getFilter().filter(constraint);
     }
 
-    public void setStudentInventories(ArrayList<StudentInventory> studentInventories) {
-
-    }
-
     @Override
     public void onRefresh() {
         refreshData();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mStudentInventoryAdapter.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        mStudentInventoryAdapter.onRestoreInstanceState(savedInstanceState);
     }
 }

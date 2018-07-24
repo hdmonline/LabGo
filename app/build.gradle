@@ -56,7 +56,8 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
 
     // expandable recyclerview
-    implementation 'com.thoughtbot:expandablerecyclerview:1.3'
+    // implementation 'com.thoughtbot:expandablerecyclerview:1.3' // This lib doesn't support reload data
+    implementation 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -20,4 +20,8 @@ public class PreStudentInventory {
     public ArrayList<ArrayList<BorrowedItem>> getStudentItems() {
         return mStudentItems;
     }
+
+    public int size() {
+        return mGtids.size();
+    }
 }

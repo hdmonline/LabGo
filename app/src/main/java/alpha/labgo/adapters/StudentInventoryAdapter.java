@@ -1,6 +1,9 @@
 package alpha.labgo.adapters;
 
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,61 +15,66 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
+import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
+import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
 import com.bumptech.glide.Glide;
-import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
-import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
-import com.thoughtbot.expandablerecyclerview.viewholders.GroupViewHolder;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import alpha.labgo.R;
 import alpha.labgo.models.BorrowedItem;
 import alpha.labgo.models.StudentInventory;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static android.view.animation.Animation.RELATIVE_TO_SELF;
-
 public class StudentInventoryAdapter
-        extends ExpandableRecyclerViewAdapter<StudentInventoryAdapter.StudentViewHolder,
-        StudentInventoryAdapter.StudentBorrowedItemViewHolder>
+        extends ExpandableRecyclerAdapter<
+                StudentInventory,
+                BorrowedItem,
+                StudentInventoryAdapter.StudentViewHolder,
+                StudentInventoryAdapter.StudentBorrowedItemViewHolder>
         implements Filterable {
 
     private static final String TAG = "StudentInventoryAdapter";
 
     private Context mContext;
-    private ArrayList<StudentInventory> mStudentInventories = new ArrayList<>();
-    private ArrayList<StudentInventory> mFilteredStudentInventories = new ArrayList<>();
+    private ArrayList<StudentInventory> mStudentInventories;
+    private ArrayList<StudentInventory> mFilteredStudentInventories;
+    LayoutInflater mInflater;
 
     /**
      * Default constructor.
      *
-     * @param groups The group list
+     * @param context Context
+     * @param studentInventoryList The group
      */
-    public StudentInventoryAdapter(List<? extends ExpandableGroup> groups) {
-        super(groups);
+    public StudentInventoryAdapter(Context context, ArrayList<StudentInventory> studentInventoryList) {
+        super(studentInventoryList);
+        mContext = context;
+        mStudentInventories = studentInventoryList;
+        mFilteredStudentInventories = studentInventoryList;
+        mInflater = LayoutInflater.from(context);
     }
 
+    /**
+     * Constructor only with context.
+     *
+     * @param context Context
+     */
     public StudentInventoryAdapter(Context context) {
         super(new ArrayList<StudentInventory>());
         mContext = context;
+        mStudentInventories = new ArrayList<>();
+        mFilteredStudentInventories = mStudentInventories;
+        mInflater = LayoutInflater.from(context);
     }
 
-    @SuppressWarnings("unchecked")
-    public StudentInventoryAdapter(Context context, List<? extends ExpandableGroup> groups) {
-        super(groups);
-        try {
-            mStudentInventories = (ArrayList<StudentInventory>) groups;
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-        }
-        mContext = context;
-    }
-
-    public class StudentViewHolder extends GroupViewHolder {
+    public class StudentViewHolder extends ParentViewHolder {
 
         private static final String TAG = "StudentViewHolder";
+
+        private static final float INITIAL_POSITION = 0.0f;
+        private static final float ROTATED_POSITION = -90f;
 
         private TextView mName, mGtid;
         private ImageView mArrow;
@@ -81,35 +89,45 @@ public class StudentInventoryAdapter
         }
 
         @Override
-        public void expand() {
-            animateExpand();
+        public void setExpanded(boolean expanded) {
+            super.setExpanded(expanded);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                if (expanded) {
+                    mArrow.setRotation(ROTATED_POSITION);
+                } else {
+                    mArrow.setRotation(INITIAL_POSITION);
+                }
+            }
         }
 
         @Override
-        public void collapse() {
-            animateCollapse();
+        public void onExpansionToggled(boolean expanded) {
+            super.onExpansionToggled(expanded);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                RotateAnimation rotateAnimation;
+                if (expanded) { // rotate clockwise
+                    rotateAnimation = new RotateAnimation(ROTATED_POSITION,
+                            INITIAL_POSITION,
+                            RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                            RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+                } else { // rotate counterclockwise
+                    rotateAnimation = new RotateAnimation(-1 * ROTATED_POSITION,
+                            INITIAL_POSITION,
+                            RotateAnimation.RELATIVE_TO_SELF, 0.5f,
+                            RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+                }
+
+                rotateAnimation.setDuration(300);
+                rotateAnimation.setFillAfter(true);
+                mArrow.startAnimation(rotateAnimation);
+            }
         }
 
-        private void animateExpand() {
-            RotateAnimation rotate =
-                    new RotateAnimation(360, 180, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
-            rotate.setDuration(300);
-            rotate.setFillAfter(true);
-            mArrow.setAnimation(rotate);
-        }
-
-        private void animateCollapse() {
-            RotateAnimation rotate =
-                    new RotateAnimation(0, 90, RELATIVE_TO_SELF, 0.5f, RELATIVE_TO_SELF, 0.5f);
-            rotate.setDuration(300);
-            rotate.setFillAfter(true);
-            mArrow.setAnimation(rotate);
-        }
-
-        public void setStudentView(ExpandableGroup studentInventory) {
-            if (studentInventory instanceof StudentInventory){
-                mName.setText(studentInventory.getTitle());
-                mGtid.setText(((StudentInventory) studentInventory).getGtid());
+        public void setStudentView(StudentInventory studentInventory) {
+            if (studentInventory != null) {
+                mName.setText(studentInventory.getName());
+                String gtidText = "GTID: " + studentInventory.getGtid();
+                mGtid.setText(gtidText);
             } else {
                 Log.e(TAG, "setStudentView: the input type needs to be StudentInventory");
             }
@@ -147,33 +165,38 @@ public class StudentInventoryAdapter
     public void setList(ArrayList<StudentInventory> studentInventories) {
         mStudentInventories = studentInventories;
         mFilteredStudentInventories = studentInventories;
-        notifyDataSetChanged();
+        setParentList(studentInventories, true);
+        notifyParentDataSetChanged(false);
     }
 
+    @NonNull
     @Override
-    public StudentViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+    public StudentViewHolder onCreateParentViewHolder(ViewGroup parent, int viewType) {
+        View view = mInflater
                 .inflate(R.layout.layout_student_inventory, parent, false);
         return new StudentViewHolder(view);
     }
 
+    @NonNull
     @Override
-    public void onBindGroupViewHolder(StudentViewHolder holder, int flatPosition, ExpandableGroup group) {
-        holder.setStudentView(group);
-    }
-
-    @Override
-    public StudentInventoryAdapter.StudentBorrowedItemViewHolder onCreateChildViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.layout_borrowed_item, parent, false);
+    public StudentBorrowedItemViewHolder onCreateChildViewHolder(@NonNull ViewGroup child, int viewType) {
+        View view = mInflater
+                .inflate(R.layout.layout_borrowed_item, child, false);
         return new StudentBorrowedItemViewHolder(view);
     }
 
+    @UiThread
     @Override
-    public void onBindChildViewHolder(StudentBorrowedItemViewHolder holder, int flatPosition, ExpandableGroup group, int childIndex) {
-        final BorrowedItem borrowedItem = ((StudentInventory) group).getItems().get(childIndex);
+    public void onBindParentViewHolder(StudentViewHolder holder, int parentPosition, StudentInventory group) {
+        holder.setStudentView(group);
+    }
+
+    @UiThread
+    @Override
+    public void onBindChildViewHolder(@NonNull StudentBorrowedItemViewHolder holder, int parentPosition, int childPosition, @NonNull BorrowedItem borrowedItem) {
         holder.setBorrowedItemView(borrowedItem);
     }
+
 
     @Override
     public int getItemCount() {
@@ -210,7 +233,7 @@ public class StudentInventoryAdapter
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults results) {
                 mFilteredStudentInventories = (ArrayList<StudentInventory>) results.values;
-                notifyDataSetChanged();
+                notifyParentDataSetChanged(false);
             }
         };
     }

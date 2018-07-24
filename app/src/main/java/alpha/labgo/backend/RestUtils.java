@@ -847,28 +847,6 @@ public class RestUtils {
         }
 
         return new PreStudentInventory(studentItems, gtids);
-        /*final int numStudents = gtids.size();
-        for (int i = 0; i < numStudents; i++) {
-            final String currGtid = gtids.get(i);
-            mFirestore.collection("gtid").document(currGtid).get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            if (documentSnapshot.exists()){
-                                String currName = documentSnapshot.getString("name");
-                                gtidNames.put(currGtid, currName);
-
-                                // all the names are received, put them together into StudentInventory objects
-                                if (gtidNames.size() == numStudents) {
-                                    ArrayList<StudentInventory> studentInventories = buildStudentInventories(gtidNames, gtids, studentItems);
-                                    fragment.setStudentInventories(studentInventories);
-                                }
-                            } else {
-                                Log.e(TAG, "getStudentInventories: can't get student name from gtid, please check internet or firestore");
-                            }
-                        }
-                    });
-        }*/
     }
 
     /**
@@ -897,6 +875,7 @@ public class RestUtils {
 
         JSONArray itemJsonArray = null;
         try {
+            Log.d(TAG, "getInventoryItems: getting items");
             itemJsonArray = getResponseFromHttpUrl(url);
         } catch (IOException e) {
             e.printStackTrace();
@@ -928,6 +907,7 @@ public class RestUtils {
 
         JSONArray jaResult = null;
         try {
+            Log.d(TAG, "getInventoryItems: getting ivnentories");
             jaResult = getResponseFromHttpUrl(url);
         } catch (IOException e) {
             e.printStackTrace();
@@ -959,6 +939,7 @@ public class RestUtils {
 
 
         try {
+            Log.d(TAG, "getInventoryItems: getting inventory stocks");
             jaResult = getResponseFromHttpUrl(url);
         } catch (IOException e) {
             e.printStackTrace();
