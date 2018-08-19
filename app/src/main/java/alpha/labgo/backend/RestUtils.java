@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import alpha.labgo.BaseActivity;
+import alpha.labgo.MainTaActivity;
 import alpha.labgo.SignInActivity;
 import alpha.labgo.SignUpActivity;
 import alpha.labgo.UpdateInventoryActivity;
@@ -325,7 +327,13 @@ public class RestUtils {
                     Log.e(TAG, "Wrong QR code!");
                     return;
                 }
-                mContext.startActivity(new Intent(mContext, MainActivity.class));
+
+                if (BaseActivity.sIsTa) {
+                    mContext.startActivity(new Intent(mContext, MainTaActivity.class));
+                } else {
+                    mContext.startActivity(new Intent(mContext, MainActivity.class));
+                }
+
             }
         }
     }

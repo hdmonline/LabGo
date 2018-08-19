@@ -50,8 +50,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     private FirebaseAuth mAuth;
     private FirebaseUser mCurrUser;
 
-    private boolean mIsTa;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,7 +164,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()){
                             String email = documentSnapshot.getString("email");
-                            mIsTa = documentSnapshot.getBoolean("ta");
+                            sIsTa = documentSnapshot.getBoolean("ta");
                             sGtid = gtidInput;
                             signInWithEmail(email, password);
                         } else {
@@ -187,7 +185,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         hideProgressDialog();
 
                         if (task.isSuccessful()) {
-                            onAuthSuccess(mIsTa);
+                            onAuthSuccess(sIsTa);
                         } else {
                             Toast.makeText(SignInActivity.this, "Sign In Failed",
                                     Toast.LENGTH_SHORT).show();
@@ -222,8 +220,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     mLoadingIndicator.setVisibility(View.INVISIBLE);
                                     sGtid = documentSnapshot.getString("gtid");
-                                    mIsTa = documentSnapshot.getBoolean("ta");
-                                    onAuthSuccess(mIsTa);
+                                    sIsTa = documentSnapshot.getBoolean("ta");
+                                    onAuthSuccess(sIsTa);
                                 }
                             });
                 }

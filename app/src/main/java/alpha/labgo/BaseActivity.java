@@ -29,6 +29,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUESTS = 2;
     private static ProgressDialog mProgressDialog;
     protected static String sGtid;
+    public static boolean sIsTa;
 
     /**
      * This method shows progress dialog with desired message.
