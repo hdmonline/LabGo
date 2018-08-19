@@ -268,6 +268,7 @@ public class DashboardTaFragment extends Fragment implements
      */
     private void showNoItemText() {
         mSwipeRefreshLayout.setRefreshing(false);
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
         mNoItemText.setVisibility(View.VISIBLE);
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
