@@ -69,7 +69,6 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
 
         // Views
-        mToolbar = findViewById(R.id.toolbar);
         mNavigationView = findViewById(R.id.nav_view);
         mHeaderView = mNavigationView.getHeaderView(0);
         mUserName = mHeaderView.findViewById(R.id.field_drawer_user_name);
@@ -77,8 +76,6 @@ public class MainActivity extends BaseActivity
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
         mViewPager = findViewById(R.id.container);
         mDrawer = findViewById(R.id.layout_drawer);
-
-        setSupportActionBar(mToolbar);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
@@ -247,11 +244,11 @@ public class MainActivity extends BaseActivity
     }
 
     private void initDrawer() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
