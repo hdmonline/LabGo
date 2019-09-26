@@ -3,7 +3,7 @@ A smart inventory management system with automatic check in/out mechanism inspir
 This repo is the Android app of this system.
 
 ## Architecture
-The system architecture is shown below
+The system architecture is shown below.
 ![system](https://github.com/hdmonline/LabGo/blob/master/image/Smart%20Inventort%20Management%20System.png)
 
 ## Check in/out Schematic
